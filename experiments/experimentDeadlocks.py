@@ -7,10 +7,15 @@ def cleanup(db):
     db.initialize()
 
 def start():
-    #for i in range(ITERATIONS):
-    for j in range(WORKLOAD):
-        data = deadlocks.main()
-        print(data)
+    db1 = DB()
+    db2 = DB()
+    barrier = Barrier(2)
+    t1 = threading.Thread(target=tx_a, args=(db1, barrier))
+    t2 = threading.Thread(target=tx_b, args=(db2, barrier))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
 
 
 def main():
