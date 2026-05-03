@@ -1,27 +1,26 @@
+import threading
 from db.database import DB
-from services import serviceDeadlocks as deadlocks
-from config.settings import WORKLOAD, ITERATIONS
+from config.settings import ITERATIONS, WORKLOAD
+from core.coreDeadlocks import run_with_retry
 
-def cleanup(db):
-    db.deleteschema()
-    db.initialize()
-
-def start():
-    db1 = DB()
-    db2 = DB()
-    barrier = Barrier(2)
-    t1 = threading.Thread(target=tx_a, args=(db1, barrier))
-    t2 = threading.Thread(target=tx_b, args=(db2, barrier))
-    t1.start()
-    t2.start()
-    t1.join()
-    t2.join()
-
-
-def main():
+def client(client_id, results):
     db = DB()
-    cleanup(db)
-    start()
 
-if __name__ == "__main__":
-    main()
+    for _ in range(ITERATIONS):
+        data = run_with_retry(client_id, db)
+
+        results.append(data)
+
+def start_deadlocks():
+    threads = []
+    results = []
+
+    for i in range(WORKLOAD):
+        t = threading.Thread(target=client, args=(i, results))
+        threads.append(t)
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    return results

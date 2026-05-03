@@ -32,10 +32,22 @@ class DB:
             cursor.execute("INSERT INTO deadlocks(salary) VALUES (%s)", ((i + 1) * 100,))
 
         cursor.execute("COMMIT")
+        cursor.close()
+
+    def begin(self):
+        cursor = self.conn.cursor()
+        cursor.execute("BEGIN;")
+        cursor.close()
 
     def commit(self):
         cursor = self.conn.cursor()
         cursor.execute("COMMIT")
+        cursor.close()
+
+    def rollback(self):
+        cursor = self.conn.cursor()
+        cursor.execute("ROLLBACK")
+        cursor.close()
 
     def close(self):
         self.conn.close()
