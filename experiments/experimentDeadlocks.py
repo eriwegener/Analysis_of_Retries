@@ -1,26 +1,28 @@
 import threading
 from db.database import DB
-from config.settings import ITERATIONS, WORKLOAD
-from core.coreDeadlocks import run_with_retry
+from config.settings import ITERATIONS, WORKLOAD, RETRY_ENABLED
+from core.coreDeadlocks import *
 
-def client(client_id, results):
+def _client(client_id, iteration):
     db = DB()
 
-    for _ in range(ITERATIONS):
-        data = run_with_retry(client_id, db)
+    if RETRY_ENABLED:
+        run_with_retry(client_id, db, iteration)
+    else:
+        run_without_retry(client_id, db, iteration)
 
-        results.append(data)
+    db.close()
+
 
 def start_deadlocks():
     threads = []
-    results = []
 
-    for i in range(WORKLOAD):
-        t = threading.Thread(target=client, args=(i, results))
-        threads.append(t)
-        t.start()
+    for k in range(ITERATIONS):
+        print(k)
+        for i in range(WORKLOAD):
+            t = threading.Thread(target=_client, args=(i, k,))
+            threads.append(t)
+            t.start()
 
-    for t in threads:
-        t.join()
-
-    return results
+        for t in threads:
+            t.join()

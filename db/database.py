@@ -18,20 +18,20 @@ class DB:
 
         return result
 
-    def deleteschema(self):
+    def delete_schema(self):
         cursor = self.conn.cursor()
-        cursor.execute("DROP SCHEMA public CASCADE")
-        cursor.execute("COMMIT")
+        cursor.execute("DROP SCHEMA public CASCADE;")
+        cursor.execute("COMMIT;")
         cursor.close()
 
     def initialize(self):
         cursor = self.conn.cursor()
-        cursor.execute("CREATE SCHEMA public")
-        cursor.execute("CREATE TABLE deadlocks(id SERIAL, salary INT)")
+        cursor.execute("CREATE SCHEMA public;")
+        cursor.execute("CREATE TABLE deadlocks(id SERIAL, salary INT);")
         for i in range(5):
-            cursor.execute("INSERT INTO deadlocks(salary) VALUES (%s)", ((i + 1) * 100,))
+            cursor.execute("INSERT INTO deadlocks(salary) VALUES (%s);", ((i + 1) * 100,))
 
-        cursor.execute("COMMIT")
+        cursor.execute("COMMIT;")
         cursor.close()
 
     def begin(self):
@@ -41,12 +41,12 @@ class DB:
 
     def commit(self):
         cursor = self.conn.cursor()
-        cursor.execute("COMMIT")
+        cursor.execute("COMMIT;")
         cursor.close()
 
     def rollback(self):
         cursor = self.conn.cursor()
-        cursor.execute("ROLLBACK")
+        cursor.execute("ROLLBACK;")
         cursor.close()
 
     def close(self):
