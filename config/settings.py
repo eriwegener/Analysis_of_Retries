@@ -1,10 +1,12 @@
-RETRY_COUNT = 3
-RETRY_DELAY = 0.05
-RETRY_ENABLED = True
+RETRY_COUNT = [0, 1, 2, 3, 5]
+RETRY_DELAY = [0, 0.01, 0.1, 0.5]
+RETRY_STRATEGY = ["no_retry", "no_delay", "static_delay", "exponential_delay", "jitter_delay"]
 
-WORKLOAD = 10
-ITERATIONS = 2
+CONCURRENCY = [2, 15, 75]
+WORKLOAD = [500, 1000, 1500, 2000]
+ITERATIONS = 3
 
-LOG_PATH = "./logging/results_w10_i2_retry3_delay50ms.jsonl"
+LOG_PATH = "/logging/deadlocks/results.jsonl"
+BASE_DIR = "/home/eric/Documents/idea-IU-252.26830.84/projects/Bachelorarbeit"
 
 ENABLE_LOGGING = True

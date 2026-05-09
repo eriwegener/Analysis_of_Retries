@@ -1,17 +1,13 @@
-import test
 from experiments.experimentDeadlocks import start_deadlocks
-from db.database import DB
-
-def _clear_database(db):
-    db.delete_schema()
-    db.initialize()
-    db.close()
+from analysis.analysisDeadlock import start_analysis
+from config.settings import LOG_PATH, BASE_DIR
 
 def main():
-    db = DB()
-    _clear_database(db)
-    #test.test_function()
-    start_deadlocks()
+    path = BASE_DIR + LOG_PATH
+    #with open(path, "w"):
+        #pass
+    #start_deadlocks()
+    start_analysis()
 
 if __name__ == "__main__":
     main()

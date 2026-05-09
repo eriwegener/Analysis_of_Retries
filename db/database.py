@@ -49,5 +49,11 @@ class DB:
         cursor.execute("ROLLBACK;")
         cursor.close()
 
+    def rollback_all(self):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT gid FROM pg_prepared_xacts WHERE database = current_database()")
+        for (gid,) in cursor.fetchall():
+            cursor.execute("ROLLBACK PREPARED %s", (gid,))
+
     def close(self):
         self.conn.close()
