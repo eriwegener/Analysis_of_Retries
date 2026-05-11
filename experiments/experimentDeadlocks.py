@@ -61,7 +61,7 @@ def _run_batch(rk, rs, rc, rd, wl, it, cc):
         futures = []
         #print("Iteration:", it)
         for l in range(wl):
-            executor.submit(_client, l, it, rk, rs, rc, rd)
+            futures.append(executor.submit(_client, l, it, rk, rs, rc, rd))
 
         for f in as_completed(futures):
             f.result()
@@ -159,4 +159,4 @@ def start_deadlocks():
         _soft_reset_database()
 
     end = time.perf_counter()
-    print(start - end, "s")
+    print(end - start, "s")

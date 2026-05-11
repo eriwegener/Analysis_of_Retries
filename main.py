@@ -6,8 +6,8 @@ def main():
     path = BASE_DIR + LOG_PATH
     #with open(path, "w"):
         #pass
-    start_deadlocks()
-    #start_analysis()
+    #start_deadlocks()
+    start_analysis()
 
 if __name__ == "__main__":
     main()
