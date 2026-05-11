@@ -57,29 +57,6 @@ def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, r
     if ENABLE_LOGGING:
         _create_log(run_id, iteration, retries, attempt_times, total_ms, data, start, finish)
 
-def run_with_exponential_delay(client_id, db, iteration, run_id, retry_count, retry_delay):
-    retries = 0
-    attempt_times = []
-
-    start = time.perf_counter()
-    data, duration_ms = _start_transaction(client_id, db)
-    attempt_times.append(duration_ms)
-
-    while data == "failed" and retries < retry_count:
-        db.rollback()
-        delay = retry_delay * (2 ** retries)
-        time.sleep(delay)
-
-        data, duration_ms = _start_transaction(client_id, db)
-        attempt_times.append(duration_ms)
-        retries += 1
-
-    finish = time.perf_counter()
-    total_ms = math.floor((finish - start) * 1000)
-
-    if ENABLE_LOGGING:
-        _create_log(run_id, iteration, retries, attempt_times, total_ms, data, start, finish)
-
 def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_delay):
     retries = 0
     attempt_times = []

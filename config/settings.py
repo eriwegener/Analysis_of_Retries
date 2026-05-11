@@ -1,10 +1,10 @@
-RETRY_COUNT = [0, 1, 2, 3, 5]
-RETRY_DELAY = [0, 0.01, 0.1, 0.5]
-RETRY_STRATEGY = ["no_retry", "no_delay", "static_delay", "exponential_delay", "jitter_delay"]
+RETRY_COUNT = [0, 1, 3, 5]
+RETRY_DELAY = [0, 0.01, 0.1]
+RETRY_STRATEGY = [0, 1, 2, 3]
 
-CONCURRENCY = [2, 15, 75]
-WORKLOAD = [500, 1000, 1500, 2000]
-ITERATIONS = 3
+CONCURRENCY = [2, 10, 15, 30, 75]
+WORKLOAD = [500, 1500]
+ITERATIONS = 1
 
 LOG_PATH = "/logging/deadlocks/results.jsonl"
 BASE_DIR = "/home/eric/Documents/idea-IU-252.26830.84/projects/Bachelorarbeit"
