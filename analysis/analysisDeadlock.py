@@ -1,12 +1,8 @@
-#Throughput
-#Influence of Workload
-#Influence of Delay
-#Failures despite Retry
 #Stability over Duration
 
 import pandas as pd
 
-from config.settings import LOG_PATH, BASE_DIR, WORKLOAD, ITERATIONS
+from config.settings import LOG_PATH, BASE_DIR
 
 def _get_data():
     path = BASE_DIR + LOG_PATH
@@ -15,94 +11,83 @@ def _get_data():
 
     return df.iloc[4000:]
 
-def _success_rates(data):
+def _print(value, title, pstatus):
+    print(f"=== {title} {pstatus} ===")
+    print(value.to_string())
+    print("")
+
+def _rates(data, param, pstatus):
     df = data.copy()
-    concurrency = data.copy()
-    strategy = data.copy()
-    retry = data.copy()
 
-    concurrency["cc"] = concurrency["run_id"].str.extract(r"_(cc\d+)")
-    strategy["s"] = strategy["run_id"].str.extract(r"(s\d+)_")
-    retry["r"] = retry["run_id"].str.extract(r"_(r\d+)_")
+    df["s"] = df["run_id"].str.extract(r"(s\d+)_")
+    df[param] = df["run_id"].str.extract(fr"({param}\d+)")
 
-    cc_counts = concurrency.groupby(["cc", "status"]).size().unstack(fill_value=0)
-    cc_rates = cc_counts.div(cc_counts.sum(axis=1), axis=0) * 100
-    cc_rates.index.name = None
+    if param:
+        counts = df.groupby([param, "status"]).size().unstack(fill_value=0)
+        rates = counts.div(counts.sum(axis=1), axis=0) * 100
 
-    s_counts = strategy.groupby(["s", "status"]).size().unstack(fill_value=0)
-    s_rates = s_counts.div(s_counts.sum(axis=1), axis=0) * 100
-    s_rates.index.name = None
+        if pstatus == "success":
+            rates = rates["success"]
+        elif pstatus == "failed":
+            rates = rates["failed"]
+    else:
+        counts = df.groupby(["s", "status"]).size().unstack(fill_value=0)
+        rates = counts.div(counts.sum(axis=1), axis=0) * 100
 
-    r_counts = retry.groupby(["r", "status"]).size().unstack(fill_value=0)
-    r_rates = r_counts.div(r_counts.sum(axis=1), axis=0) * 100
-    r_rates.index.name = None
+        if pstatus == "success":
+            rates = rates["success"]
+        elif pstatus == "failed":
+            rates = rates["failed"]
 
-    total_counts = df["status"].value_counts()
-    total_rate = (total_counts / total_counts.sum()) * 100
+    _print(rates, "rates", pstatus)
 
-    print("")
-    print("=== concurrency ===")
-    print(cc_rates)
-
-    print("")
-    print("=== strategy ===")
-    print(s_rates)
-
-    print("")
-    print("=== retry ===")
-    print(r_rates)
-
-    print("")
-    print("\n=== total ===")
-    print(total_rate)
-
-def _retry_distribution(data):
+def _retry_distribution(data, param, pstatus):
     df = data.copy()
-    df_success = df[df["status"] == "success"]
-    df_success["r"] = df_success["run_id"].str.extract(r"_(r\d+)_")
-    result = df_success.groupby("r").size().sort_index()
+    df["r"] = df["run_id"].str.extract(r"_(r\d+)_")
+    df[param] = df["run_id"].str.extract(fr"({param}\d+)")
+    if param:
+        result = df.groupby(["r", param, "status"]).size().unstack(fill_value=0)
+    else:
+        result = df.groupby(["r", "status"]).size().unstack(fill_value=0)
 
-    result.index = "r" + result.index
-    result.index.name = None
+    if pstatus == "success":
+        result = result["success"]
+    elif pstatus == "failed":
+        result = result["failed"]
 
-    print("\n=== retry-distribution ===")
-    print(result)
+    _print(result, "retry-distribution", pstatus)
 
-def _latency_comparison(data):
+def _latency_comparison(data, pstatus):
     df = data.copy()
-    df_success = df[df["status"] == "success"]
-    df_success["s"] = df_success["run_id"].str.extract(r"(s\d+)_")
+    df["s"] = df["run_id"].str.extract(r"(s\d+)_")
+    result = (df.groupby(["s", "status"])["total_ms"].mean().unstack(fill_value=0))
 
-    success = df_success.groupby("s").size().sort_index()
-    success.index.name = None
+    if pstatus == "success":
+        result = result["success"]
+    elif pstatus == "failed":
+        result = result["failed"]
 
-    avg = (df_success.groupby("s")["total_ms"].mean())
-    avg.index.name = None
+    _print(result, "latency_comparison", "")
 
-    #print(success)
-    print(avg)
-
-def _quartiles(data):
+def _quartiles(data, param, pstatus):
     df = data.copy()
-    df_success = df[df["status"] == "success"]
-    df_success["s"] = df_success["run_id"].str.extract(r"(s\d+)_")
+    if param:
+        df[param] = df["run_id"].str.extract(fr"({param}\d+)")
+        quantiles = df.groupby([param, "status",])["total_ms"].quantile([0.50, 0.95, 0.99]).unstack(fill_value=0)
+    else:
+        quantiles = df.groupby("status")["total_ms"].quantile([0.50, 0.95, 0.99]).unstack(fill_value=0)
 
-    df_failed = df[df["status"] == "failed"]
-    df_failed["f"] = df_failed["run_id"].str.extract(r"(s\d+)_")
+    if pstatus == "success":
+        quantiles = quantiles["success"]
+    elif pstatus == "failed":
+        quantiles = quantiles["failed"]
 
-    quantiles_success = df_success["total_ms"].quantile([0.50, 0.95, 0.99])
-    quantiles_failed = df_failed["total_ms"].quantile([0.50, 0.95, 0.99])
+    _print(quantiles, "quartiles", pstatus)
 
-    print(quantiles_success)
-    print("")
-    print(quantiles_failed)
-
-def _retry_overhead(data):
+def _retry_overhead(data, param, pstatus):
     df_overhead = data.copy()
 
-    df_overhead["s"] = df_overhead["run_id"].str.extract(r"(s\d+)_")
-    df_overhead["cc"] = df_overhead["run_id"].str.extract(r"_(cc\d+)")
-    df_overhead["count"] = df_overhead["run_id"].str.extract(r"_(r\d+)_")
+    df_overhead[param] = df_overhead["run_id"].str.extract(fr"({param}\d+)")
 
     df_overhead["attempts_trimmed"] = (df_overhead["attempts_ms"].
                                        apply(lambda x: x[1:] if isinstance(x, list) and len(x) > 1 else []))
@@ -110,27 +95,67 @@ def _retry_overhead(data):
                                       apply(lambda x: min(x) if len(x) > 0 else 0))
     df_overhead["overhead"] = df_overhead["total_ms"] - df_overhead["best_ms"]
 
-    s_avg = df_overhead.groupby(["s", "status"])["overhead"].mean()
-    cc_avg = df_overhead.groupby(["cc", "status"])["overhead"].mean()
-    rc_avg = df_overhead.groupby(["count", "status"])["overhead"].mean()
+    result = df_overhead.groupby([param, "status"])["overhead"].mean().unstack(fill_value=0)
 
-    print("=== strategy ===")
-    print(s_avg)
+    if pstatus == "success":
+        result = result["success"]
+    elif pstatus == "failed":
+        result = result["failed"]
 
-    print("")
-    print("=== concurrency ===")
-    print(cc_avg)
+    _print(result, "retry-overhead", pstatus)
 
-    print("")
-    print("=== retry count ===")
-    print(rc_avg)
+def _throughput(data, param):
+    df = data.copy()
+
+    df["s"] = df["run_id"].str.extract(r"(s\d+)_")
+    df_time = df.groupby(["s"]).agg(start_time=("tx_start", "min"), end_time=("tx_finish", "max"))
+    if param:
+        df[param] = df["run_id"].str.extract(fr"({param}\d+)")
+
+        df_success = df[df["status"] == "success"].groupby(["s", param]).agg(successful_retries=("run_id", "count"))
+    else:
+        df_success = df[df["status"] == "success"].groupby(["s"]).agg(successful_retries=("run_id", "count"))
+
+    df_time["duration"] = df_time["end_time"] - df_time["start_time"]
+
+    system = df_time.join(df_success, how="left").fillna(0)
+    system["throughput"] = system["successful_retries"] / system["duration"]
+
+    _print(system[["successful_retries", "duration", "throughput"]], "throughput", "")
+
+def _influence_workload(data):
+    print("=== influence-workload ===")
+    _rates(data, "w", "")
+    _throughput(data, "w")
+    _quartiles(data, "w", "")
+
+def _influence_delay(data):
+    print("=== influence-delay ===")
+    _rates(data, "d", "")
+    _retry_distribution(data, "d", "")
+    _throughput(data, "d")
+    _quartiles(data, "d", "")
+
+def _failure_retry(data):
+    df = data.copy()
+
+    retries_count = df.groupby(["retries", "status"]).size().unstack(fill_value=0)
+    retries_count = retries_count["failed"]
+
+    print("=== failure-retry ===")
+    _rates(data, "cc", "failed")
+    _rates(data, "", "failed")
+    _print(retries_count, "retry_count", "failed")
 
 def start_analysis():
     data = _get_data()
 
-    #_success_rates(data)
-    print("")
-    #_retry_distribution(data)
-    #_latency_comparison(data)
-    #_quartiles(data)
-    #_retry_overhead(data)
+    _rates(data, "", "")
+    _retry_distribution(data, "", "")
+    _latency_comparison(data, "")
+    _quartiles(data, "s", "")
+    _retry_overhead(data, "cc", "")
+    _throughput(data, "")
+    _influence_workload(data)
+    _influence_delay(data)
+    _failure_retry(data)

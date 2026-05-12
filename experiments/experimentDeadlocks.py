@@ -68,7 +68,8 @@ def _run_batch(rk, rs, rc, rd, wl, it, cc):
 
 def _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx):
     rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
-    _create_log(rk, rs, rc, rd, wl, it, cc)
+    if ENABLE_LOGGING:
+        _create_log(rk, rs, rc, rd, wl, it, cc)
     _run_batch(rk, rs, rc, rd, wl, it, cc)
 
 def _warmup_database():
