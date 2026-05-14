@@ -149,10 +149,11 @@ def _experiment_5(it):
         if cc_idx != 2:
             for rc_idx in range(len(RETRY_COUNT)):
                 if rc_idx in [0, 2]:
-                    for rd_idx in range(len(RETRY_DELAY) - 1):
-                        for rs_idx in range(len(RETRY_STRATEGY)):
-                            if rs_idx in [2, 3]:
-                                _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                    for rd_idx in range(len(RETRY_DELAY)):
+                        if rd_idx != 0:
+                            for rs_idx in range(len(RETRY_STRATEGY)):
+                                if rs_idx in [2, 3]:
+                                    _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
 
 def start_deadlocks():
@@ -164,9 +165,9 @@ def start_deadlocks():
         #_experiment_0(it)
         #_experiment_1(it)
         #_experiment_2(it)
-        _experiment_3(it)
+        #_experiment_3(it)
         #_experiment_4(it)
-        #_experiment_5(it)
+        _experiment_5(it)
 
         _soft_reset_database()
 

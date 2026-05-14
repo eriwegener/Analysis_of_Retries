@@ -31,7 +31,7 @@ def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, r
 
     while data == "failed" and retries < retry_count:
         db.rollback()
-        delay = random.uniform(0, retry_delay[2] * (2 ** retries))
+        delay = random.uniform(0, retry_delay * (2 ** retries))
         time.sleep(delay)
 
         data, duration_ms = _start_transaction(client_id, db)

@@ -19,9 +19,9 @@ def _rates(data, param, pstatus):
     df = data.copy()
 
     df["s"] = df["run_id"].str.extract(r"(s\d+)_")
-    df[param] = df["run_id"].str.extract(fr"({param}\d+)")
 
     if param:
+        df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
         counts = df.groupby(["s", param, "status"]).size().unstack(fill_value=0)
         rates = counts.div(counts.sum(axis=1), axis=0) * 100
 
@@ -43,7 +43,7 @@ def _rates(data, param, pstatus):
 def _retry_distribution(data, param, pstatus):
     df = data.copy()
     df["s"] = df["run_id"].str.extract(r"(s\d+)_")
-    df[param] = df["run_id"].str.extract(fr"({param}\d+)")
+    df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
     if param:
         result = df.groupby(["s", "retries", param, "status"]).size().unstack(fill_value=0)
     else:
@@ -71,7 +71,7 @@ def _latency_comparison(data, pstatus):
 def _quartiles(data, param, pstatus):
     df = data.copy()
     if param:
-        df[param] = df["run_id"].str.extract(fr"({param}\d+)")
+        df[param] = df["run_id"].str.extract(fr"({param}[\d.])")
         quantiles = df.groupby([param, "status",])["total_ms"].quantile([0.50, 0.95, 0.99, 0.999]).unstack(fill_value=0)
     else:
         quantiles = df.groupby("status")["total_ms"].quantile([0.50, 0.95, 0.99, 0.999]).unstack(fill_value=0)
@@ -86,7 +86,7 @@ def _quartiles(data, param, pstatus):
 def _retry_overhead(data, param, pstatus):
     df_overhead = data.copy()
 
-    df_overhead[param] = df_overhead["run_id"].str.extract(fr"({param}\d+)")
+    df_overhead[param] = df_overhead["run_id"].str.extract(fr"({param}[\d.])")
 
     df_overhead["attempts_trimmed"] = (df_overhead["attempts_ms"].
                                        apply(lambda x: x[1:] if isinstance(x, list) and len(x) > 1 else []))
