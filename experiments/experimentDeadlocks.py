@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from time import sleep
 
 from db.database import DB
-from config.settings import ITERATIONS, WORKLOAD, RETRY_STRATEGY, CONCURRENCY, RETRY_COUNT, RETRY_DELAY
+from config.settings import ITERATIONS, WORKLOAD, RETRY_STRATEGY, CONCURRENCY, RETRY_COUNT, RETRY_DELAY, ENABLE_TEST
 from core.coreDeadlocks import *
 
 def _clear_database():
@@ -84,92 +84,117 @@ def _warmup_database():
     rs_idx = 0
     wl_idx = 0
 
-    for cc_idx in range(len(CONCURRENCY)):
-        if cc_idx == 0 or cc_idx == 4:
-            rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, 0, cc_idx)
-            rk = "WARM-UP"
-            _run_batch(rk, rs, rc, rd, wl, 0, cc)
+    if not ENABLE_TEST:
+        for cc_idx in range(len(CONCURRENCY)):
+            if cc_idx == 4:
+                rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, 0, cc_idx)
+                rk = "WARM-UP"
+                _run_batch(rk, rs, rc, rd, wl, 0, cc)
 
-def _experiment_0(it):
+def _experiment_0():
     rc_idx = 0
     rd_idx = 0
     rs_idx = 0
+    wl_idx = 0
 
-    for cc_idx in range(len(CONCURRENCY)):
-        #if cc_idx in [0, 2, 4]:
-            print("CC_Index:", cc_idx)
-            for wl_idx in range(len(WORKLOAD)):
+    if ENABLE_TEST:
+        for it in range(2):
+            for cc_idx in range(len(CONCURRENCY)):
+                print("CC_Index:", cc_idx)
+                _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+    else:
+        for it in range(ITERATIONS):
+            for cc_idx in range(len(CONCURRENCY)):
+                print("CC_Index:", cc_idx)
                 _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
-def _experiment_1(it):
+def _experiment_1():
     rd_idx = 0
     rs_idx = 1
+    wl_idx = 0
 
-    for cc_idx in range(len(CONCURRENCY)):
-        if cc_idx in [0, 2, 4]:
-            for wl_idx in range(len(WORKLOAD)):
-                for rc_idx in range(len(RETRY_COUNT)):
-                    if rc_idx == 1 or rc_idx == 2:
-                        _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+    if ENABLE_TEST:
+        for rc_idx in range(1, 3):
+            for cc_idx in range(1, 6):
+                _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+    else:
+        for it in range(ITERATIONS):
+            for rc_idx in range(1, 3):
+                for cc_idx in range(1, 6):
+                    _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
-def _experiment_2(it):
-    rc_idx = 3
-    rd_idx = 0
-    rs_idx = 1
-    cc_idx = 4
-    wl_idx = 1
-
-    _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
-
-def _experiment_3(it):
+def _experiment_2():
     rc_idx = 2
     rs_idx = 2
+    wl_idx = 0
 
-    for cc_idx in range(len(CONCURRENCY)):
-        if cc_idx == 2 or cc_idx == 4:
-            for wl_idx in range(len(WORKLOAD)):
-                for rd_idx in range(len(RETRY_DELAY)):
+    if ENABLE_TEST:
+        for rd_idx in range(1, len(RETRY_DELAY)):
+            for cc_idx in range(2, 6):
+                _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+    else:
+        for it in range(ITERATIONS):
+            for rd_idx in range(1, len(RETRY_DELAY)):
+                for cc_idx in range(2, 6):
                     _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
-def _experiment_4(it):
+def _experiment_3():
+    rc_idx = 2
+    rd_idx = 2
+    wl_idx = 1
+
+    if ENABLE_TEST:
+        for rs_idx in range(1, len(RETRY_STRATEGY)):
+            for cc_idx in range(2, 6):
+                _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+    else:
+        for it in range(ITERATIONS):
+            for rs_idx in range(1, len(RETRY_STRATEGY)):
+                for cc_idx in range(2, 6):
+                    _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+
+def _experiment_4():
     rc_idx = 3
-    cc_idx = 4
-    wl_idx = 1
+    rd_idx = 0
+    rs_idx = 1
+    cc_idx = 7
+    wl_idx = 0
 
-    for rd_idx in range(len(RETRY_DELAY)):
-        if rd_idx in [1, 2]:
-            for rs_idx in range(len(RETRY_STRATEGY)):
-                if rs_idx in [2, 3]:
-                    _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+    if ENABLE_TEST:
+        _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+    else:
+        for it in range(ITERATIONS - 2):
+            _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
-def _experiment_5(it):
-    wl_idx = 1
+def _experiment_5():
+    rc_idx = 3
+    wl_idx = 0
 
-    for cc_idx in range(len(CONCURRENCY)):
-        if cc_idx != 2:
-            for rc_idx in range(len(RETRY_COUNT)):
-                if rc_idx in [0, 2]:
-                    for rd_idx in range(len(RETRY_DELAY)):
-                        if rd_idx != 0:
-                            for rs_idx in range(len(RETRY_STRATEGY)):
-                                if rs_idx in [2, 3]:
-                                    _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
-
+    if ENABLE_TEST:
+        for rs_idx in range(2, len(RETRY_STRATEGY)):
+            for rd_idx in range(2, len(RETRY_DELAY)):
+                for cc_idx in range (5, len(CONCURRENCY)):
+                    if cc_idx != 6:
+                        _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+    else:
+        for it in range(ITERATIONS - 2):
+            for rs_idx in range(2, len(RETRY_STRATEGY)):
+                for rd_idx in range(2, len(RETRY_DELAY)):
+                    for cc_idx in range (5, len(CONCURRENCY)):
+                        if cc_idx != 6:
+                            _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
 def start_deadlocks():
     #_clear_database()
     #_warmup_database()
     start = time.perf_counter()
-    for it in range(ITERATIONS):
-        print("Iteration:", it)
-        #_experiment_0(it)
-        #_experiment_1(it)
-        #_experiment_2(it)
-        #_experiment_3(it)
-        #_experiment_4(it)
-        _experiment_5(it)
 
-        _soft_reset_database()
+    #_experiment_0()
+    #_experiment_1()
+    #_experiment_2()
+    #_experiment_3()
+    #_experiment_4()
+    #_experiment_5()
 
     end = time.perf_counter()
     print(end - start, "s")
