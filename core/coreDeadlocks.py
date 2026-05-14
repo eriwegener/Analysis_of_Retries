@@ -7,19 +7,6 @@ import json
 from services.serviceDeadlocks import run_transaction
 from config.settings import LOG_PATH, ENABLE_LOGGING, BASE_DIR
 
-def _log_event(path, record):
-    with open(path, "a") as f:
-        f.write(json.dumps(record) + "\n")
-
-def _create_log(run_id, iteration, retries, attempt_times, total_ms, status, start, finish):
-    record = {"type": "tx_event", "run_id": run_id, "iteration": iteration, "retries": retries,
-              "attempts_ms": attempt_times, "total_ms": total_ms, "status": status, "tx_start": start,
-              "tx_finish": finish}
-
-    path = BASE_DIR + LOG_PATH
-
-    _log_event(path, record)
-
 def _start_transaction(client_id, db):
     start = time.perf_counter()
     try:
@@ -54,8 +41,9 @@ def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, r
     finish = time.perf_counter()
     total_ms = math.floor((finish - start) * 1000)
 
-    if ENABLE_LOGGING:
-        _create_log(run_id, iteration, retries, attempt_times, total_ms, data, start, finish)
+    return {"type": "tx_event", "run_id": run_id, "iteration": iteration, "retries": retries,
+            "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
+            "tx_finish": finish}
 
 def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_delay):
     retries = 0
@@ -77,8 +65,9 @@ def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_d
     finish = time.perf_counter()
     total_ms = math.floor((finish - start) * 1000)
 
-    if ENABLE_LOGGING:
-        _create_log(run_id, iteration, retries, attempt_times, total_ms, data, start, finish)
+    return {"type": "tx_event", "run_id": run_id, "iteration": iteration, "retries": retries,
+            "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
+            "tx_finish": finish}
 
 def run_without_delay(client_id, db, iteration, run_id, retry_count):
     retries = 0
@@ -100,8 +89,9 @@ def run_without_delay(client_id, db, iteration, run_id, retry_count):
     finish = time.perf_counter()
     total_ms = math.floor((finish - start) * 1000)
 
-    if ENABLE_LOGGING:
-        _create_log(run_id, iteration, retries, attempt_times, total_ms, data, start, finish)
+    return {"type": "tx_event", "run_id": run_id, "iteration": iteration, "retries": retries,
+            "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
+            "tx_finish": finish}
 
 def run_without_retry(client_id, db, iteration, run_id):
     retries = None
@@ -114,5 +104,6 @@ def run_without_retry(client_id, db, iteration, run_id):
     finish = time.perf_counter()
     total_ms = math.floor((finish - start) * 1000)
 
-    if ENABLE_LOGGING:
-        _create_log(run_id, iteration, retries, attempt_times, total_ms, data, start, finish)
+    return {"type": "tx_event", "run_id": run_id, "iteration": iteration, "retries": retries,
+     "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
+     "tx_finish": finish}

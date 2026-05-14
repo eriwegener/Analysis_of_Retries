@@ -7,7 +7,7 @@ load_dotenv()
 class DB:
     def __init__(self):
         self.conn = psycopg2.connect(dbname=os.getenv("DB_NAME"), user=os.getenv("DB_USER"),
-                                     password=os.getenv("DB_PASSWORD"), host=os.getenv("DB_HOST"))
+                                     password=os.getenv("DB_PASSWORD"), host=os.getenv("DB_HOST"), port=os.getenv("DB_PORT"))
         self.conn.autocommit = False
 
     def query(self, sql):

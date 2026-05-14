@@ -6,7 +6,10 @@ CONCURRENCY = [2, 10, 15, 30, 75]
 WORKLOAD = [500, 1500]
 ITERATIONS = 1
 
-LOG_PATH = "/logging/deadlocks/results.jsonl"
-BASE_DIR = "/home/eric/Documents/idea-IU-252.26830.84/projects/Bachelorarbeit"
+LOG_PATH = "\\logging\\deadlocks\\results.jsonl"
+BASE_DIR = "C:\\Users\\wegen\\IdeaProjects\\Bachelorarbeit"
+
+#LOG_PATH = "/logging/deadlocks/results.jsonl"
+#BASE_DIR = "/home/eric/Documents/idea-IU-252.26830.84/projects/Bachelorarbeit"
 
 ENABLE_LOGGING = True
