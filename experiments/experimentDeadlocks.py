@@ -85,13 +85,12 @@ def _warmup_database():
     wl_idx = 0
 
     if not ENABLE_TEST:
-        for cc_idx in range(len(CONCURRENCY)):
-            if cc_idx == 4:
-                rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, 0, cc_idx)
-                rk = "WARM-UP"
-                _run_batch(rk, rs, rc, rd, wl, 0, cc)
+        for cc_idx in range(8, len(CONCURRENCY)):
+            rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, 0, cc_idx)
+            rk = "WARM-UP"
+            _run_batch(rk, rs, rc, rd, wl, 0, cc)
 
-def _experiment_0():
+def _experiment_0(): #Baseline
     rc_idx = 0
     rd_idx = 0
     rs_idx = 0
@@ -108,34 +107,34 @@ def _experiment_0():
                 print("CC_Index:", cc_idx)
                 _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
-def _experiment_1():
+def _experiment_1(): #Retry without Delay
     rd_idx = 0
     rs_idx = 1
     wl_idx = 0
 
     if ENABLE_TEST:
         for rc_idx in range(1, 3):
-            for cc_idx in range(1, 6):
+            for cc_idx in range(len(CONCURRENCY) - 1):
                 _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for rc_idx in range(1, 3):
-                for cc_idx in range(1, 6):
+                for cc_idx in range(len(CONCURRENCY) - 1):
                     _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
-def _experiment_2():
+def _experiment_2(): #Delay
     rc_idx = 2
     rs_idx = 2
     wl_idx = 0
 
     if ENABLE_TEST:
         for rd_idx in range(1, len(RETRY_DELAY)):
-            for cc_idx in range(2, 6):
+            for cc_idx in range(len(CONCURRENCY) - 1):
                 _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for rd_idx in range(1, len(RETRY_DELAY)):
-                for cc_idx in range(2, 6):
+                for cc_idx in range(len(CONCURRENCY) - 1):
                     _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
 def _experiment_3():
@@ -145,19 +144,19 @@ def _experiment_3():
 
     if ENABLE_TEST:
         for rs_idx in range(1, len(RETRY_STRATEGY)):
-            for cc_idx in range(2, 6):
+            for cc_idx in range(len(CONCURRENCY) - 1):
                 _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for rs_idx in range(1, len(RETRY_STRATEGY)):
-                for cc_idx in range(2, 6):
+                for cc_idx in range(len(CONCURRENCY) - 1):
                     _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
 def _experiment_4():
     rc_idx = 3
     rd_idx = 0
     rs_idx = 1
-    cc_idx = 7
+    cc_idx = 9
     wl_idx = 0
 
     if ENABLE_TEST:
@@ -173,9 +172,8 @@ def _experiment_5():
     if ENABLE_TEST:
         for rs_idx in range(2, len(RETRY_STRATEGY)):
             for rd_idx in range(2, len(RETRY_DELAY)):
-                for cc_idx in range (5, len(CONCURRENCY)):
-                    if cc_idx != 6:
-                        _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+                for cc_idx in range (8, len(CONCURRENCY)):
+                    _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS - 2):
             for rs_idx in range(2, len(RETRY_STRATEGY)):
