@@ -94,7 +94,7 @@ def _warmup_database():
     wl_idx = 0
     it = 0
 
-    if not ENABLE_TEST:
+    if ENABLE_TEST:
         for cc_idx in range(3, len(CONCURRENCY)):
             rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
             rk = "WARM-UP"
@@ -121,7 +121,7 @@ def _experiment_1(): #Retry without Delay
     wl_idx = 0
     valid_combinations = [
         (rc, cc)
-        for rc in range(1, len(RETRY_DELAY))
+        for rc in range(1, len(RETRY_COUNT))
         for cc in range(len(CONCURRENCY))
     ]
 
@@ -181,10 +181,14 @@ def start():
     _warmup_database()
     t_start = time.perf_counter()
 
+    print("=== Experiment0 ===")
     _experiment_0()
-    #experiment_1()
-    #experiment_2()
-    #experiment_3()
+    print("=== Experiment1 ===")
+    _experiment_1()
+    print("=== Experiment2 ===")
+    _experiment_2()
+    print("=== Experiment3 ===")
+    _experiment_3()
 
     t_end = time.perf_counter()
     print(t_end - t_start, "s")

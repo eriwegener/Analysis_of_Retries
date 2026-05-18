@@ -1,4 +1,4 @@
 from experiments.experimentFunctions import start
 
-def start_timeout():
+def start_deadlocks():
     start()

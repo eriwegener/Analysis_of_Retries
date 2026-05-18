@@ -3,6 +3,8 @@ import random
 import psycopg2.errors
 import time
 
+from psycopg2.errorcodes import DEADLOCK_DETECTED, SERIALIZATION_FAILURE, QUERY_CANCELED
+
 from services.serviceDeadlocks import run_transaction_deadlocks
 from services.serviceSerialization import run_transaction_serialization
 from services.serviceTimeout import run_transaction_timeouts
@@ -10,6 +12,7 @@ from services.serviceTimeout import run_transaction_timeouts
 
 def _start_transaction(client_id, db, caller_name):
     start = time.perf_counter()
+    res = 0
     try:
         if caller_name == "start_deadlocks":
             db.begin()
@@ -28,8 +31,7 @@ def _start_transaction(client_id, db, caller_name):
             run_transaction_timeouts(client_id, db)
             db.commit()
             res = "success"
-    except psycopg2.Error as err:
-        #print(err)
+    except psycopg2.Error:
         res = "failed"
 
     duration_ms = math.floor((time.perf_counter() - start) * 1000)
@@ -49,7 +51,7 @@ def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, r
         delay = random.uniform(0, retry_delay * (2 ** retries))
         time.sleep(delay)
 
-        data, duration_ms = _start_transaction(client_id, db)
+        data, duration_ms = _start_transaction(client_id, db, caller_name)
         attempt_times.append(duration_ms)
         retries += 1
 
