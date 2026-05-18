@@ -2,31 +2,46 @@ import math
 import random
 import psycopg2.errors
 import time
-import json
 
-from services.serviceDeadlocks import run_transaction
-from config.settings import LOG_PATH, ENABLE_LOGGING, BASE_DIR
+from services.serviceDeadlocks import run_transaction_deadlocks
+from services.serviceSerialization import run_transaction_serialization
+from services.serviceTimeout import run_transaction_timeouts
 
-def _start_transaction(client_id, db):
+
+def _start_transaction(client_id, db, caller_name):
     start = time.perf_counter()
     try:
-        db.begin()
-        run_transaction(client_id, db)
-        db.commit()
-        res = "success"
-    except psycopg2.errors.DeadlockDetected:
+        if caller_name == "start_deadlocks":
+            db.begin()
+            run_transaction_deadlocks(client_id, db)
+            db.commit()
+            res = "success"
+        elif caller_name == "start_serialization":
+            db.begin()
+            db.isolation()
+            run_transaction_serialization(client_id, db)
+            db.commit()
+            res = "success"
+        elif caller_name == "start_timeout":
+            db.begin()
+            db.lock_timeout()
+            run_transaction_timeouts(client_id, db)
+            db.commit()
+            res = "success"
+    except psycopg2.Error as err:
+        #print(err)
         res = "failed"
 
     duration_ms = math.floor((time.perf_counter() - start) * 1000)
 
     return res, duration_ms
 
-def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, retry_delay):
+def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, retry_delay, caller_name):
     retries = 0
     attempt_times = []
 
     start = time.perf_counter()
-    data, duration_ms = _start_transaction(client_id, db)
+    data, duration_ms = _start_transaction(client_id, db, caller_name)
     attempt_times.append(duration_ms)
 
     while data == "failed" and retries < retry_count:
@@ -45,12 +60,12 @@ def run_retry_with_jitter_delay(client_id, db, iteration, run_id, retry_count, r
             "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
             "tx_finish": finish}
 
-def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_delay):
+def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_delay, caller_name):
     retries = 0
     attempt_times = []
 
     start = time.perf_counter()
-    data, duration_ms = _start_transaction(client_id, db)
+    data, duration_ms = _start_transaction(client_id, db, caller_name)
     attempt_times.append(duration_ms)
 
     while data == "failed" and retries < retry_count:
@@ -58,7 +73,7 @@ def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_d
         delay = retry_delay
         time.sleep(delay)
 
-        data, duration_ms = _start_transaction(client_id, db)
+        data, duration_ms = _start_transaction(client_id, db, caller_name)
         attempt_times.append(duration_ms)
         retries += 1
 
@@ -69,12 +84,12 @@ def run_with_static_delay(client_id, db, iteration, run_id, retry_count, retry_d
             "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
             "tx_finish": finish}
 
-def run_without_delay(client_id, db, iteration, run_id, retry_count):
+def run_without_delay(client_id, db, iteration, run_id, retry_count, caller_name):
     retries = 0
     attempt_times = []
 
     start = time.perf_counter()
-    data, duration_ms = _start_transaction(client_id, db)
+    data, duration_ms = _start_transaction(client_id, db, caller_name)
     attempt_times.append(duration_ms)
 
     while data == "failed" and retries < retry_count:
@@ -82,7 +97,7 @@ def run_without_delay(client_id, db, iteration, run_id, retry_count):
         delay = 0
         time.sleep(delay)
 
-        data, duration_ms = _start_transaction(client_id, db)
+        data, duration_ms = _start_transaction(client_id, db, caller_name)
         attempt_times.append(duration_ms)
         retries += 1
 
@@ -93,12 +108,12 @@ def run_without_delay(client_id, db, iteration, run_id, retry_count):
             "attempts_ms": attempt_times, "total_ms": total_ms, "status": data, "tx_start": start,
             "tx_finish": finish}
 
-def run_without_retry(client_id, db, iteration, run_id):
+def run_without_retry(client_id, db, iteration, run_id, caller_name):
     retries = None
     attempt_times = []
 
     start = time.perf_counter()
-    data, duration_ms = _start_transaction(client_id, db)
+    data, duration_ms = _start_transaction(client_id, db, caller_name)
     attempt_times.append(duration_ms)
 
     finish = time.perf_counter()

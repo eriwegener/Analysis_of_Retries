@@ -28,8 +28,16 @@ class DB:
         cursor = self.conn.cursor()
         cursor.execute("CREATE SCHEMA public;")
         cursor.execute("CREATE TABLE deadlocks(id SERIAL, salary INT);")
-        for i in range(5):
+        cursor.execute("CREATE TABLE serialization(id SERIAL, amount INT);")
+        cursor.execute("CREATE TABLE timeouts(id SERIAL, amount INT);")
+        for i in range(3):
             cursor.execute("INSERT INTO deadlocks(salary) VALUES (%s);", ((i + 1) * 100,))
+
+        for i in range(3):
+            cursor.execute("INSERT INTO serialization(amount) VALUES (%s);", ((i + 1) * 100,))
+
+        for i in range(3):
+            cursor.execute("INSERT INTO timeouts(amount) VALUES (%s);", ((i + 1) * 100,))
 
         cursor.execute("COMMIT;")
         cursor.close()
@@ -47,6 +55,16 @@ class DB:
     def rollback(self):
         cursor = self.conn.cursor()
         cursor.execute("ROLLBACK;")
+        cursor.close()
+
+    def isolation(self):
+        cursor = self.conn.cursor()
+        cursor.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;")
+        cursor.close()
+
+    def lock_timeout(self):
+        cursor = self.conn.cursor()
+        cursor.execute("SET lock_timeout = '100ms';")
         cursor.close()
 
     def rollback_all(self):
