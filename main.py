@@ -4,10 +4,13 @@ from experiments.experimentSerialization import start_serialization
 from experiments.experimentTimeout import start_timeout
 
 def main():
-    #start_deadlocks()
-    #start_serialization()
-    #start_timeout()
-    start_analysis()
+    print("=== Deadlock ===")
+    start_deadlocks()
+    print("=== Serialization ===")
+    start_serialization()
+    print("=== Lock-Timeout ===")
+    start_timeout()
+    #start_analysis()
 
 if __name__ == "__main__":
     main()

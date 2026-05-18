@@ -3,8 +3,6 @@ import random
 import psycopg2.errors
 import time
 
-from psycopg2.errorcodes import DEADLOCK_DETECTED, SERIALIZATION_FAILURE, QUERY_CANCELED
-
 from services.serviceDeadlocks import run_transaction_deadlocks
 from services.serviceSerialization import run_transaction_serialization
 from services.serviceTimeout import run_transaction_timeouts

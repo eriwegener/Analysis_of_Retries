@@ -21,13 +21,13 @@ def _create_log(run_id, strategy, count, delay, workload, iterations, concurrenc
 
     _log_event(path, record)
 
-def _get_params(rc, rd, rs, wl, it, cc):
+def _get_params(exp, rc, rd, rs, wl, it, cc):
     retry_count = RETRY_COUNT[rc]
     retry_delay = RETRY_DELAY[rd]
     retry_strategy = RETRY_STRATEGY[rs]
     workload = WORKLOAD[wl]
     concurrency = CONCURRENCY[cc]
-    run_key = f"s{retry_strategy}_r{retry_count}_d{retry_delay}_w{workload}_i{it}_cc{concurrency}"
+    run_key = f"e{exp}_s{retry_strategy}_r{retry_count}_d{retry_delay}_w{workload}_i{it}_cc{concurrency}"
 
     return run_key, retry_count, retry_delay, retry_strategy, workload, concurrency
 
@@ -81,8 +81,8 @@ def _soft_reset_database():
     sleep(2)
     db.close()
 
-def _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx):
-    rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
+def _start_experiment(exp_idx, rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx):
+    rk, rc, rd, rs, wl, cc = _get_params(exp_idx, rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
     if ENABLE_LOGGING:
         _create_log(rk, rs, rc, rd, wl, it, cc)
     _run_batch(rk, rs, rc, rd, wl, it, cc)
@@ -96,7 +96,7 @@ def _warmup_database():
 
     if ENABLE_TEST:
         for cc_idx in range(3, len(CONCURRENCY)):
-            rk, rc, rd, rs, wl, cc = _get_params(rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
+            rk, rc, rd, rs, wl, cc = _get_params("w", rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
             rk = "WARM-UP"
             _run_batch(rk, rs, rc, rd, wl, it, cc)
 
@@ -109,11 +109,11 @@ def _experiment_0(): #Baseline
     if ENABLE_TEST:
         for cc_idx in range(len(CONCURRENCY)): #5
             print("CC_Index:", cc_idx)
-            _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("0", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for cc_idx in range(len(CONCURRENCY)): #25
-                _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("0", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
 
 def _experiment_1(): #Retry without Delay
     rd_idx = 0
@@ -128,11 +128,11 @@ def _experiment_1(): #Retry without Delay
     if ENABLE_TEST:
         for rc_idx, cc_idx in valid_combinations: #15
             print("CC_Index:", cc_idx)
-            _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("1", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for rc_idx, cc_idx in valid_combinations: #75
-                _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("1", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
             _soft_reset_database()
 
 def _experiment_2(): #Delay
@@ -148,11 +148,11 @@ def _experiment_2(): #Delay
     if ENABLE_TEST:
         for rd_idx, cc_idx in valid_combinations: #20
             print("CC_Index:", cc_idx)
-            _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("2", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for rd_idx, cc_idx in valid_combinations: #100
-                _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("2", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
             _soft_reset_database()
 
 def _experiment_3(): #Strategy
@@ -163,17 +163,16 @@ def _experiment_3(): #Strategy
         for rs in range(2, len(RETRY_STRATEGY))
         for rc in range(1, len(RETRY_COUNT))
         for cc in range(len(CONCURRENCY))
-        if rs != 2 or rc != 2
     ]
 
     if ENABLE_TEST:
         for rs_idx, rc_idx, cc_idx in valid_combinations: #25
             print("CC_IDX: ", cc_idx)
-            _start_experiment(rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("3", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
     else:
         for it in range(ITERATIONS):
             for rs_idx , rc_idx, cc_idx in valid_combinations: #125
-                _start_experiment(rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("3", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
             _soft_reset_database()
 
 def start():

@@ -64,7 +64,7 @@ def _retry_distribution(data, param, pstatus):
 
 def _latency_comparison(data, param, pstatus):
     df = data.copy()
-    df["s"] = df["run_id"].str.extract(r"(s\d+)_")
+    df["e"] = df["run_id"].str.extract(r"(e\d+)_")
 
     if param:
         df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
@@ -101,7 +101,7 @@ def _quartiles(data, param, pstatus):
 def _retry_overhead(data, param, pstatus):
     df_overhead = data.copy()
 
-    df_overhead["s"] = df_overhead["run_id"].str.extract(fr"({param}[\d.]+)")
+    df_overhead["e"] = df_overhead["run_id"].str.extract(fr"(e[\d.]+)")
     df_overhead[param] = df_overhead["run_id"].str.extract(fr"({param}[\d.]+)")
 
     df_overhead["attempts_trimmed"] = (df_overhead["attempts_ms"].
@@ -127,14 +127,14 @@ def _retry_overhead(data, param, pstatus):
 def _throughput(data, param):
     df = data.copy()
 
-    df["s"] = df["run_id"].str.extract(r"(s\d+)_")
-    df_time = df.groupby(["s"]).agg(start_time=("tx_start", "min"), end_time=("tx_finish", "max"))
+    df["e"] = df["run_id"].str.extract(r"(e\d+)_")
+    df_time = df.groupby(["e"]).agg(start_time=("tx_start", "min"), end_time=("tx_finish", "max"))
     if param:
-        df[param] = df["run_id"].str.extract(fr"({param}\d+)")
+        df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
 
-        df_success = df[df["status"] == "success"].groupby(["s", param]).agg(successful_retries=("run_id", "count"))
+        df_success = df[df["status"] == "success"].groupby(["e", param]).agg(successful_retries=("run_id", "count"))
     else:
-        df_success = df[df["status"] == "success"].groupby(["s"]).agg(successful_retries=("run_id", "count"))
+        df_success = df[df["status"] == "success"].groupby(["e"]).agg(successful_retries=("run_id", "count"))
 
     df_time["duration"] = df_time["end_time"] - df_time["start_time"]
 
@@ -179,7 +179,7 @@ def _influence_strategy(data):
     _latency_comparison(data, "s", "")
     _quartiles(data, "s", "")
     _retry_overhead(data, "s", "")
-    _throughput(data, "")
+    _throughput(data, "s")
 
 def _overall(data):
     print("=== overall ===")
@@ -188,6 +188,7 @@ def _overall(data):
     _latency_comparison(data, "", "")
     _quartiles(data, "", "")
     _retry_overhead(data, "", "")
+    _throughput(data, "")
 
 def start_analysis():
     data = _get_data()
