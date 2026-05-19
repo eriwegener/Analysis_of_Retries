@@ -5,19 +5,27 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from time import sleep
 from db.database import DB
 from config.settings import WORKLOAD, RETRY_STRATEGY, CONCURRENCY, RETRY_COUNT, RETRY_DELAY, ENABLE_TEST, \
-    ENABLE_LOGGING, BASE_DIR, LOG_PATH, ITERATIONS
+    ENABLE_LOGGING, BASE_DIR, LOG_PATH_D, LOG_PATH_S, LOG_PATH_T, ITERATIONS, LOG_PATH
 from core.retry import *
 
 def _log_event(path, record):
     with open(path, "a") as f:
         f.write(json.dumps(record) + "\n")
 
-def _create_log(run_id, strategy, count, delay, workload, iterations, concurrency):
+def _create_log(run_id, strategy, count, delay, workload, iterations, concurrency, caller_name):
     record = {"type": "run_meta", "run_id": run_id, "strategy": strategy, "retry_count": count,
               "retry_delay": delay, "workload": workload, "iterations": iterations, "concurrency": concurrency,
               "timestamp": time.time()}
 
-    path = BASE_DIR + LOG_PATH
+    if caller_name == "start_deadlocks":
+        path = BASE_DIR + LOG_PATH_D
+    elif caller_name == "start_serialization":
+        path = BASE_DIR + LOG_PATH_S
+    elif caller_name == "start_timeout":
+        path = BASE_DIR + LOG_PATH_T
+    else:
+        print("We have a problem!!!")
+        path = BASE_DIR + LOG_PATH
 
     _log_event(path, record)
 
@@ -49,14 +57,16 @@ def _client(client_id, iteration, run_id, strategy, count, delay, caller_name):
 
     return result
 
-def _run_batch(rk, rs, rc, rd, wl, it, cc):
-    path = BASE_DIR + LOG_PATH
-
-    if rk == "WARM-UP":
-        caller_frame = inspect.stack()[3][0]
+def _run_batch(rk, rs, rc, rd, wl, it, cc, caller_name):
+    if caller_name == "start_deadlocks":
+        path = BASE_DIR + LOG_PATH_D
+    elif caller_name == "start_serialization":
+        path = BASE_DIR + LOG_PATH_S
+    elif caller_name == "start_timeout":
+        path = BASE_DIR + LOG_PATH_T
     else:
-        caller_frame = inspect.stack()[4][0]
-    caller_name = caller_frame.f_code.co_name
+        print("We have a problem!!!")
+        path = BASE_DIR + LOG_PATH
 
     with ThreadPoolExecutor(max_workers=cc,) as executor:
         futures = []
@@ -81,26 +91,26 @@ def _soft_reset_database():
     sleep(2)
     db.close()
 
-def _start_experiment(exp_idx, rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx):
+def _start_experiment(exp_idx, rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx, caller_name):
     rk, rc, rd, rs, wl, cc = _get_params(exp_idx, rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
     if ENABLE_LOGGING:
-        _create_log(rk, rs, rc, rd, wl, it, cc)
-    _run_batch(rk, rs, rc, rd, wl, it, cc)
+        _create_log(rk, rs, rc, rd, wl, it, cc, caller_name)
+    _run_batch(rk, rs, rc, rd, wl, it, cc, caller_name)
 
-def _warmup_database():
+def _warmup_database(ca):
     rc_idx = 0
     rd_idx = 0
     rs_idx = 0
     wl_idx = 0
     it = 0
 
-    if ENABLE_TEST:
+    if not ENABLE_TEST:
         for cc_idx in range(3, len(CONCURRENCY)):
             rk, rc, rd, rs, wl, cc = _get_params("w", rc_idx, rd_idx, rs_idx, wl_idx, it, cc_idx)
             rk = "WARM-UP"
-            _run_batch(rk, rs, rc, rd, wl, it, cc)
+            _run_batch(rk, rs, rc, rd, wl, it, cc, ca)
 
-def _experiment_0(): #Baseline
+def _experiment_0(ca): #Baseline
     rc_idx = 0
     rd_idx = 0
     rs_idx = 0
@@ -109,13 +119,13 @@ def _experiment_0(): #Baseline
     if ENABLE_TEST:
         for cc_idx in range(len(CONCURRENCY)): #5
             print("CC_Index:", cc_idx)
-            _start_experiment("0", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("0", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx, ca)
     else:
         for it in range(ITERATIONS):
             for cc_idx in range(len(CONCURRENCY)): #25
-                _start_experiment("0", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("0", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx, ca)
 
-def _experiment_1(): #Retry without Delay
+def _experiment_1(ca): #Retry without Delay
     rd_idx = 0
     rs_idx = 1
     wl_idx = 0
@@ -128,14 +138,14 @@ def _experiment_1(): #Retry without Delay
     if ENABLE_TEST:
         for rc_idx, cc_idx in valid_combinations: #15
             print("CC_Index:", cc_idx)
-            _start_experiment("1", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("1", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx, ca)
     else:
         for it in range(ITERATIONS):
             for rc_idx, cc_idx in valid_combinations: #75
-                _start_experiment("1", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("1", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx, ca)
             _soft_reset_database()
 
-def _experiment_2(): #Delay
+def _experiment_2(ca): #Delay
     rc_idx = 2
     rs_idx = 2
     wl_idx = 0
@@ -148,14 +158,14 @@ def _experiment_2(): #Delay
     if ENABLE_TEST:
         for rd_idx, cc_idx in valid_combinations: #20
             print("CC_Index:", cc_idx)
-            _start_experiment("2", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("2", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx, ca)
     else:
         for it in range(ITERATIONS):
             for rd_idx, cc_idx in valid_combinations: #100
-                _start_experiment("2", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+                _start_experiment("2", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx, ca)
             _soft_reset_database()
 
-def _experiment_3(): #Strategy
+def _experiment_3(ca): #Strategy
     rd_idx = 2
     wl_idx = 0
     valid_combinations = [
@@ -168,26 +178,31 @@ def _experiment_3(): #Strategy
     if ENABLE_TEST:
         for rs_idx, rc_idx, cc_idx in valid_combinations: #25
             print("CC_IDX: ", cc_idx)
-            _start_experiment("3", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx)
+            _start_experiment("3", rc_idx, rd_idx, rs_idx, 0, cc_idx, wl_idx, ca)
     else:
         for it in range(ITERATIONS):
-            for rs_idx , rc_idx, cc_idx in valid_combinations: #125
-                _start_experiment("3", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx)
+            for rs_idx , rc_idx, cc_idx in valid_combinations: #150
+                _start_experiment("3", rc_idx, rd_idx, rs_idx, it, cc_idx, wl_idx, ca)
             _soft_reset_database()
 
 def start():
+    caller_frame = inspect.currentframe().f_back
+
+    caller_name = caller_frame.f_code.co_name
+
+
     _clear_database()
-    _warmup_database()
+    _warmup_database(caller_name)
     t_start = time.perf_counter()
 
     print("=== Experiment0 ===")
-    _experiment_0()
+    _experiment_0(caller_name)
     print("=== Experiment1 ===")
-    _experiment_1()
+    _experiment_1(caller_name)
     print("=== Experiment2 ===")
-    _experiment_2()
+    _experiment_2(caller_name)
     print("=== Experiment3 ===")
-    _experiment_3()
+    _experiment_3(caller_name)
 
     t_end = time.perf_counter()
     print(t_end - t_start, "s")

@@ -15,4 +15,4 @@ dataSources.local.xml
 out/
 *.iml
 test.py
-logging/
+logging/deadlocks/
