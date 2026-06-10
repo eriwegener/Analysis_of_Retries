@@ -1,14 +1,16 @@
 import json
 import inspect
+import os
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from time import sleep
 from db.database import DB
 from config.settings import WORKLOAD, RETRY_STRATEGY, CONCURRENCY, RETRY_COUNT, RETRY_DELAY, ENABLE_TEST, \
-    ENABLE_LOGGING, BASE_DIR, LOG_PATH_D, LOG_PATH_S, LOG_PATH_T, ITERATIONS, LOG_PATH
+    ENABLE_LOGGING, LOG_PATH_D, LOG_PATH_S, LOG_PATH_T, ITERATIONS, LOG_PATH_E, LOG_PATH_TEST
 from core.retry import *
 
 def _log_event(path, record):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "a") as f:
         f.write(json.dumps(record) + "\n")
 
@@ -17,15 +19,18 @@ def _create_log(run_id, strategy, count, delay, workload, iterations, concurrenc
               "retry_delay": delay, "workload": workload, "iterations": iterations, "concurrency": concurrency,
               "timestamp": time.time()}
 
-    if caller_name == "start_deadlocks":
-        path = BASE_DIR + LOG_PATH_D
-    elif caller_name == "start_serialization":
-        path = BASE_DIR + LOG_PATH_S
-    elif caller_name == "start_timeout":
-        path = BASE_DIR + LOG_PATH_T
+    if not ENABLE_TEST:
+        if caller_name == "start_deadlocks":
+            path = LOG_PATH_D
+        elif caller_name == "start_serialization":
+            path = LOG_PATH_S
+        elif caller_name == "start_timeout":
+            path = LOG_PATH_T
+        else:
+            print("We have a problem!!!")
+            path = LOG_PATH_E
     else:
-        print("We have a problem!!!")
-        path = BASE_DIR + LOG_PATH
+        path = LOG_PATH_TEST
 
     _log_event(path, record)
 
@@ -58,15 +63,18 @@ def _client(client_id, iteration, run_id, strategy, count, delay, caller_name):
     return result
 
 def _run_batch(rk, rs, rc, rd, wl, it, cc, caller_name):
-    if caller_name == "start_deadlocks":
-        path = BASE_DIR + LOG_PATH_D
-    elif caller_name == "start_serialization":
-        path = BASE_DIR + LOG_PATH_S
-    elif caller_name == "start_timeout":
-        path = BASE_DIR + LOG_PATH_T
+    if not ENABLE_TEST:
+        if caller_name == "start_deadlocks":
+            path = LOG_PATH_D
+        elif caller_name == "start_serialization":
+            path = LOG_PATH_S
+        elif caller_name == "start_timeout":
+            path = LOG_PATH_T
+        else:
+            print("We have a problem!!!")
+            path = LOG_PATH_E
     else:
-        print("We have a problem!!!")
-        path = BASE_DIR + LOG_PATH
+        path = LOG_PATH_TEST
 
     with ThreadPoolExecutor(max_workers=cc,) as executor:
         futures = []
@@ -189,7 +197,6 @@ def start():
     caller_frame = inspect.currentframe().f_back
 
     caller_name = caller_frame.f_code.co_name
-
 
     _clear_database()
     _warmup_database(caller_name)
