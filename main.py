@@ -9,7 +9,7 @@ def main():
     #start_serialization()
     #print("=== Lock-Timeout ===")
     #start_timeout()
-    start_analysis(LOG_PATH_T)
+    start_analysis(LOG_PATH_D)
 
 if __name__ == "__main__":
     main()

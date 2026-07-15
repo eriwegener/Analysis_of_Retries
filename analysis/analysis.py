@@ -14,7 +14,7 @@ def _get_data(path):
         df = df[df["type"] == "tx_event"]
         df = df[~df["run_id"].str.startswith("WARM-UP")]
 
-        hdf = df[~df["pg_code"].isin([0, "40P01", "40001", "55P03"])]
+        hdf = df[~df["pg_code"].isin([0, "40P01", 40001, "55P03"])]
         if len(hdf):
             print(len(hdf), "errors, coming from other sources.")
             print(hdf["pg_code"])
