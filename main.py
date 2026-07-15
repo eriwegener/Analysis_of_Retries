@@ -6,10 +6,10 @@ def main():
     #print("=== Deadlock ===")
     #start_deadlocks()
     #print("=== Serialization ===")
-    start_serialization()
+    #start_serialization()
     #print("=== Lock-Timeout ===")
     #start_timeout()
-    #start_analysis(LOG_PATH_T)
+    start_analysis(LOG_PATH_T)
 
 if __name__ == "__main__":
     main()

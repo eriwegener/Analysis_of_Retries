@@ -17,4 +17,4 @@ LOG_PATH_E = LOG_DIR / "error.jsonl"
 LOG_PATH_TEST = LOG_DIR / "tests" / "result_test7.jsonl"
 
 ENABLE_LOGGING = True
-ENABLE_TEST = True
+ENABLE_TEST = False
