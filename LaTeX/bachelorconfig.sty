@@ -1,0 +1,296 @@
+\ProvidesPackage{bachelorconfig}[2026/06/09 Shared project configuration]
+
+% -----------------------------------------------------------------------------
+% Project metadata
+% -----------------------------------------------------------------------------
+\newcommand*{\ProjectTitle}{Von Retry zu Self-Healing: Analyse automatisierter Fehlerbehandlung in PostgreSQL}
+\newcommand*{\ProjectAuthor}{Eric Wegener}
+\newcommand*{\ProjectUniversity}{Ostbayerische Technische Hochschule Regensburg}
+\newcommand*{\ProjectFaculty}{Informatik und Mathematik}
+\newcommand*{\ProjectDegreeProgram}{Allgemeine Informatik}
+\newcommand*{\ProjectStudentId}{3363081}
+\newcommand*{\ProjectAcademicSupervisor}{Prof. Dr. Florian Heinz}
+\newcommand*{\ProjectSecondExaminer}{Prof. Dr. Sebastian Fischer}
+\newcommand*{\ProjectSubmissionDate}{\today}
+\newcommand*{\ProjectLocation}{Regensburg}
+\newcommand*{\ProjectUniversityLogoFile}{figures/logos/OTH_Logo_1col_pos_b.eps}
+\newcommand*{\ProjectUniversityLogoHeight}{2.4cm}
+\newcommand*{\ProjectTitlePageVariant}{2}
+\newcommand*{\ProjectMargin}{2cm}
+
+% -----------------------------------------------------------------------------
+% Language and typography
+% -----------------------------------------------------------------------------
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[ngerman]{babel}
+\RequirePackage{lmodern}
+\RequirePackage{csquotes}
+\RequirePackage{setspace}
+\RequirePackage{titlesec}
+\RequirePackage[
+	skip=0.5\baselineskip plus 2pt,
+	indent=0pt
+]{parskip}
+
+\onehalfspacing
+
+\titleformat{\chapter}[hang]
+{\normalfont\huge\bfseries}
+{\thechapter}
+{20pt}
+{\Huge}
+\titlespacing*{\chapter}{0pt}{-25pt}{30pt}
+
+% -----------------------------------------------------------------------------
+% Page layout
+% -----------------------------------------------------------------------------
+\RequirePackage{geometry}
+\ifdefined\PrintVersion
+\geometry{
+	a4paper,
+	inner=\ProjectMargin,
+	outer=\ProjectMargin,
+	top=\ProjectMargin,
+	bottom=\ProjectMargin,
+	bindingoffset=10mm
+}
+\else
+\geometry{a4paper,margin=\ProjectMargin}
+\fi
+
+
+% -----------------------------------------------------------------------------
+% Graphics
+% -----------------------------------------------------------------------------
+\RequirePackage{graphicx}
+\RequirePackage[table]{xcolor}
+\RequirePackage{tikz}
+\RequirePackage{svg}
+\graphicspath{{figures/}}
+
+% Include a build-optimized copy when latexmk has generated one. The third
+% argument specifies the maximum image width in pixels; smaller originals are
+% never enlarged. A direct LaTeX run falls back to the original image.
+\newcommand*{\includeoptimizedimg}[3][]{%
+	\IfFileExists{aux/optimized-images/#3px/#2}{%
+		\includegraphics[#1]{aux/optimized-images/#3px/#2}%
+	}{%
+		\includegraphics[#1]{#2}%
+	}%
+}
+
+\newcommand*{\ProjectTitleInkHex}{18202A}
+\newcommand*{\ProjectTitleMutedHex}{667085}
+\newcommand*{\ProjectTitleAccentHex}{005B96}
+\newcommand*{\ProjectTitleGraphBaseHex}{2E7BB4}
+\newcommand*{\ProjectTitleGraphTintHex}{D5E5F0}
+
+\definecolor{TitleInk}{HTML}{\ProjectTitleInkHex}
+\definecolor{TitleMuted}{HTML}{\ProjectTitleMutedHex}
+\definecolor{TitleAccent}{HTML}{\ProjectTitleAccentHex}
+\definecolor{TitleGraphBase}{HTML}{\ProjectTitleGraphBaseHex}
+\definecolor{TitleGraphTint}{HTML}{\ProjectTitleGraphTintHex}
+
+% -----------------------------------------------------------------------------
+% Tables
+% -----------------------------------------------------------------------------
+\RequirePackage{tabularx}
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{longtable}
+\RequirePackage{multirow}
+\RequirePackage{caption}
+
+\newcommand*{\EnableRowColors}{\rowcolors{2}{white}{gray!10}}
+\newcommand*{\DisableRowColors}{\rowcolors{2}{}{}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{B}[1]{>{\raggedright\arraybackslash}p{\dimexpr#1\textwidth-2\tabcolsep\relax}}
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\captionsetup{position=bottom}
+\captionsetup[table]{justification=raggedright, singlelinecheck=false}
+
+% Float-Seiten beginnen am oberen Satzspiegel statt vertikal zentriert.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
+% -----------------------------------------------------------------------------
+% Code and terminal output
+% -----------------------------------------------------------------------------
+\RequirePackage{listings}
+\AtBeginDocument{%
+	\renewcommand{\lstlistingname}{Codeausschnitt}%
+	\renewcommand{\lstlistlistingname}{Codeausschnitte}%
+}
+
+\DeclareCaptionType{terminalinputlisting}[Terminaleingabe][Terminaleingaben]
+\DeclareCaptionType{terminaloutputlisting}[Terminalausgabe][Terminalausgaben]
+
+\makeatletter
+\@addtoreset{terminalinputlisting}{chapter}
+\@addtoreset{terminaloutputlisting}{chapter}
+\makeatother
+\renewcommand{\theterminalinputlisting}{\thechapter.\arabic{terminalinputlisting}}
+\renewcommand{\theterminaloutputlisting}{\thechapter.\arabic{terminaloutputlisting}}
+
+\DeclareCaptionStyle{terminalcaption}{
+	font=small,
+	labelfont=bf,
+	labelsep=colon,
+	justification=raggedright,
+	singlelinecheck=false,
+	position=bottom,
+	hypcap=false,
+	skip=0pt
+}
+\captionsetup[terminalinputlisting]{style=terminalcaption}
+\captionsetup[terminaloutputlisting]{style=terminalcaption}
+
+\newcommand*{\TerminalCaption}[3]{%
+	\par\noindent
+	\begin{minipage}{\linewidth}
+	\captionof{#1}{#2}%
+	\label{#3}%
+	\end{minipage}%
+	\par
+}
+\newcommand*{\TerminalInputCaption}[2]{%
+	\TerminalCaption{terminalinputlisting}{#1}{#2}%
+}
+\newcommand*{\TerminalOutputCaption}[2]{%
+	\TerminalCaption{terminaloutputlisting}{#1}{#2}%
+}
+
+\definecolor{TerminalBackground}{HTML}{EEEEEE}
+\definecolor{TerminalFrame}{HTML}{2CAADE}
+\definecolor{TerminalText}{HTML}{000000}
+\definecolor{CodeKeyword}{HTML}{005CC5}
+\definecolor{CodeString}{HTML}{22863A}
+\definecolor{CodeComment}{HTML}{6A737D}
+\newlength{\TerminalFrameSep}
+\newlength{\TerminalFrameRule}
+\setlength{\TerminalFrameSep}{6pt}
+\setlength{\TerminalFrameRule}{0.4pt}
+
+\lstdefinestyle{terminalbase}{
+	basicstyle=\scriptsize\ttfamily\color{TerminalText},
+	backgroundcolor=\color{TerminalBackground},
+	frame=single,
+	rulecolor=\color{TerminalFrame},
+	framerule=\TerminalFrameRule,
+	linewidth=\dimexpr\linewidth-2\TerminalFrameSep-2\TerminalFrameRule\relax,
+	xleftmargin=\dimexpr\TerminalFrameSep+\TerminalFrameRule\relax,
+	xrightmargin=0pt,
+	framexleftmargin=0pt,
+	framexrightmargin=0pt,
+	framextopmargin=0pt,
+	framexbottommargin=0pt,
+	framesep=\TerminalFrameSep,
+	breaklines=true,
+	breakatwhitespace=true,
+	columns=fullflexible,
+	keepspaces=true,
+	mathescape=false,
+	escapeinside={(*@}{@*)},
+	showstringspaces=false,
+	aboveskip=0.75\baselineskip,
+	belowskip=0pt,
+}
+
+\lstdefinestyle{terminaloutput}{style=terminalbase}
+\lstdefinestyle{terminalinput}{style=terminalbase}
+
+\lstdefinestyle{pythoncode}{
+	style=terminalbase,
+	language=Python,
+	numbers=left,
+	numberstyle=\tiny\ttfamily\color{gray},
+	numbersep=10pt,
+	stepnumber=1,
+	tabsize=4,
+	showspaces=false,
+	showtabs=false,
+	keywordstyle=\color{CodeKeyword}\bfseries,
+	stringstyle=\color{CodeString},
+	commentstyle=\color{CodeComment}\itshape,
+	sensitive=true,
+	captionpos=b,
+}
+
+\lstdefinelanguage{json}{
+	sensitive=true,
+	morestring=[b]",
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morekeywords={true,false,null},
+}
+
+\lstdefinestyle{jsoncode}{
+	style=terminalbase,
+	language=json,
+	numbers=left,
+	numberstyle=\tiny\ttfamily\color{gray},
+	numbersep=10pt,
+	stepnumber=1,
+	tabsize=2,
+	showspaces=false,
+	showtabs=false,
+	keywordstyle=\color{CodeKeyword}\bfseries,
+	stringstyle=\color{CodeString},
+	commentstyle=\color{CodeComment}\itshape,
+	sensitive=true,
+	captionpos=b,
+}
+
+\lstnewenvironment{terminaloutput}[1][]
+{\lstset{style=terminaloutput,#1}}
+{}
+
+\lstnewenvironment{terminalinput}[1][]
+{\lstset{style=terminalinput,#1}}
+{}
+
+\lstnewenvironment{pythoncode}[1][]
+{\lstset{style=pythoncode,#1}}
+{}
+
+\lstnewenvironment{jsoncode}[1][]
+{\lstset{style=jsoncode,#1}}
+{}
+
+% -----------------------------------------------------------------------------
+% Bibliography
+% -----------------------------------------------------------------------------
+\RequirePackage[
+	backend=bibtex,
+	style=ieee,
+	sorting=none
+]{biblatex}
+\addbibresource{main.bib}
+
+% -----------------------------------------------------------------------------
+% Links, references, and PDF integration
+% -----------------------------------------------------------------------------
+\RequirePackage[pdfpagelabels,plainpages=false,ngerman]{hyperref}
+\RequirePackage[nameinlink,noabbrev,ngerman]{cleveref}
+\crefname{table}{Tabelle}{Tabellen}
+\crefname{figure}{Abbildung}{Abbildungen}
+\crefname{section}{Kapitel}{Kapitel}
+\crefname{appendix}{Anhang}{Anhänge}
+\crefname{terminalinputlisting}{Terminaleingabe}{Terminaleingaben}
+\crefname{terminaloutputlisting}{Terminalausgabe}{Terminalausgaben}
+\crefname{listing}{Codeausschnitt}{Codeausschnitte}
+\crefname{lstlisting}{Codeausschnitt}{Codeausschnitte}
+\RequirePackage{pdfpages}
+
+% -----------------------------------------------------------------------------
+% Project helpers
+% -----------------------------------------------------------------------------
+\newcommand*{\SkeletonNote}[1]{\par\noindent\textit{TODO: #1}\par}
+
+\endinput

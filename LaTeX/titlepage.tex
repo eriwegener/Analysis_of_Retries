@@ -1,0 +1,66 @@
+% Toggle the active design in bachelorconfig.sty:
+%   \ProjectTitlePageVariant = 1  -> cooperation title page
+%   \ProjectTitlePageVariant = 2  -> graph title page
+
+\newcommand*{\TitlePageLogo}[3]{%
+	\IfFileExists{#2}{%
+		\includegraphics[height=#1,width=\linewidth,keepaspectratio]{#2}%
+	}{%
+			{\small\bfseries\color{TitleMuted}#3}%
+	}%
+}
+
+\newcommand*{\TitlePageMetaRow}[2]{%
+	\textcolor{TitleMuted}{#1} & #2\\[0.35em]%
+}
+
+
+
+\newcommand*{\BachelorTitlePage}{%
+	\begin{titlepage}
+	\thispagestyle{empty}
+	\color{TitleInk}
+	\ifnum\ProjectTitlePageVariant=2
+	\TitlePageGraphBackground
+	\fi
+
+	\vspace*{0.2cm}
+	\begin{minipage}[t]{0.48\textwidth}
+	\vspace{0pt}
+	\raggedright
+	\TitlePageLogo{\ProjectUniversityLogoHeight}{\ProjectUniversityLogoFile}{\ProjectUniversity}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.48\textwidth}
+	\vspace{0pt}
+	\raggedleft
+	\TitlePageLogo{\ProjectCompanyLogoHeight}{\ProjectCompanyLogoFile}{\ProjectCompany}
+	\end{minipage}
+
+	\vspace*{4.8cm}
+
+	{\Large\scshape Bachelorarbeit\par}
+	\vspace{0.9cm}
+	{\Huge\bfseries\linespread{1.03}\selectfont \ProjectTitle\par}
+	\vspace{0.8cm}
+	{\Large \ProjectAuthor\par}
+
+	\vfill
+
+	\begin{minipage}{0.78\textwidth}
+	\renewcommand{\arraystretch}{1.14}
+	\begin{tabularx}{\textwidth}{@{}p{0.38\textwidth}>{\raggedright\arraybackslash}X@{}}
+	\TitlePageMetaRow{Studiengang}{\ProjectDegreeProgram}
+	\TitlePageMetaRow{Hochschule}{\ProjectUniversity}
+	\TitlePageMetaRow{Fakult\"at}{\ProjectFaculty}
+	\TitlePageMetaRow{Hochschulbetreuer}{\ProjectAcademicSupervisor}
+	\TitlePageMetaRow{Zweitpr\"ufer}{\ProjectSecondExaminer}
+	\end{tabularx}
+	\end{minipage}
+
+	\vspace*{0.5cm}
+	{\ProjectLocation, \ProjectSubmissionDate\par}
+	\end{titlepage}
+}
+
+\BachelorTitlePage

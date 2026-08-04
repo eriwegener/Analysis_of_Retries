@@ -1,0 +1,102 @@
+\ifdefined\PrintVersion
+\documentclass[12pt,a4paper,twoside,openright]{report}
+\else
+\documentclass[12pt,a4paper]{report}
+\fi
+
+\usepackage{bachelorconfig}
+
+\title{\ProjectTitle}
+\author{\ProjectAuthor}
+\date{\today}
+
+\begin{document}
+
+	\hypersetup{pageanchor=false}
+	\input{titlepage}
+	\ifdefined\PrintVersion
+	\begingroup
+	\pagestyle{empty}
+	\cleardoublepage
+	\endgroup
+	\else
+	\clearpage
+	\fi
+	\hypersetup{pageanchor=true}
+	\pagenumbering{Roman}
+
+	\tableofcontents
+
+	\clearpage
+	\pagenumbering{arabic}
+
+	\chapter{Einleitung}
+	\label{chap:einleitung}
+	\input{chapters/01-einleitung}
+
+	\chapter{Grundlagen}
+	\label{chap:grundlagen}
+	\input{chapters/02-grundlagen}
+
+	\chapter{Stand der Forschung}
+	\label{chap:stand-der-forschung}
+	\input{chapters/03-stand-der-forschung}
+%
+	%\chapter{Werkzeuge zur Netzwerkerkennung}
+	%\label{chap:werkzeuge-zur-netzwerkerkennung}
+	%\input{chapters/04-werkzeuge-zur-netzwerkerkennung}
+%
+	%\chapter{Wettbewerbsanalyse}
+	%\label{chap:wettbewerbsanalyse}
+	%\input{chapters/05-wettbewerbsanalyse}
+%
+	%\chapter{Anforderungsanalyse}
+	%\label{chap:anforderungsanalyse}
+	%\input{chapters/06-anforderungsanalyse}
+%
+	%\chapter{Implementierung}
+	%\label{chap:implementierung}
+	%\input{chapters/07-implementierung}
+%
+	%\chapter{Evaluation}
+	%\label{chap:evaluation}
+	%\input{chapters/08-evaluation}
+%
+	%\chapter{Fazit und Ausblick}
+	%\label{chap:fazit-und-ausblick}
+	%\input{chapters/09-fazit-und-ausblick}
+%
+	test\cite{Haerder1983TransactionRecovery}
+	
+	\nocite{*}
+
+	\printbibliography[
+		heading=bibintoc,
+		title={Literaturverzeichnis}
+	]
+
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listfigurename}
+	\listoffigures
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listtablename}
+	\listoftables
+%
+	\appendix
+	\chapter{Anhang}
+	\label{chap:anhang}
+	%\label{app:requirements}
+	%\input{appendices/requirements}
+
+	\chapter{Erklärung zum Einsatz von KI}
+	\label{app:ki-nutzung}
+	\input{appendices/ki-nutzung}
+
+	\includepdf[
+		pages=1,
+		pagecommand={\thispagestyle{empty}}
+	]{figures/bachelorerklaerung.pdf}
+
+\end{document}

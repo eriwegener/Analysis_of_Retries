@@ -1,0 +1,101 @@
+- https://dl.acm.org/doi/epdf/10.1145/289.291 (Härder, Reuter) 2.8.26 15:50
+    - end of transaction EOT, ist das erfolgreiche Ende einer tx S.289
+    - ACID, definition siehe S.289f
+    - Transaction Failure, tx erreicht commit nicht S.290
+    - System Failure, System stürzt ab, durch bug, hardware failure usw S.291
+    - Media Failure, Speicher geht verloren oder kaputt S.291
+    - Transactions müssen ACID conform sein, wenn nicht commited, dann verschwinden S.291
+    - Transaction UNDO, entfernt alle effekte der abgebrochenen tx S.292
+    - Global UNDO, macht alle effekte von abgebrochenen tx rückgängig nach zB Systemabsturz S.292
+    - Partial REDO, ergebnisse von tx können noch nicht in der DB stehen und müssen deswegen wiederholt werden S.292
+    - Global REDO, wenn ein altes Backup geladen werden musste, muss eine Kopie der effekte von allen tx commited werden, nach Media Failure S.292
+    - materialized Database, persistenter Datenbankzustand der nach einem Absturz noch vorhanden ist S.295
+    - propagation, die Operation, die geschriebene Seiten zu einem teil der materialized DB macht S.295
+    - STEAL, modifizierte Seiten können immer geschrieben oder propagiert werden S.299
+    - NO-STEAL, modifizierte Seiten werden min im buffer gelassen, bis EOT S.299
+    - FORCE, alle modifizierten Seiten werden während der EOT bearbeitung geschrieben und propagiert S.300
+    - NO-FORCE, es wird während der EOT Bearbeitung keine propagation aufgerufen S.300
+    - write ahead log WAL
+        - UNDO informationen müssen vor propagation der entsprechenden Änderung ins Log geschrieben werden S.302
+        - REDO informationen müssen ins temp, archive Log geschrieben werden bevor die Bestätigung des EOT kommt S.302
+    - Checkpoints, man sammelt informationen an sicheren punkten um den REDO recovery aufwand zu limitieren und optimieren S.303
+
+02 Grundlagen:
+    2.1 PostgreSQL, Quellen direkt über die Documentation
+        - https://www.postgresql.org/docs/current/tutorial-arch.html 2.8.26 19:40
+            - Architektur
+                - Serverprozess der die DB dateien managed, connections akzeptiert und db actions des clients ausführt
+                    - DB server programm heißt postgres
+                - client applikation, die DB operationen ausführen will
+                    - kann vieles sein, text basiert, graphische App, Web Server usw
+                - Client und Server kommunizieren via TCP/IP
+                - Server kann mehrere Verbindungen gleichzeitig eingehen
+        - https://www.postgresql.org/docs/current/tutorial-transactions.html 2.8.26 19:55
+            - Transactions
+                - fundamentales konzept
+                - bündelt mehrere schritte in eine operation
+                - wenn ein schritt fehlschlägt, schlägt die ganze tx fehl
+                - es wird garantiert, dass die Daten gespeichert sind bevor die tx als abgeschlossen gilt
+        - https://www.postgresql.org/docs/current/runtime-config-wal.html 2.8.26 20:20
+            - PostgreSQL arbeitet mit WAL write ahead log, um erfolgreiche recovery nach crashes durch zu führen
+    2.2 Fehlerklassen
+        - https://www.postgresql.org/docs/8.4/errcodes-appendix.html 2.8.26 20:05
+            - Error Codes, sind 5stellig mit Zahlen oder Buchstaben
+                - folgen den SQL standard conventions für SQLSTATE codes
+                - 00000, successful completion
+                - 40001, Serialization Failure
+                - 40P01, Deadlock detected
+                - 55P03, Lock not available
+        - https://learn.microsoft.com/en-us/azure/architecture/patterns/retry 2.8.26 19:00
+            - Transactions werden wiederholt, wenn bestimmte Fehler auftreten
+                - diese fehler müssen sich von selbst lösen können, transient faults
+                - zB Deadlocks, Serialization und Timeout, alle durch warten lösbar
+                - zB Constraint Violation löst sich nicht wirklich von alleine, da die Violation immer noch besteht bei einem retry
+    2.3 Erklärung Retry
+        - https://learn.microsoft.com/en-us/azure/architecture/patterns/retry 2.8.26 19:00
+            - Transactions werden wiederholt, wenn bestimmte Fehler auftreten
+                - diese fehler müssen sich von selbst lösen können, transient faults
+                - zB Deadlocks, Serialization und Timeout, alle durch warten lösbar
+                - zB Constraint Violation löst sich nicht wirklich von alleine, da die Violation immer noch besteht bei einem retry
+            - Risiken
+                - abwägen ob ein schneller fail nicht besser ist als ewiges retry für durchsatz
+                - aggressiver Retry kann ein System überlasten das schon an der Grenze der Kapazität läuft
+                - tx sollten idempotent sein
+                - die fehlermeldungen sollten beachtet werden, nicht dass man retry versucht und es schon gar keine Verbindung zur DB gibt
+            - Strategies
+                - https://learn.microsoft.com/en-us/azure/architecture/patterns/retry
+                    - No Retry, es gibt keinen Retry, ist die Baseline der Experimente
+                        - Cancel Retry, wenn ein Fehler auftritt der nicht wiederholbar ist, wird gar nicht erst retry
+                    - Immediately Retry, die tx wird direkt wiederholt
+                    - Retry after Delay, es wird kurz gewartet und dann wiederholt
+                - https://learn.microsoft.com/en-us/azure/well-architected/design-guides/handle-transient-faults
+                    - Exponential Backoff, der delay wird mit jedem retry exponentiell mehr
+                    - Jitter, ist zufällig berechnet mit dem exponential Backoff
+            - https://learn.microsoft.com/en-us/azure/well-architected/design-guides/handle-transient-faults 2.8.26 19:15
+                - Retry Policy, beschreibt sowohl die strategien, als auch die fehler detection, delay intervalle und anzahl der retries
+                - Anzahl an Retries und dauer des Delays müssen optimal gewählt werden, da es sonst keinen Effekt hat oder zu viele Ressourcen zurückhält
+    2.4 Erklärung von Manueller Fehlerbehandlung
+        - einfach runterschreiben
+
+03:
+    3.1 Fehlerbehandlung in DBS
+        - klassische Fehlerbehandlung
+        - recovery als Hintergrund Infos
+        - https://doi.org/10.1109/HICSS.1988.11850
+            - Optimistic concurrency control OCC S.545
+
+    3.2 Transaction Retry
+        - https://www.postgresql.org/docs/current/mvcc-serialization-failure-handling.html
+            - deadlocks, serialization sollte komplett restarted werden
+    3.3 Wie wirkt sich Retry auf das System aus
+        - https://doi.org/10.1145/3613372.3613409
+    3.4 kurze Anbindung an Self-Healing
+        - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1160055 (https://ieeexplore.ieee.org/document/1160055)
+            - probleme mit nicht autonomen Systemen:
+                - Systems werden diverser
+                - werden zu komplex um vernünftig integriert, optimiert und gewartet zu werden
+            - autonome Konzepte werden gesucht
+                - Self-configuration (Komponenten und System werden durch high-level policies automatisch konfiguriert)
+                - Self-optimization (Komponenten und Systeme suchen Selbst nach Möglichkeiten sich zu verbessern)
+                - Self-healing (System detects, diagnoses und repairs local software und hardware problems)
+                - Self-protection (System verteidigt sich gegen Angriffe)
