@@ -16,8 +16,7 @@ sorgen, dass ein System an die Belastungsgrenze stößt.
 Das ist vor allem ein Problem für Systeme die von Anfang an, an dem Ende ihrer Kapazitäten laufen.
 Um unnötiges Wiederholen der Transaktionen zu vermeiden, sollten die Fehlercodes ausgelesen werden, um 
 sicherzustellen, dass es sich um ein transient failure handelt und nicht um einen anderen Fehler.
-Zu alledem sollten Transaktionen idempotent
-\footnote{Eine Transaktion ist idempotent, wenn sie bei mehrfacher Ausführung
+Zu alledem sollten Transaktionen idempotent\footnote{Eine Transaktion ist idempotent, wenn sie bei mehrfacher Ausführung
 	das gleiche Ergebnis liefert.} sein~\cite{MicrosoftRetryPattern}.
 Außerdem müssen die Anzahl der Retries und der Delay optimal gewählt werden, denn sonst besteht die Möglichkeit,
 dass ein Retry zum einen keinen Effekt hat oder zu viele Ressourcen verbraucht~\cite{MicrosoftTransientFaults}.
@@ -32,9 +31,15 @@ sein~\cite{MicrosoftRetryPattern}.
 Des Weiteren gibt es den \emph{Exponential back-off} und den \emph{Exponential back-off with jitter}.
 Bei Exponential back-off handelt es sich um ein Verfahren, bei dem mit jedem erfolglosem Retry einer Transaktion der
 Delay exponentiell länger wird.
-Durch jitter wird der Delay zufällig zwischen einem Grundwert und dem Exponential back-off Wert gewählt~\cite{MicrosoftTransientFaults}.
+Durch jitter wird der Delay zufällig zwischen einem Grundwert und dem Exponential back-off Wert gewählt.
+
 Der Vollständigkeit halber sollten \emph{Cancel Retry} und \emph{Circuit Breaker}, als gängige praktische Methoden
 genannt werden.
 Wobei Cancel Retry nur eine Erweiterung für die anderen Strategien ist.
+Diese Strategie testet den Fehlercode und wenn der Fehler kein transient fault ist, wird kein Retry ausgeführt.
+Circuit Breaker hält wiederholte Anfragen ab, wenn diese eine hohe Chance haben fehlzuschlagen.
+Dafür gibt es einen threshold\footnote{Schwelle} an fehlgeschlagenen Wiederholungen.
+Wenn dieser überschritten wird, dann öffnet sich der Kreis und alle Transaktionen schlagen fehl, damit sich das
+System erholen kann.
 Zudem empfiehlt Microsoft, in ihrem Guide zum Umgang mit transient faults, für jede Strategie die einen Delay
-verwendet, diesen zufällig zu generieren.
+verwendet, diesen zufällig zu generieren~\cite{MicrosoftTransientFaults}.

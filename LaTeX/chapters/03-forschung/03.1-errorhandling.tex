@@ -1,0 +1,37 @@
+% !TeX root = ../../main.tex
+
+Dieser Abschnitt handelt von der Fehlerbehandlung in Datenbanken.
+Dafür wird kurz beschrieben, wie die Fehler bisher erkannt und verarbeitet werden.
+
+Bisher behandelt eine Datenbank Fehler nicht von selbst.
+Sobald ein Fehler erkannt wird, wird eine Transaktion abgebrochen und er Client bekommt eine Fehlermeldung.
+Dieser muss dann entscheiden wie mit diesem Fehler umgegangen wird.
+Bei einigen Fehlern ist dies sinnvoll, bei anderen ist es erhöhter Aufwand für den Client, beziehungsweise für
+den Nutzer.
+
+Es wurde sich für Recovery die Mühe gegeben, bestimmte Mechanismen einzuführen, um die Wiederherstellung nach
+einem Absturz zu gewährleisten.
+So gibt es das in~\ref{sec:postgresql} erwähnte WAL, welches auf \texttt{UNDO} und \texttt{REDO} basiert.
+Für \texttt{UNDO} und \texttt{REDO} gibt es aber noch unterteilungen.
+Es gibt \texttt{Transaction UNDO}, welches alle Effekte der abgebrochenen Transaktion entfernt und
+das \texttt{Global UNDO}, welches alle Effekte von allen abgebrochenen Transaktionen rückgängig macht.
+Das \texttt{Global UNDO} wird häufig nach einem Systemabsturz verwendet.
+\texttt{Partial REDO} wird ausgeführt, wenn Ergebnisse von Transaktionen noch nicht in der Datenbank standen,
+als das System abgestürzt ist.
+Dadurch werden die Transaktionen wiederholt und die Ergebnisse werden in die Datenbank geschrieben.
+Bei \texttt{Global REDO} handelt es sich um einen Sonderfall, der in der Regel nur bei \emph{Media Failure}\footnote{Ein
+	Media Failure tritt auf, wenn Speicher verloren oder kaputt geht.} auftritt.
+Da nach Media Failure eine ältere Version der Datenbank vorliegt, werden durch \texttt{Global REDO} alle Transaktionen
+bis zu dem Zeitpunkt des Failures nachgeholt, damit diese wieder in der Datenbank stehen.
+Des Weiteren werden Checkpoints verwendet, um den Recovery Aufwand zu optimieren und limitieren~\cite{Haerder1983}.
+
+Weitere interne Fehlerbehandlung passiert durch \emph{Optimistic Concurrency Control (OCC)},
+\emph{Pessimistic Concurrency Control (PCC)} und \emph{Multi-Version Concurrency Control (MVCC)}\@.
+OCC funktioniert, in dem es während einer Transaktion die Locks in einer kurzen Zeit bekommt und wieder freigibt.
+Die Locks werden direkt vor einer Leseoperation erworben und sobald diese fertig ist, wieder zugänglich gemacht.
+Für eine Schreiboperation werden die Lock auch erst direkt vor der Operation erworben, aber bis zum Ende der
+Transaktion gehalten.
+Bei PCC werden die Locks am Anfang der Transaktion erworben und erst beim Abschluss wieder freigegeben, dadurch kann
+eine Ressource lange gesperrt werden~\cite{IBMConcurrencyControl}.
+Das von PostgreSQL verwendete MVCC zeigt jeder Transaktion einen Snapshot der Datenbank.
+Dies sorgt dafür, dass die Locks zum Lesen nicht mit den Locks zum Schreiben keine Konflikte verursachen~\cite{PostgreSQLMVCC}.

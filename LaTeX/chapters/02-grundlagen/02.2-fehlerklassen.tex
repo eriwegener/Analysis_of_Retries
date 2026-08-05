@@ -34,5 +34,6 @@ Jeder Fehler der, oben erwähnt wurde, kann sich durch langes Warten lösen.
 Wenn die abgebrochene Transaktion wartet, bis die andere erfolgreich abgeschlossen ist, dann kann bei nur zwei
 Transaktionen kein Deadlock, Serialization Failure oder Lock not available mehr entstehen.
 Deswegen sind diese Fehler transient Failures und sollten wiederholt werden~\cite{MicrosoftRetryPattern}.
+
 Eine \texttt{Constraint-Violation} wäre kein transient Failure, da sich der Fehler nicht so schnell automatisch lösen
 wird.

@@ -1,3 +1,32 @@
 % !TeX root = ../main.tex
 
-Test123
+Dieses Kapitel soll einen Überblick über den aktuellen Stand der Forschung geben zu Retries geben.
+Ziel ist es, die wissenschaftlichen Erkenntnisse sowie den bisherigen Forschungsstand einzuordnen.
+Darüber hinaus werden Forschungslücken und unterschiedliche Perspektiven in der Literatur aufgezeigt.
+Die Darstellung des Forschungsstandes bildet die Basis für die nachfolgende Analyse und verdeutlicht die Relevanz
+der Arbeit.
+\textbf{Großes ? oida, muss nomma geändert werden.}
+
+\section{Fehlerbehandlung in Datenbanken}
+\label{sec:errorhandling}
+\input{chapters/03-forschung/03.1-errorhandling}
+
+\section{Self-Healing}
+\label{sec:selfHealing}
+\input{chapters/03-forschung/03.2-selfHealing}
+
+\textbf{Keine Ahnung, iwie bin ich unzufrieden mit diesen beiden Abschnitten!}
+
+\section{Retry Transaktionen}
+\label{sec:retryTransaction}
+\input{chapters/03-forschung/03.3-transactionRetry}
+
+\section{Auswirkungen von Retry}
+\label{sec:effectsOnSystem}
+\input{chapters/03-forschung/03.4-auswirkungen}
+
+Aus der Arbeit lässt sich mitnehmen, dass Retry die Performance eines System massivst beeinflusst.
+Und genau daran setzt diese Arbeit an.
+Denn wie Aderaldo und Mendonça schon beschrieben haben, wird die execution time größer je höher die Parameter.
+Im Folgenden soll nun gezeigt werden, wie extrem sich Retry bei bestimmten Fehlern auf die Datenbank auswirkt und ob
+sich retry deshalb lohnt oder nicht.

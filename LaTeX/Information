@@ -83,12 +83,30 @@
         - recovery als Hintergrund Infos
         - https://doi.org/10.1109/HICSS.1988.11850
             - Optimistic concurrency control OCC S.545
-
     3.2 Transaction Retry
         - https://www.postgresql.org/docs/current/mvcc-serialization-failure-handling.html
             - deadlocks, serialization sollte komplett restarted werden
     3.3 Wie wirkt sich Retry auf das System aus
         - https://doi.org/10.1145/3613372.3613409
+            - mit Retry Strategies verschiedene Resilience libraries getestet
+            - beschreiben kurzen Retry ohne Delay und langes Warten
+            - testen anhand folgender kennzahlen: Relative Execution Time, Relative Response Time, Relative Performance
+            - research questions
+                - execution time mit verschiedenen libraries, workloads udn fail rates
+                - response Time
+                - welche Config bietet bestes ergebnis
+                - wir wirken sich die parameter aus
+            - Results
+                - execution time grows exponential, wenn such die parameter größer werden und die failure rate höher wird
+                - response time  geht runter, am stärksten beeinflusst durch Multiplier
+                - Trade-off / Zielkonflikt: Die Parameter balancieren Execution Time (Gesamtdauer auf Client-Seite) und Response Time (Antwortzeit des Servers) gegeneinander aus.
+                    Wenn die Fehlerrate steigt, geht die Optimierung der einen Metrik meist zu Lasten der anderen.
+                    Sweet Spot existiert: Es gibt optimale Konfigurationen, die beide Zeiten niedrig halten und somit die beste Gesamtleistung liefern.
+                    Kein simples Erfolgsrezept: Diese optimalen Einstellungen folgen keinem starren Muster, sondern schwanken (alternieren) stark in ihren Ausprägungen – besonders bei hoher Last und vielen Fehlern.
+                - backoff höchster negativer faktor, dann multiplier, retries, gleicht sich, wenn workload und fail rates steigen
+            - Fazit
+                - feine balance der parameter notwendig
+                - unterstreicht wie wichtig is, die Betriebsumgebung zu berücksictigen
     3.4 kurze Anbindung an Self-Healing
         - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1160055 (https://ieeexplore.ieee.org/document/1160055)
             - probleme mit nicht autonomen Systemen:

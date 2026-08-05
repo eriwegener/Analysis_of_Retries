@@ -1,0 +1,52 @@
+% !TeX root = ../../main.tex
+
+Die oberen Abschnitte haben bisher gezeigt, wie Datenbanken im Allgemeinen Fehler finden und behandeln.
+Des Weiteren zeigen sie, wie der Forschungsstand zu den Fehlerklassen in Bezug auf Retry aussieht.
+Und wie schon erwähnt, bringt Retry nicht nur Vorteile, sondern auch Nachteile für die Performance des Systems.
+Deshalb beschreibt dieser Abschnitt, wie sich Retry auf ein System auswirkt.
+
+Die Arbeit von Aderaldo und Mendonça beschreibt das Retry Verhalten auf ein System passend.
+In Ihrer Arbeit testen sie wie sich verschiedene Retry Strategien und Resilienzbibliotheken auf das System auswirken.
+Als flexible Parameter haben sie \emph{Initial backoff delay}, \emph{Backoff delay multiplier} und
+\emph{Max. number of retries} definiert.
+Die beiden Resilienzbibliotheken die getestet wurden, waren Polly(C\#) und Resilience4j(Java).
+Sie testen anhand der Werte \emph{Relative Execution Time}, \emph{Relative Response Time} und
+\emph{Relative Performance}.
+Es wurden vier Forschungsfragen gestellt.
+\begin{itemize}
+	\item Wie ist die execution time unter den verschiedenen Retry Konfigurationen, Bibliotheken, Workloads und
+	Failure Rates?
+	\item Wie ist die response time unter den verschiedenen Retry Konfigurationen, Bibliotheken, Workloads und
+	Failure Rates?
+	\item Welche Konfiguration bietet das beste Ergebnis?
+	\item Wie wirken sich die Parameter aus?
+\end{itemize}
+Um die ersten beiden Fragen zu beantworten, haben Sie jeweils mit nur einem variablen Parameter gearbeitet.
+Die anderen Beiden blieben fix.
+Für die dritte Frage haben Sie die fünf besten Retry Konfigurationen für die beiden Bibliotheken unter den
+unterschiedlichen Workloads und Failure Rates dargestellt.
+Da Sie für die vierte Frage \emph{SHAP}\footnote{SHAP ist ein machine learning explainer. Mit dem werden in der Regel
+	erklärt, wie ein machine learning model auf seine Ergebnisse kommt.} verwendet haben, wurden die Ergebnisse mit
+einem SHAP Value für die einzelnen Parameter bewertet und nach den Kombinationen aus Workloads und Failure Rates
+sortiert.
+
+Aus diesen Ergebnissen lassen sich die Forschungsfragen beantworten.
+Die execution time steigt exponentiell an, wenn die einzelnen Parameter und die failure rate höher werden.
+Während der backoff delay multiplier hier einen stärkeren Einfluss hat als die restlichen Parameter, hat Workload
+hier keinen signifikanten Einfluss.
+Die Ergebnisse für die zweite Frage zeigen, die response time geht runter.
+Dies wird wieder am stärksten von dem backoff delay multiplier beeinflusst.
+Hier sorgen höhere Parameter für eine geringere response time, besonders unter hohen failure rates.
+Es lässt sich nur schwer festlegen, welche Konfiguration die Beste ist, da die Parameter die execution und response
+time ausbalancieren.
+Durch höhere Parameter steigt die execution time, aber die response time sinkt.
+Gleichzeitig geht die Optimierung der einen Metrik meist zu Lasten der anderen, sobald die failure rates steigen.
+Vor allem da die Einstellungen keinem festen Muster folgen, vor allem unter hoher Workload und failure rates.
+Dadurch ist es hart die beste Strategie zu bestimmen, aber es gibt sie.
+An dem Punkt an dem sowohl die execution time, als auch die response time im Verhältnis zueinander am niedrigsten
+sind, befindet sich die beste Strategie.
+
+Als Fazit ziehen Aderaldo und Mendonça, dass eine feine Balance der Parameter notwendig ist, damit das System
+sauber funktioniert.
+Deshalb ist es unter anderem wichtig die Betriebsumgebung zu berücksichtigen, damit man die Parameter passend
+abstimmen kann~\cite{Aderaldo2023}.
