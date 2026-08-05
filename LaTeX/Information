@@ -26,7 +26,7 @@
             - Architektur
                 - Serverprozess der die DB dateien managed, connections akzeptiert und db actions des clients ausführt
                     - DB server programm heißt postgres
-                - client applikation, die DB operationen ausführen will
+                - client application, die DB operationen ausführen will
                     - kann vieles sein, text basiert, graphische App, Web Server usw
                 - Client und Server kommunizieren via TCP/IP
                 - Server kann mehrere Verbindungen gleichzeitig eingehen
@@ -39,7 +39,7 @@
         - https://www.postgresql.org/docs/current/runtime-config-wal.html 2.8.26 20:20
             - PostgreSQL arbeitet mit WAL write ahead log, um erfolgreiche recovery nach crashes durch zu führen
     2.2 Fehlerklassen
-        - https://www.postgresql.org/docs/8.4/errcodes-appendix.html 2.8.26 20:05
+        - https://www.postgresql.org/docs/current/errcodes-appendix.html 2.8.26 20:05
             - Error Codes, sind 5stellig mit Zahlen oder Buchstaben
                 - folgen den SQL standard conventions für SQLSTATE codes
                 - 00000, successful completion

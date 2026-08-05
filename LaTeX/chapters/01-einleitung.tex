@@ -1,3 +1,10 @@
 % !TeX root = ../main.tex
 
-Test123
+Das Nutzen einer Datenbank bringt viele Vorteile, aber auch Nachteile.
+Vor allem, wenn die Fehlerbehandlung nicht solide läuft.
+Denn wenn eine Datenbank einen Fehler bemerkt, wird dieser bisher manuell behandelt.
+Sobald ein Fehler auftritt, bricht die Datenbank die Transaktion ab und gibt dem Client den Fehlercode zurück.
+In dem Fall muss dann die Clientapplikation entscheiden wie mit diesem um gegangen wird.
+Das heißt meistens, dass der User eigenhändig eingreifen muss.
+Das Ziel ist es, dass der Client schon gar nicht mehr erfährt, dass eine Transaktion abgebrochen wurde.
+Die folgende Arbeit behandelt, wie genau man bestimmte Fehler abfangen und möglicherweise auch lösen kann.

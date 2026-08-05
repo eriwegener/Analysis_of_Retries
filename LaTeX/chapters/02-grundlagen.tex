@@ -1,6 +1,18 @@
 % !TeX root = ../main.tex
 
-\section{Test1233}
-\label{sec:Test1233}
-%\input{}
-Test12354
+Das folgende Kapitel beschreibt die Grundlagen, die für die Arbeit wichtig sind.
+Dabei wird genauer darauf eingegangen wie eine PostgreSQL Datenbank aufgebaut ist, welche Fehlerklassen es gibt.
+Des Weiteren werden Retry Mechanismen kurz erläutert, erwähnt welche Risiken diese mit sich bringen und worauf man
+bei einer Implementierung achten muss.
+
+\section{PostgreSQL}
+\label{sec:postgresql}
+\input{chapters/02-grundlagen/02.1-postgres}
+
+\section{Fehlerklassen}
+\label{sec:errorclasses}
+\input{chapters/02-grundlagen/02.2-fehlerklassen}
+
+\section{Retry}
+\label{sec:retry}
+\input{chapters/02-grundlagen/02.3-retry}
