@@ -1,0 +1,20 @@
+% !TeX root = ../main.tex
+
+Die zunehmende Nutzung von Datenbanken führt zu steigenden Anforderungen an die Zuverlässigkeit und Verfügbarkeit
+von Datenbankoperationen.
+Insbesondere in Systemen mit einer hohen Anzahl paralleler Zugriffe können Fehler auftreten, die eine erneute
+Verarbeitung von Datenbankoperationen erforderlich machen.
+Aus diesem Grund müssen Retry-Mechanismen sorgfältig konfiguriert werden, um sowohl die Zuverlässigkeit der
+Anwendung als auch die Leistungsfähigkeit der Datenbank zu gewährleisten.
+
+\section{Fehlerbehandlung in PostgreSQL}
+\label{sec:errorhandlingPostgreSQL}
+\input{chapters/04-problemAnalysis/04.1-errorhandling}
+
+\section{Grenzen von Retry-Mechanismen}
+\label{sec:limitationOfRetry}
+\input{chapters/04-problemAnalysis/04.2-limitsRetry}
+
+\section{Anforderungen an einen Retry-Mechanismus}
+\label{sec:requirements}
+\input{chapters/04-problemAnalysis/04.3-requirements}

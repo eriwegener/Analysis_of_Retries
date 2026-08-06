@@ -1,0 +1,33 @@
+% !TeX root = ../../main.tex
+
+Aufgrund der beschriebenen Grenzen von Retry-Mechanismen ist ein unkontrollierter Einsatz nicht ausreichend, um eine
+zuverlässige Fehlerbehandlung zu gewährleisten.
+Ein Retry-Mechanismus muss verschiedene Anforderungen erfüllen, um die Vorteile eines Retries nutzen zu können, ohne
+dabei die Leistung und Stabilität der Datenbank negativ zu beeinflussen.
+
+Eine wesentliche Anforderung ist die Zuverlässigkeit.
+Der Retry-Mechanismus muss in der Lage sein, zwischen Fehlern zu unterscheiden, bei denen eine erneute Ausführung
+sinnvoll ist und Fehler bei denen ein Retry keinen Erfolg haben kann.
+Dadurch kann unnötige Last auf die Datenbank vermieden und dauerhafte Fehler schneller erkannt werden.
+
+Neben der Zuverlässigkeit spielt die Performance eine entscheidende Rolle.
+Da jeder Wiederholungsversuch Ressourcen der Datenbank verbraucht, muss die Anzahl der Retries begrenzt und deren
+Ausführung kontrolliert werden.
+Die Belastung der Datenbank wird maßgeblich von Faktoren wie die maximale Anzahl an Wiederholungsversuchen oder
+Wartezeiten zwischen dien einzelnen Versuchen beeinflusst.
+
+Darüber hinaus sollte ein Retry-Mechanismus flexibel erweiterbar sein.
+Unterschiedliche Fehlerarten benötigen unterschiedliche Behandlungsmethoden, da nicht jeder Fehler durch eine erneute
+Ausführung behoben werden kann.
+Eine optimierte Strategie muss daher an verschiedene Szenarien angepasst werden können.
+
+Diese Anforderungen bilden die Grundlage für die Bewertung von Retry-Mechanismen in dieser Arbeit.
+Dazu verdeutlichen sie, dass ein Retry-Mechanismus nicht ausschließlich auf eine erfolgreiche Wiederholung ausgelegt
+sein darf.
+Ebenso wichtig ist es, die Auswirkungen auf das Gesamtsystem zu berücksichtigen und einen Ausgleich zwischen
+Fehlertoleranz und Systembelastung zu schaffen.
+Nur durch eine geeignete Konfiguration kann ein Retry-Mechanismus langfristig zu einer stabilen udn performanten
+Datenbankanwendung beitragen.
+Da sich insbesondere die Anzahl der Wiederholungsversuche und die Wartezeit zwischen einzelnen Retries unmittelbar
+auf die Belastung der Datenbank auswirken, werden diese Parameter im experimentellen Teil dieser Arbeit
+systematisch untersucht.

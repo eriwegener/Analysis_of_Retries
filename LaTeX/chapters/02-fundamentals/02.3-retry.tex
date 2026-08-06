@@ -6,22 +6,8 @@ Eine Retry Policy beschreibt sowohl die einzelnen Strategien, welche im Folgende
 die Fehlererkennung, sowie die Anzahl der Retries und die Dauer des Delays~\cite{MicrosoftTransientFaults}.
 PostgreSQL führt die Fehlererkennung mit internen Algorithmen durch, dessen Erläuterung im Rahmen dieser Arbeit
 aufgrund ihrer Komplexität nicht möglich ist.
-Bevor sich mit Retry Strategien beschäftigt wird, sollte aber erwähnt werden, dass Retry Risiken mit sich bringt, die
-man beachten muss.
 
-Da Retry eine Transaktion einfach nur wiederholt, wird dadurch das System mehr belastet.
-Deswegen muss abgewägt werden, ob ein schneller Abbruch der Transaktion nicht sinnvoller ist, als häufiges Wiederholen.
-Des Weiteren kann vor allem aggressives Wiederholen, also häufiges Wiederholen mit geringen Intervallen, dafür
-sorgen, dass ein System an die Belastungsgrenze stößt.
-Das ist vor allem ein Problem für Systeme die von Anfang an, an dem Ende ihrer Kapazitäten laufen.
-Um unnötiges Wiederholen der Transaktionen zu vermeiden, sollten die Fehlercodes ausgelesen werden, um 
-sicherzustellen, dass es sich um ein transient failure handelt und nicht um einen anderen Fehler.
-Zu alledem sollten Transaktionen idempotent\footnote{Eine Transaktion ist idempotent, wenn sie bei mehrfacher Ausführung
-	das gleiche Ergebnis liefert.} sein~\cite{MicrosoftRetryPattern}.
-Außerdem müssen die Anzahl der Retries und der Delay optimal gewählt werden, denn sonst besteht die Möglichkeit,
-dass ein Retry zum einen keinen Effekt hat oder zu viele Ressourcen verbraucht~\cite{MicrosoftTransientFaults}.
-
-Wie schon erwähnt gibt es verschiedene Retry Strategien.
+Es gibt verschiedene mögliche Retry Strategien, die in der Praxis Anwendung finden.
 Eine ist der \emph{immediately Retry}, bei dem die Transaktion ohne zu warten direkt wiederholt wird.
 Dabei wird nur in der Anzahl der möglichen Retries variiert.
 Eine weitere in dieser Arbeit behandelten Strategie ist \emph{Retry after Delay}.
@@ -43,3 +29,6 @@ Wenn dieser überschritten wird, dann öffnet sich der Kreis und alle Transaktio
 System erholen kann.
 Zudem empfiehlt Microsoft, in ihrem Guide zum Umgang mit transient faults, für jede Strategie die einen Delay
 verwendet, diesen zufällig zu generieren~\cite{MicrosoftTransientFaults}.
+Für Retry Strategien müssen Transaktionen idempotent
+\footnote{Eine Transaktion ist idempotent, wenn sie bei mehrfacher Ausführung
+das gleiche Ergebnis liefert.} sein~\cite{MicrosoftRetryPattern}.

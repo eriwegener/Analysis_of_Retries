@@ -1,0 +1,41 @@
+% !TeX root = ../../main.tex
+
+Retry-Mechanismen stellen eine verbreitete Strategie dar, um temporäre Fehler automatisiert zu behandeln.
+Besonders geeignet sind sie für Fehler, deren Ursache sich innerhalb eines kurzen Zeitraums selbstständig behebt.
+Dazu zählen Verbindungsabbrüche, Überlastungen oder Konflikte durch parallele Transaktionen.
+In solchen Fällen kann eine erneute Ausführung dazu führen, dass eine Transaktion erfolgreich abschließt, ohne
+einen manuellen Eingriff.
+
+Da Retry eine Transaktion einfach nur wiederholt, wird dadurch das System mehr belastet.
+Deswegen muss abgewägt werden, ob ein schneller Abbruch der Transaktion nicht sinnvoller ist, als häufiges Wiederholen.
+Des Weiteren kann vor allem aggressives Wiederholen, also häufiges Wiederholen mit geringen Intervallen, dafür
+sorgen, dass ein System an die Belastungsgrenze stößt.
+Das ist vor allem ein Problem für Systeme die von Anfang an, an dem Ende ihrer Kapazitäten laufen.
+Um unnötiges Wiederholen der Transaktionen zu vermeiden, sollten die Fehlercodes ausgelesen werden, um
+sicherzustellen, dass es sich um ein transient failure handelt und nicht um einen anderen Fehler.
+Darüber hinaus sollte ein Retry-Mechanismus nur für idempotente oder entsprechend abgesicherte Transaktionen
+eingesetzt werden~\cite{MicrosoftRetryPattern}.
+Außerdem müssen die Anzahl der Retries und der Delay optimal gewählt werden, denn sonst besteht die Möglichkeit,
+dass ein Retry zum einen keinen Effekt hat oder zu viele Ressourcen verbraucht~\cite{MicrosoftTransientFaults}.
+
+Wie wirksam ein Retry ist, hängt stark von der Art des aufgetretenen Fehlers ab.
+Bei Fehlern mit dauerhafter Ursache kann eine Wiederholung keine Verbesserung erzielen.
+Ein solcher Fehler kann entstehen, wenn die Transaktion inhaltliche Fehler enthält.
+In diesem Fall würde ein erneuter Versuch das gleiche Ergebnis liefern.
+Die Fehlerbehebung muss manuell erfolgen.
+Zusätzlich hängt der Erfolg eines Retries von der gewählten Strategie ab.
+Eine schlecht optimierte Konfiguration kann die Situation begünstigen, anstatt sie zu beheben.
+
+Neben den Grenzen der Fehlerbehebung können Retry-Mechanismen selbst neue Herausforderungen erzeugen.
+Jeder wiederholte Versuch einer Transaktion verursacht zusätzliche Last für die Datenbank.
+Besonders bei hoher Anzahl paralleler Anfragen kann dies zu verstärkter Konkurrenz um Ressourcen führen.
+Dadurch können sich Antwortzeiten verlängern und die Leistung des Systems verschlechtern.
+Insbesondere bei vielen gleichzeitig ausgeführten Retries kann dadurch ein Kreislauf entstehen, bei dem zusätzliche
+Datenbanklast wiederum neue Fehler verursacht.
+
+
+Darüber hinaus besteht keine Garantie, dass eine wiederholte Transaktion erfolgreich abgeschlossen wird.
+Wenn Retries ohne passende Optimierung eingesetzt werden, können zahlreiche Wiederholungsversuche entstehen.
+Diese verbrauchen Ressourcen, ohne dass es einen Nutzen hat.
+Daher ist eine geeignete Retry-Strategie notwendig, die sowohl die Fehlerart als auch die Auswirkungen auf die
+Datenbank berücksichtigt.
