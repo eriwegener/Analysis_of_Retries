@@ -1,0 +1,27 @@
+% !TeX root = ../../main.tex
+
+Die in Abschnitt~\ref{sec:errorclasses} beschriebenen Fehlerklassen können dazu führen, dass Transaktionen in
+PostgreSQL nicht erfolgreich abgeschlossen werden können.
+Besonders bei parallelen Zugriffen mehrerer Prozesse oder Anwendungen auf gemeinsame Datenbankressourcen können
+Konflikte entstehen, die eine erfolgreiche Durchführung einzelner Transaktionen verhindern.
+Diese Situationen treten beispielsweise auf, wenn mehrere Transaktionen gleichzeitig versuchen einen Datensatz zu
+verändern.
+Das Datenbanksystem bricht daraufhin eine oder mehrere Transaktionen ab, um die Konsistenz der Daten sicherzustellen.
+
+Für Anwendungen bedeutet ein solcher Abbruch, dass die fehlgeschlagene Transaktion erneut ausgeführt werden muss.
+Während dies bei einfachen Anwendungen, wie bei einzelnen vom Nutzer ausgeführten Datenbankoperationen, durch einen
+manuellen Neustart der Transaktion erfolgen kann, stellt dies in komplexeren Systemen eine Herausforderung dar.
+Moderne Anwendungen bestehen häufig aus mehreren abhängigen Komponenten, die gleichzeitig auf gemeinsame Daten
+zugreifen.
+Tritt in dieser Kette an Komponenten an einer Stelle ein Fehler auf, kann dieser Fehler dafür sorgen, dass weitere
+Prozesse ebenfalls fehlschlagen oder nicht mehr korrekt ausgeführt werden.
+Besonders kritisch ist dies bei Systemen, bei denen Transaktionen automatisch und ohne Nutzereingriffe verarbeitet
+werden.
+
+Um solche Fehlerfälle automatisiert zu behandeln, werden Retry-Mechanismen eingesetzt.
+Die automatisierte Behandlung fehlgeschlagener Transaktionen trägt dazu bei, die Verfügbarkeit von Anwendungen zu
+erhöhen und manuelle Eingriffe zu reduzieren.
+Gleichzeitig darf die Fehlerbehandlung jedoch nicht zu einer unverhältnismäßigen Belastung des Datenbanksystems
+führen.
+Der folgende Abschnitt führt die Risiken und Grenzen von Retry auf, auf die bei einer Implementierung geachtet
+werden muss.
