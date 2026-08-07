@@ -117,3 +117,138 @@
                 - Self-optimization (Komponenten und Systeme suchen Selbst nach Möglichkeiten sich zu verbessern)
                 - Self-healing (System detects, diagnoses und repairs local software und hardware problems)
                 - Self-protection (System verteidigt sich gegen Angriffe)
+
+05
+    5.1 Zielsetzung
+        - Motivation
+            - Auswirkung verschiedener Konfigurationen auf das Verhalten
+        - Untersuchungsziel
+            - einfluss von Count
+            - Einfluss von Delay
+            - Einfluss von Strategy
+        - Bewertungsgrößen
+            - eben in analysis schauen, wonach ich filter
+        - Rahmenbedingungen
+            - gibt definierte Fehlerszenarien
+            - soll verhalten unter reproduzierbaren bedingungen beobachten
+        - Ergebnis
+            - durch die anlysierten werte soll eine Strategie bewertet werden
+            - Aussage, wann Retry sinnvoll eingesetzt werden kann
+    5.2 Gesamtarchitektur
+        - Testsystem
+            - Testclient
+            - Retry-Komponente
+            - Datenbank
+            - logging
+        - Fehlererzeugung
+            - Fehler werden über definierte Tx erzeugt
+            - SQL wird über psycopg2 ausgeführt
+        - Logging
+            - JSONL
+            - ein Eintrag pro Transaktion
+            - enhält alle Messdaten
+        - Auswertung
+            - Python mit pandas
+            - Aggregation into Sorting
+            - Berechnung der Kennzahlen
+    5.3 Retry-Konzept
+        - Konfigurationsparameter
+            - Retry Count, Delay, Strategie
+        - Ablauf
+            - SQL ausführen
+            - Fehler? Nein, fertig und log
+                - Ja, retry count erhöhen, delay anhand der strategie anwenden
+            - erneut ausführen
+        - Abbruch
+            - Erfolg oder max Retry Count erreicht
+    5.4 Ablauf eines Experiments
+        - Start -> Szenario auswählen -> config laden -> parameter setzen -> SQL ausführen
+            - Fehler ja/nein
+        - Retry möglich ja/nein
+        - Delay anwenden -> Retry -> abbruch bedingung -> Log -> nächstes Experiment -> auswertung
+
+06 Implementierung
+    6.1 Entwicklungsumgebung
+        - Hardware
+            - CPU, RAM, Betriebssystem
+            - PostgreSQL lokal
+            - keine Netzwerkkommunikation und keine weiteren Lasten
+        - Software
+            - Python
+            - psycopg2
+            - PostgreSQL Version xx
+            - pandas
+        - IDE, GitLab
+    6.2 Aufbau der Software
+        - Projektstruktur
+            - analysis/analysis.py (analysiert die logs)
+            - config/settings.py (beinhaltet die werte der parameter)
+            - core/retry.py (implementiert die retry Strategien, startet die services)
+            - db/database.py (implementiert die basic SQL befehle, verbindung zur db, und bestimmte setting für fehler)
+            - experiments/
+                - experimentFunctions.py (implementiert die Experimente und startet den retry)
+                - experimentRunner.py (eigentlich nur dafür da, dass eFunctions weiß welche Fehler ausgeführt werden sollen, caller_frame und caller_name)
+            - logging/ (directory in den geloggt wird)
+            - services/
+                - ServiceDeadlock.py (erzeugt einen Deadlock)
+                - ServiceTimeout.py (erzeugt einen Lock_Timeout)
+                - ServiceSerialization.py (erzeugt ein serialization failure)
+            -.env (definiert verbindung zur datenbank)
+            -main.py (startet alles, die einzelnen RunnerFunctions und analysis)
+    6.3 Fehlererkennung
+        - Exception Handling
+            - try ..., except psycopg2.Error as e:
+                - res = "failed", pgcode = e.pgcode
+        - Wann wird Retry ausgelöst
+            - wenn res = "failed"
+            - retry counter prüfen
+                -> retry oder abbruch
+            - WICHTIG!!!
+                - Da die Fehler in allen Experimenten gezielt erzeugt werden, wurde auf eine dynamische Klassifikation anhand der SQLSTATE-Codes verzichtet.
+                    Im Rahmen der Versuchsauswertung wurde überprüft, dass ausschließlich die vorgesehenen Fehlerklassen auftraten.
+    6.4 Implementierung
+        - Genauer ablauf der Implementierung des Retries
+        - Implementierung der Strategien
+        - parallelität mit Threadpool, so viele Threads wie durch concurrency definiert
+        - geloggt wird:
+            - "type":, "run_id", "iteration":, "retries":,"attempts_ms":, "total_ms":, "status":, "pg_code":, "tx_start":,"tx_finish":
+    6.5 Konfiguration
+        - Parameter
+            - Retry Count, Delay, Strategie, concurrency, rest ist fest implementiert
+    6.6 Implementierungsentscheidungen
+        - Warum python, postgres, psycopg2, jsonl, pandas, local DB, künstliche Fehler, kein Docker, keine sqlstate auswertung usw
+07 Evaluation
+    7.1 Versuchsaufbau
+        - Was für experimente wurden durchgeführt
+        - Wie viele Wiederholungen für die Konfigurationen (5 insgesamt, für Stabilität über die versuche)
+        - welche configs gibt es
+        - variation der parameter
+            - Count, delay, strategy, concurrency
+        - konstante parameter
+        - messgrößen
+            - erfolgsrate, retry verteilung, execution time, quartile, overhead, throughput
+        - Einheit der Messwerte
+    7.2 Testergebnisse
+        - Für die einzelnen Fehlerklassen,
+            - dann strategien und experimente, und was sonst noch in analysis.py steht (maybe nur experimente darstellen)
+        - Wichtige Messwerte darstellen, passende diagramme
+        - Danach einfach nur darstellen nach Strategien, Count, Delays, Concurrency und knapp erklären, was man erkennt
+    7.3 Vergleich der Konfigurationen
+        - alles für die einzelnen fehlerklassen
+        - schnellste Strategie, höchste erfolgsrate, höchste Last, geringster overhead
+        - Änderungen bei anderen parametern
+        - gibt es config die gut die über alle fehlerklassen funktioniert
+        - gibts optimale parameter oder abhängig von Fehlerszenario
+    7.4 Interpretation
+        - Was bedeuten die Ergebnisse für Retry allgemein?
+        - Wann lohnt sich Retry?
+        - Wann verschlechtert Retry das System?
+        - Welche Parameter sind sinnvoll?
+        - gibts einen Trade-off zwischen Erfolgsrate und Performance
+        - passen Ergebnisse zu Problemanalyse
+        - Welche Grenzen hat der Versuchsaufbau?
+            - lokale Datenbank
+            - künstlich erzeugte Fehler
+            - teilweise einfach too much concurrency
+            - nur bestimmte Fehlerklassen
+            - fünf Wiederholungen

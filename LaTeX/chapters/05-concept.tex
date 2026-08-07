@@ -1,6 +1,14 @@
 % !TeX root = ../main.tex
 
-Alter hab ich keinen Bock mehr.
+Dieses Kapitel beschreibt das Konzept der Experimente zur Untersuchung verschiedener Retry Strategien für
+Transaktionen in PostgreSQL\@.
+Ziel ist es, einen reproduzierbaren Versuchsaufbau zu definieren, mit dem das Verhalten der Retry-Mechanismen in
+fest erzeugten Fehlersituationen analysiert werden kann.
+
+Dafür wird zunächst die Zielsetzung erläutert.
+Anschließend wird die Systemarchitektur beschrieben und wie sie sich mit PostgreSQL ergänzen.
+Darauf aufbauend wird der Aufbau des Retry-Mechanismus vorgestellt, sowie der Ablauf eines vollständigen
+Experiments erläutert.
 
 \section{Zielsetzung}
 \label{sec:purpose}
@@ -10,10 +18,10 @@ Alter hab ich keinen Bock mehr.
 \label{sec:architecture}
 \input{chapters/05-concept/05.2-architecture}
 
-%\section{Entscheidungslogik}
-%\label{sec:logic}
-%\input{chapters/05-concept/05.1-logic}
+\section{Aufbau}
+\label{sec:design}
+\input{chapters/05-concept/05.3-design}
 
 \section{Ablauf des Systems}
 \label{sec:process}
-\input{chapters/05-concept/05.3-process}
+\input{chapters/05-concept/05.4-process}

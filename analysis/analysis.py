@@ -71,7 +71,7 @@ def _retry_distribution(data, param, pstatus):
 
     _print(result, "retry-distribution", param, pstatus)
 
-def _latency_comparison(data, param, pstatus):
+def _execution_comparison(data, param, pstatus):
     df = data.copy()
     df["e"] = df["run_id"].str.extract(r"(e\d+)_")
 
@@ -88,7 +88,7 @@ def _latency_comparison(data, param, pstatus):
 
     result = _sort_numeric(result)
 
-    _print(result, "latency_comparison", "", "")
+    _print(result, "execution_comparison", "", "")
 
 def _quartiles(data, param, pstatus):
     df = data.copy()
@@ -158,7 +158,7 @@ def _influence_concurrency(data):
     print("=== influence-concurrency ===")
     _rates(data, "cc", "")
     _retry_distribution(data, "cc", "")
-    _latency_comparison(data, "cc", "")
+    _execution_comparison(data, "cc", "")
     _quartiles(data, "cc", "")
     _retry_overhead(data, "cc", "")
     _throughput(data, "cc")
@@ -167,7 +167,7 @@ def _influence_delay(data):
     print("=== influence-delay ===")
     _rates(data, "d", "")
     _retry_distribution(data, "d", "")
-    _latency_comparison(data, "d", "")
+    _execution_comparison(data, "d", "")
     _quartiles(data, "d", "")
     _retry_overhead(data, "d", "")
     _throughput(data, "d")
@@ -176,7 +176,7 @@ def _influence_retry(data):
     print("=== influence-retry ===")
     _rates(data, "r", "")
     _retry_distribution(data, "r", "")
-    _latency_comparison(data, "r", "")
+    _execution_comparison(data, "r", "")
     _quartiles(data, "r", "")
     _retry_overhead(data, "r", "")
     _throughput(data, "r")
@@ -185,7 +185,7 @@ def _influence_strategy(data):
     print("=== influence-strategy ===")
     _rates(data, "s", "")
     _retry_distribution(data, "s", "")
-    _latency_comparison(data, "s", "")
+    _execution_comparison(data, "s", "")
     _quartiles(data, "s", "")
     _retry_overhead(data, "s", "")
     _throughput(data, "s")
@@ -194,7 +194,7 @@ def _overall(data):
     print("=== overall ===")
     _rates(data, "", "")
     _retry_distribution(data, "", "")
-    _latency_comparison(data, "", "")
+    _execution_comparison(data, "", "")
     _quartiles(data, "", "")
     _retry_overhead(data, "", "")
     _throughput(data, "")

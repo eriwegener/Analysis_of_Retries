@@ -1,0 +1,74 @@
+% !TeX root = ../main.tex
+
+\begin{figure}[ht]
+	\centering
+	\begin{tikzpicture}
+		\node[
+			fill=gray!10,
+			draw=gray!30,
+			rounded corners,
+			inner sep=10pt
+		] {
+			\begin{tikzpicture}[
+				scale=0.8,
+				transform shape,
+				node distance=1cm,
+				every node/.style={font=\small},
+				startstop/.style={
+					rectangle,
+					rounded corners,
+					draw,
+					minimum width=3cm,
+					minimum height=1cm,
+					align=center
+				},
+				process/.style={
+					rectangle,
+					draw,
+					minimum width=3cm,
+					minimum height=1cm,
+					align=center
+				},
+				decision/.style={
+					diamond,
+					draw,
+					align=center,
+					aspect=2
+				},
+				arrow/.style={
+					->,
+					>=stealth
+				}
+			]
+
+			\node (start) [startstop] {Anwendung starten};
+			\node (error) [process, below=of start] {Namensgebende Funktion\\ startet Experimente}
+			\node (experiment) [process, below=of error] {Experiment startet Retry\\ anhand der definierten Parameter}
+			\node (run) [process, below=of experiment] {SQL ausführen}
+			\node (sOrf) [decision, below=of run] {success or failure}
+			\node (possible) [decision, below right=1.5cm of sOrf] {Retry möglich?}
+			\node (retry) [process, below right=2cm of possible] {Retry ausführen}
+			\node (log) [process, below left=2cm of possible] {Log result}
+			\node (calc) [process, below=of log] {Kenngrößen berechnen};
+			\node (result) [process, below=of calc] {Ergebnisse auswerten};
+			\node (end) [startstop, below=of result] {Experiment beenden};
+
+			\draw [arrow] (start) -- (error);
+			\draw [arrow] (error) -- (experiment);
+			\draw [arrow] (experiment) -- (run);
+			\draw [arrow] (run) -- (sOrf);
+			\draw [arrow] (sOrf) -- node[midway, above right] {failed} (possible);
+			\draw [arrow] (sOrf) -- node[midway, above left] {succeeded} (log);
+			\draw [arrow] (possible) -- node[below left] {possible} (retry);
+			\draw [arrow] (possible) -- node[below right] {not possible} (log);
+			\draw [arrow] (retry) |- (sOrf);
+			\draw [arrow] (log) -- (calc);
+			\draw [arrow] (calc) -- (result);
+			\draw [arrow] (result) -- (end);
+
+			\end{tikzpicture}};
+	\end{tikzpicture}
+	
+	\caption{Ablauf eines Experiments}
+	\label{fig:experiment_flow}
+\end{figure}

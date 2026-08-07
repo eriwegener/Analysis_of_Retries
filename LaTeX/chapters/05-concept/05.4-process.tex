@@ -1,0 +1,9 @@
+% !TeX root = ../../main.tex
+
+Abbildung~\ref{fig:experiment_flow} zeigt den Ablauf eines Experiments.
+Nach dem Start der Anwendung werden die Experimente gestartet und die definierten Parameter ausgewählt.
+Für jede Transaktion wird zunächst eine SQL-Anfrage ausgeführt und anschließend anhand des Ergebnisses entschieden,
+ob ein Retry erforderlich ist.
+Falls ein erneuter Versuch möglich ist, wird dieser ausgeführt und der Ablauf wiederholt.
+Nach Abschluss der Transaktionen werden die Ergebnisse geloggt und die beschriebenen Kenngrößen berechnet.
+\input{figures/flowchart}

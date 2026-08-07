@@ -1,3 +1,71 @@
 % !TeX root = ../../main.tex
 
-Jajjaajjajaja
+Das Ziel der Experimente ist es die einzelnen, Retry systematisch zu testen und zu untersuchen, wie dieser sich unter
+den verschiedenen Konfigurationen verhält.
+Zusätzlich soll analysiert werden wie stark der Einfluss der verschiedenen Parameter ist.
+
+Die Parameter sind die Anzahl an erlaubten Retries, \emph{Retry Count}, die Dauer des Wartens zwischen den einzelnen
+Retries, \emph{Delay}, und die einzelnen Strategien.
+Die Strategien, wie in Abschnitt~\ref{sec:retry} erwähnt, sind als Basis kein Retry, immediate Retry, Retry mit festem
+Delay und der Retry mit exponential backoff + jitter Delay.
+
+Bewertet werden soll das mit verschiedenen Kenngrößen.
+Die wichtigste hierbei ist die Erfolgsrate, die sich berechnet, in dem alle erfolgreichen Transaktionen durch die
+Gesamtanzahl an Transaktionen geteilt werden.
+Eine weitere entscheidende Kenngröße ist die durchschnittliche Ausführungszeit der Transaktionen.
+Die berechnet sich aus der Summe der \texttt{total\_ms} aller Transaktionen geteilt durch die Anzahl der Transaktionen.
+Des Weiteren werden die Quartile berechnet.
+Dabei wird der Fokus auf die 50\%, 95\%, 99\% und 99.9\% Quartile gelegt, um zu zeigen, wie viel Prozent der
+Transaktionen bis zu welchem Zeitpunkt abgeschlossen haben.
+Die \emph{retry\_distribution} zeigt, wie viele Transaktionen wie häufig einen Retry ausgeführt haben.
+Sortiert wird bei den genannten Kenngrößen nach successful oder failed.
+
+Eine weitere Kenngröße ist der \emph{retry\_overhead}, der sich durch die durchschnittliche Differenz zwischen der
+Gesamtdauer \texttt{total\_ms} und dem besten Versuch \texttt{best\_ms} berechnet.
+\[
+	\mathrm{retry\_overhead} =
+	\frac{1}{n}
+	\sum_{i=1}^{n}
+	\left(
+		\mathrm{total}_{\mathrm{ms},i}
+		-
+		\mathrm{best}_{\mathrm{ms},i}
+	\right),
+	\quad n = \mathrm{total\_transactions}
+\]
+
+Dieser Wert ist besonders relevant, da er den zusätzlichen Zeitaufwand zeigt, der durch die Ausführung von Retries
+entsteht.
+Dadurch lässt sich bewerten, welchen Einfluss Wiederholungsversuche auf die Gesamtausführungszeit einer Transaktion
+haben.
+
+
+Die letzte Kenngröße ist mit, eine der wichtigsten, der \emph{throughput}.
+Der Durchsatz zeigt an, wie viele erfolgreiche Transaktionen innerhalb einer bestimmten Zeit verarbeitet werden
+können.
+Dadurch ermöglicht er eine Bewertung der Leistungsfähigkeit des Systems.
+Dieser berechnet sich aus der Anzahl erfolgreicher Versuche(N) geteilt durch die Dauer des Experiments.
+\[
+	\mathrm{throughput} =
+	\frac{
+		N_{\mathrm{success}}
+	}{
+		t_{\mathrm{finish}}-t_{\mathrm{start}}
+	}
+\]
+Es wird durch die Dauer des Experiments geteilt, da diese fest definiert sind.
+In den Experimenten sind die Parameter variable, aber wenn ein Experiment angefangen wurde, läuft das die Anzahl an
+Iterationen durch.
+Dadurch lässt sich der Durchsatz der einzelnen Experimente berechnen und durch weitere Sortierungsparameter wird der
+Durchsatz für diesen Parameter berechnet.
+
+Damit diese Experimente repräsentative Ergebnisse liefern, gibt es Rahmenbedingungen.
+Die Fehlerszenarien sind fest definiert für alle Transaktionen.
+Wenn Retry beispielsweise für Deadlocks getestet werden soll, dann erzeugen die Transaktionen auf jeden Fall auch
+einen Deadlock.
+Bei den anderen Fehlerklassen passiert genau das Gleiche, dadurch lässt sich das Verhalten unter reproduzierbaren
+Bedingungen beobachten.
+
+Die Kenngrößen sollen im Endeffekt zeigen, ob es Retry Strategien gibt, die bei den einzelnen Fehlerklassen bessere
+Ergebnisse liefern als andere Strategien.
+Zusätzlich soll anhand der Ergebnisse abgeleitet werden, wann Retry sinnvoll eingesetzt werden kann.

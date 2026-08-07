@@ -1,3 +1,5 @@
+% \def\PrintVersion
+
 \ifdefined\PrintVersion
 \documentclass[12pt,a4paper,twoside,openright]{report}
 \else
@@ -49,24 +51,22 @@
 	\chapter{Konzept der Experimente}
 	\label{chap:concept}
 	\input{chapters/05-concept}
-%
-	%\chapter{Anforderungsanalyse}
-	%\label{chap:anforderungsanalyse}
-	%\input{chapters/06-anforderungsanalyse}
-%
-	%\chapter{Implementierung}
-	%\label{chap:implementierung}
-	%\input{chapters/07-implementierung}
-%
-	%\chapter{Evaluation}
-	%\label{chap:evaluation}
-	%\input{chapters/08-evaluation}
-%
-	%\chapter{Fazit und Ausblick}
-	%\label{chap:fazit-und-ausblick}
-	%\input{chapters/09-fazit-und-ausblick}
-%
-	\nocite{*}
+
+	\chapter{Implementierung}
+	label{chap:implementation}
+	\input{chapters/06-implementation}
+
+	\chapter{Evaluation}
+	\label{chap:evaluation}
+	\input{chapters/07-evaluation}
+
+	\chapter{Diskussion}
+	\label{chap:discussion}
+	\input{chapters/08-discussion}
+
+	\chapter{Fazit und Ausblick}
+	\label{chap:conclusion}
+	\input{chapters/09-conclusion}
 
 	\printbibliography[
 		heading=bibintoc,

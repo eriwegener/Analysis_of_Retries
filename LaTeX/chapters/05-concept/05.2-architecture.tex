@@ -1,3 +1,27 @@
 % !TeX root = ../../main.tex
 
-Bitti hol mich hier raus!!!
+Die Komponenten die an meinen Experimenten beteiligt sind, sind der Testclient, über den die Experimente gestartet
+werden.
+Dadurch werden die Retry Mechanismen verwendet.
+In diesen Mechanismen wird der SQL-Code über psycopg2
+\footnote{psycopg2 ist ein PostgreSQL-Datenbanktreiber für Python.} an die Datenbank weitergegeben, die diesen
+ausführt und ein Ergebnis zurückgibt.
+Das Ergebnis des Mechanismus wird am Ende in eine Logdatei geschrieben.
+
+Die getesteten Fehler werden über definierte Transaktionen erzeugt.
+Dieser SQL-Code wird dann mit psycopg2 an die Datenbank weitergegeben und ausgeführt.
+Der Status einer Transaktion wird über psycopg2 wieder das Testprogramm zurückgegeben, welches diesen dann speichert.
+Daraufhin wird getestet, ob Retry durchgeführt werden muss oder nicht.
+
+Wenn ein Mechanismus abgeschlossen ist, wird das Ergebnis in eine Logdatei geschrieben.
+Dabei ist es von Relevanz, dass an der richtigen Stelle geloggt wird.
+Denn zu frühes loggen kann für verfälschte Ergebnisse sorgen.
+Die Daten werden als JSONL\footnote{Normales JSON Format nur als Line} in die Logdatei geschrieben.
+Dabei steht eine Zeile für eine Transaktion.
+Eine Logdatei enthält alle Messdaten für die Fehlerklasse, die getestet wurde.
+
+Die Auswertung dieser Dateien erfolgt mit pandas\footnote{pandas ist ein Datenanalyse-Tool für Python.}, welches die
+Messdaten aggregiert und aufbereitet.
+Dadurch ermöglicht pandas eine Berechnung der relevanten Messgrößen, sowie deren flexible Sortierung nach
+spezifischen Testparametern.
+Dies garantiert eine übersichtliche Darstellung der Ergebnisse.
