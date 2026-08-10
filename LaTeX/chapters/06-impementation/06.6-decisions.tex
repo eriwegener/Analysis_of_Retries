@@ -1,1 +1,52 @@
 % !TeX root = ../../main.tex
+
+Bei der Implementierung wurden verschiedene Entscheidungen getroffen, um den Versuchsaufbau möglichst einfach und
+reproduzierbar zu halten.
+Gleichzeitig sollte die Implementierung möglichst nah an den tatsächlich untersuchten Datenbank- und
+Retry-Mechanismen bleiben.
+Die wichtigsten Entscheidungen werden im Folgenden kurz begründet.
+
+Für die Umsetzung wurde Python verwendet, da sich damit sowohl die Kommunikation mit PostgreSQL als auch die
+parallele Ausführung der Transaktionen und die spätere Analyse der Versuchsdaten umsetzen lassen.
+Für die Datenbankanbindung wird \texttt{psycopg2} eingesetzt, damit ein direkter Zugriff auf PostgreSQL
+möglich ist.
+Dadurch können SQL-Anweisungen und Transaktionen gezielt gesteuert und auftretende Datenbankfehler direkt
+verarbeitet werden.
+Zudem handelt es sich bei \texttt{psycopg2} um eine etablierte und weit verbreitete Bibliothek für die Anbindung
+von PostgreSQL aus Python.
+Als Datenbanksystem wird PostgreSQL verwendet, da die für die Experimente benötigten Transaktionsmechanismen und
+Sperrverfahren unterstützt werden.
+Insbesondere die Erkennung von Fehlern und die Rückgabe entsprechender SQLSTATE-Codes sind für die Untersuchung der
+Fehlerklassen relevant.
+Die Datenbank wird lokal betrieben, um zusätzliche Einflüsse durch Netzwerkverbindungen oder externe Systeme zu
+vermeiden.
+Dadurch kann die Testumgebung zudem einfacher konfiguriert und kontrolliert werden.
+
+Für die Speicherung der Versuchsergebnisse wurde das JSONL-Format gewählt.
+Jeder Transaktionsversuch kann dabei als eigener Datensatz gespeichert werden, wodurch auch bei einer großen Anzahl
+an Messwerten eine einfache und strukturierte Speicherung möglich ist.
+Die erzeugten Logdateien können anschließend direkt mit \texttt{pandas} eingelesen und weiterverarbeitet werden.
+\texttt{pandas} wird für die Gruppierung der Versuchsdaten sowie die Berechnung der untersuchten Kenngrößen
+eingesetzt.
+
+Die Fehler werden gezielt erzeugt, um für jedes Experiment eine definierte Fehlerklasse untersuchen zu können.
+Eine dynamische Klassifikation anhand der SQLSTATE-Codes ist daher für die Durchführung der Experimente nicht
+notwendig.
+Die Codes werden dennoch protokolliert, um die tatsächlich aufgetretenen Fehler überprüfen und die Ergebnisse
+entsprechend nachvollziehen zu können.
+
+Für die Untersuchung des Retry-Verhaltens wurden die Strategien \emph{Immediate Retry}, \emph{Retry after Delay} und
+\emph{Retry with Backoff + Jitter} gewählt.
+Diese decken unterschiedliche Ansätze der Wiederholungsversuche ab.
+Während beim \emph{Immediate Retry} unmittelbar ein neuer Versuch gestartet wird, verwendet \emph{Retry after Delay}
+eine konstante Wartezeit.
+\emph{Retry with Backoff + Jitter} erweitert diesen Ansatz um einen exponentiell steigenden maximalen Delay und
+eine zufällige Komponente.
+Dadurch können die Auswirkungen verschiedener Verzögerungsstrategien auf die untersuchten Kenngrößen miteinander
+verglichen werden.
+
+Die parallele Ausführung der Clients erfolgt über den \texttt{ThreadPoolExecutor}.
+Dadurch können mehrere Transaktionen gleichzeitig ausgeführt und die für die Experimente benötigte Concurrency
+realisiert werden.
+Der nächste Versuch wird erst gestartet, nachdem der vorherige fehlgeschlagen ist und gegebenenfalls der
+entsprechende Delay abgewartet wurde.

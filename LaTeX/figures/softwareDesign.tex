@@ -1,0 +1,84 @@
+% !TeX root = ../main.tex
+
+\begin{figure}[ht]
+	\centering
+	\begin{tikzpicture}
+		\node[
+			fill=gray!10,
+			draw=gray!30,
+			rounded corners,
+			inner sep=10pt
+		] {
+			\begin{tikzpicture}[
+				scale=0.8,
+				transform shape,
+				node distance=1cm,
+				every node/.style={font=\small},
+				startstop/.style={
+					rectangle,
+					rounded corners,
+					draw,
+					minimum width=3cm,
+					minimum height=1cm,
+					align=center
+				},
+				process/.style={
+					rectangle,
+					draw,
+					minimum width=3cm,
+					minimum height=1cm,
+					align=center
+				},
+				decision/.style={
+					diamond,
+					draw,
+					align=center,
+					aspect=2
+				},
+				storage/.style={
+					rectangle,
+					draw,
+					dashed,
+					align=center,
+					aspect=2
+				},
+				arrow/.style={
+					->,
+					>=stealth
+				},
+				implements/.style={
+					dashed,
+					-{Triangle[open]}
+				},
+			]
+
+				\node (start) [startstop] {main.py\\Programmstart};
+				\node (runner) [process, below=of start] {experimentRunner.py};
+				\node (analysis) [process, right=2cmof runner] {anaylsis.py};
+				\node (experiment) [process, below=of runner] {experimentFunctions.py};
+				\node (config) [process, left=2cm of runner] {config.py};
+				\node (database) [process, below=of config] {database.py};
+				\node (retry) [process, below=of experiment] {retry.py};
+				\node (service) [process, below=of database] {service.py};
+				\node (log) [storage, below=of analysis] {Logs}
+
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (start) -- (runner);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (start) -| (analysis);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (runner) -- (experiment);
+				\draw [implements, shorten <=5pt, shorten >=5pt] (config) -- (experiment);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (experiment.south) to[bend right=20] (retry.north);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (retry.north) to[bend right=20] (experiment.south);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (retry.west) to[bend left=20] (service.east);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (service.east) to[bend left=20] (retry.west);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (service.north) to[bend left=20] (database.south);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (database.south) to[bend left=20] (service.north);
+				\draw [implements, shorten <=5pt, shorten >=5pt] (database) -- (experiment);
+				\draw [implements, shorten <=5pt, shorten >=5pt] (log) -- (analysis);
+				\draw [arrow, shorten <=5pt, shorten >=5pt] (experiment) -- (log);
+
+			\end{tikzpicture}};
+	\end{tikzpicture}
+
+	\caption{Aufbau der Projektstruktur}
+	\label{fig:softwareDesign}
+\end{figure}

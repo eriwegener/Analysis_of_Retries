@@ -1,1 +1,39 @@
 % !TeX root = ../../main.tex
+
+Der Codeausschnitt~\ref{lst:params} zeigt die Wertebereiche der für die Experimente verwendeten Parameter.
+Um die Vergleichbarkeit und Stabilität der Ergebnisse zu gewährleisten, wird jedes Experiment fünfmal wiederholt.
+Die Workload bleibt dabei mit 500 Transaktionen für alle Experimente konstant.
+Dadurch wird verhindert, dass Unterschiede in der Anzahl der ausgeführten Transaktionen die Messergebnisse
+beeinflussen.
+Unterschiede zwischen den Ergebnissen können somit auf die jeweils untersuchten Parameter zurückgeführt werden.
+
+Die Parameter \texttt{CONCURRENCY}, \texttt{RETRY\_COUNT} und \texttt{RETRY\_DELAY} werden jeweils über mehrere
+festgelegte Werte variiert.
+Dadurch kann untersucht werden, wie sich beispielsweise eine steigende Anzahl paralleler Clients, eine höhere
+Anzahl zulässiger Retries oder ein zunehmender Delay auf die jeweiligen Kenngrößen auswirkt.
+Die Experimente werden dabei so konfiguriert, dass der jeweils untersuchte Parameter variiert wird, während die
+übrigen Parameter konstant gehalten werden.
+Dadurch lässt sich der Einfluss des einzelnen Parameters gezielter bestimmen.
+
+Der Parameter \texttt{RETRY\_STRATEGY} ist aus Gründen der Optimierung ebenfalls in der \texttt{config.py} definiert.
+Die Auswahl der tatsächlich verwendeten Strategie erfolgt jedoch innerhalb der Implementierung über eine
+\texttt{if-else}-Verzweigung.
+Dadurch können die verschiedenen Retry-Strategien mit derselben grundlegenden Logik ausgeführt und miteinander
+verglichen werden.
+
+Die gewählten Parameterbereiche stellen dabei einen Kompromiss zwischen dem Umfang der Experimente und der
+Aussagekraft der Ergebnisse dar.
+Durch die Variation mehrerer Werte können Trends innerhalb der untersuchten Kenngrößen erkannt werden, ohne dass
+für jede mögliche Kombination aller Parameter ein eigenes Experiment durchgeführt werden muss.
+Die fünf Wiederholungen pro Konfiguration dienen zusätzlich dazu, Schwankungen einzelner Messungen zu reduzieren
+und eine stabilere Grundlage für die spätere Auswertung zu schaffen.
+
+\begin{lstlisting}[language=Python, caption={Übersicht der Parameter}, label={lst:params}]
+	RETRY_COUNT = [0, 1, 3, 5]
+	RETRY_DELAY = [0, 0.005, 0.01, 0.05, 0.1]
+	RETRY_STRATEGY = [0, 1, 2, 3]
+
+	CONCURRENCY = [2, 5, 7, 10, 20]
+	WORKLOAD = [500]
+	ITERATIONS = 5
+\end{lstlisting}

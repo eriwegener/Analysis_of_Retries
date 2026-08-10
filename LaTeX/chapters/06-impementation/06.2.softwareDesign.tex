@@ -1,1 +1,40 @@
 % !TeX root = ../../main.tex
+
+Der strukturelle Aufbau des Projekts ist in Abbildung~\ref{fig:softwareDesign} dargestellt und wird im
+nachfolgenden Abschnitt detailliert beschrieben.
+\input{figures/softwareDesign}
+
+Der Programmablauf beginnt mit der Ausführung der \texttt{main}-Funktion.
+Von dort aus werden nacheinander die Funktionen aus dem Modul \texttt{experimentRunner} und die
+\texttt{start\_analysis}-Funktion aufgerufen.
+Die Funktionen des Moduls \texttt{experimentRunner} dienen dabei ausschließlich als namensgebende Funktionen, aus denen
+im weiteren Verlauf die verschiedenen Fehlerklassen abgeleitet werden.
+Dadurch wird klar zugeordnet, welche Fehlerklassen erzeugt und durch die Experimente getestet werden.
+Die anschließende Analyse der Experimente erfolgt über die im Modul \texttt{analysis} enthaltenen Funktionen,
+welche die erzeugten Ergebnisse weiterverarbeiten, auswerten und strukturiert darstellen.
+
+Die im Modul \texttt{experimentRunner} implementierten Funktionen rufen die \texttt{start()}-Funktion im Modul
+\texttt{experimentFunctions} auf.
+Hier sind neben den Experimenten auch die Funktionen zum \emph{Warm-up} der Datenbank und zum Schreiben der Logs
+implementiert.
+Zusätzlich beziehen sich die Experimente die Parameter aus dem \texttt{config} Modul.
+In diesem Modul werden die Clients gestartet, die den Retry ausführen und für jeden Client wird eine neue
+Datenbankverbindung aufgebaut.
+Die Clients starten daraufhin den Retry mit einer bestimmten Strategie.
+
+Im \texttt{retry} Modul befinden sich die Implementierungen der einzelnen Retry Strategien.
+In jeder Strategie wird als Erstes die Transaktion ausgeführt.
+Dafür ruft eine Funktion den Service auf, der zu der Fehlerklasse passt, den die Funktion aus
+\texttt{experimentRunner} am Anfang definiert hat.
+In dem Service steht die Implementierung der Transaktion, die den Fehler erzeugen soll.
+Diese wird dann von der Datenbank ausgeführt und diese gibt dann entweder den SLQSTATE-Code \texttt{00000} oder den
+Fehlerklassen spezifischen Fehler-Code.
+Diese werden dann in \texttt{retry} ausgewertet und gespeichert.
+Daraufhin setzen die einzelnen Retry Strategien ein und führen einen Retry an den gegebenen Parametern aus.
+Sobald eine Strategie keinen Retry mehr durchführen kann, sei es wegen Überschreitung des maximalen Retry Counts oder
+weil die Transaktion successful war, werden die Ergebnisse im JSONL-Format an die Funktion in
+\texttt{experimentFunctions} zurückgegeben, wo diese dann in die Logdatei geschrieben werden.
+
+Von dem allem separat ist das \texttt{analysis} Modul.
+Diesem wird ein Dateipfad zu den Logs übergeben und wertet diese aus.
+Die Ergebnisse gibt es daraufhin strukturiert aus.

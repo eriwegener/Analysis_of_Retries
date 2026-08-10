@@ -39,7 +39,6 @@ def _rates(data, param, pstatus):
         df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
         counts = df.groupby([param, "status"]).size().unstack(fill_value=0)
         rates = counts.div(counts.sum(axis=1), axis=0) * 100
-
     else:
         counts = df.groupby(["status"]).size()
         rates = counts.div(counts.sum()) * 100
@@ -58,9 +57,9 @@ def _retry_distribution(data, param, pstatus):
     df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
 
     if param:
-        result = df.groupby([param, "retries", "status"]).size().unstack(fill_value=0)
+        result = df.groupby([param, "retries", "status"], dropna=False).size().unstack(fill_value=0)
     else:
-        result = df.groupby(["retries", "status"]).size().unstack(fill_value=0)
+        result = df.groupby(["retries", "status"], dropna=False).size().unstack(fill_value=0)
 
     if pstatus == "success":
         result = result["success"]

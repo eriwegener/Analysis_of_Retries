@@ -1,0 +1,69 @@
+% !TeX root = ../../../main.tex
+
+Des Weiteren werden dort Funktionen ausgeführt, um die Datenbank vorzubereiten.
+Denn für jede Fehlerklasse wird die Datenbank neu aufgesetzt, damit alle zu gleichen Bedingungen starten.
+Dafür wird die Datenbank vor Beginn der Experimente einem \emph{WARM-UP} unterzogen.
+Dabei werden relevante Daten in die Caches der Datenbank geladen, wodurch nachfolgende Zugriffe schneller
+verarbeitet werden können.
+Damit die Ergebnisse durch vorherige Experimente nicht verfälscht werden, wird nach jedem Durchlauf eines
+Experiments ein \emph{soft reset} der Datenbank durchgeführt.
+Während dieser Zeit soll sich die Datenbank von Konflikten befreien, Locks lösen und wieder in den Idle Zustand gehen.
+Dafür werden zunächst alle noch vorbereiteten Transaktionen der Datenbank mittels \texttt{ROLLBACK PREPARED}
+zurückgesetzt.
+Anschließend wird durch \texttt{sleep(2)} eine Wartezeit von zwei Sekunden eingehalten, damit sich die Datenbank
+vollständig stabilisieren kann.
+Nachdem die Datenbank vorbereitet ist, werden die Experimente ausgeführt.
+Dafür wurden vier Experimente implementiert.
+\texttt{experiment\_0} dient dabei als Baseline-Experiment und bildet den Ausgangspunkt für die weiteren Experimente.
+Es beschreibt den Zustand des Systems ohne den Einsatz eines Retry-Mechanismus und ermöglicht somit einen Vergleich
+mit den nachfolgenden Experimenten.
+Dies wird für die fünf Concurrency-Werte getestet die in Ausschnitt~\ref{lst:params} gezeigt sind.
+Das nächste Experiment, \texttt{experiment\_1}, soll den Einfluss von Retry ohne Delay testen.
+Dadurch soll gezeigt werden, ob Retry ohne Delay sinnvoll ist und positive Ergebnisse liefert.
+Hier ist insbesondere der \texttt{RETRY\_COUNT} Parameter, im folgenden nur noch Count genannt, wichtig, da dieser
+anzeigt, wie sich das Verhalten ändert, wenn mehr Retries erlaubt sind.
+Der Count von null wird in diesem Fall nicht beachtet, da dieser redundant ist.
+In \texttt{experiment\_2} soll der Einfluss von Delay getestet werden.
+Dafür wird der Count auf einen festen Wert gesetzt, hier Index 2 also Count = 3, damit dieser die Ergebnisse nicht
+verfälscht und die \emph{immediate Retry} Strategie gewählt, weil die den Einfluss von Delay am besten zeigt, denn
+der ist weder zufällig noch anderweitig veränderbar während der Strategie.
+Der Delay ist nur in seinem Initialwert variabel, wobei auch der Delay von null nicht beachtet wird.
+Als Letztes führt \texttt{experiment\_3} einen Vergleich der Strategien durch.
+Es werden die beiden Strategien \emph{Retry with Delay} und \emph{Retry with backoff + jitter Delay}, mit einem festen
+initial Delay und variabler Anzahl an Retries getestet.
+Der initiale Delay ist auf 0,01 Sekunden festgelegt.
+Dadurch lässt sich ein Vergleich zwischen allen Strategien ziehen, da bei allen die Anzahl der Retries variiert
+wird.
+Für die beiden Strategien, die einen Delay verwenden, wird mit 0,01 Sekunden ein bewusst geringer Delay gewählt,
+sodass dieser keinen wesentlichen Einfluss auf die Vergleichbarkeit der Ergebnisse hat.
+Da alle Experimente mit allen Concurrency-Werten durchgeführt werden, lässt sich in der Analyse herausfinden, ab
+welcher Anzahl an gleichzeitigen Anfragen eine Retry Strategie
+kippt.
+
+Die Experimente rufen die Funktion \texttt{\_start\_experiment()} auf und übergeben die Indizes der Parameter.
+Die aufgerufene Funktion liest die Werte der Parameter über die Funktion \texttt{\_get\_params()} anhand
+ihrer Indizes aus.
+Zusätzlich wird anhand der Parameter der \texttt{run\_key} erzeugt, der für die Sortierung in der Analyse benötigt
+wird.
+Die Parameter und der Schlüssel werden an \texttt{\_start\_experiment()} zurückgegeben.
+Nachdem die Parameter und der Schlüssel gesetzt wurden, wird der erste Logeintrag für das Experiment erzeugt.
+Die \emph{run\_meta} beschreibt genauer, worum es sich in dem Experiment handelt und wann es gestartet wurde.
+Daraufhin wird \texttt{\_run\_batch()} aufgerufen, welche den Log-path anhand des caller\_name setzt und mit Threads
+die Anfragen an die Datenbank startet.
+Für die parallele Ausführung der Clients wird ein \texttt{ThreadPoolExecutor} mit der durch den Concurrency-Wert
+angegebenen Anzahl an Threads verwendet.
+Für jede Aufgabe wird ein \texttt{Future}-Objekt erzeugt und in einer Liste gespeichert.
+Nachdem die Aufgaben abgeschlossen sind, werden die zugehörigen Ergebnisse über \texttt{as\_completed} nacheinander
+verarbeitet.
+Dadurch erfolgt das Schreiben in die Logdatei über den aufrufenden Thread, wodurch gleichzeitige Zugriffe auf die
+Logdatei durch die Worker-Threads vermieden werden.
+Für jeden ausgeführten Vorgang werden die Parameter \texttt{type}, \texttt{run\_id}, \texttt{iteration},
+\texttt{retries}, \texttt{attempts\_ms}, \texttt{total\_ms}, \texttt{status}, \texttt{pg\_code}, \texttt{tx\_start}
+und \texttt{tx\_finish} erfasst und im JSONL-Format in der Logdatei gespeichert.
+Die Iteration wird nur wegen der Information mit geloggt, hat aber keinen weiteren Nutzen.
+
+Im Client wird anhand der übergebenen Strategie entschieden, welche Strategie aufgerufen wird.
+Das geschieht durch \texttt{match ... : case ... :} und in den einzelnen Cases wird der Rückgabewert der Strategie
+gespeichert.
+Die Datenbankverbindung wird ebenfalls in dieser Funktion aufgebaut, da jeder Client eine eigene Verbindung benötigt.
+Die Ergebnisse werden dann an die zuvor erwähnte Funktion zurückgegeben.

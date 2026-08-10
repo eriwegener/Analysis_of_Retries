@@ -2,8 +2,7 @@
 
 PostgreSQL ist eine open-source Datenbank die seit 35 Jahren aktiv entwickelt wird.
 Die aktuell veröffentliche Version ist, 18.4.
-Version 19 wird gerade entwickelt und befindet sich in der Beta.
-Daher wurde diese Arbeit mit PostgreSQL Version 18.4 durchgeführt~\cite{PostgreSQL}.
+Version 19 wird gerade entwickelt und befindet sich in der Beta~\cite{PostgreSQL}.
 
 Die Architektur von PostgreSQL sieht folgendermaßen aus, es gibt einen Serverprozess der die Datenbank verwaltet,
 Verbindungen akzeptiert und die Datenbankaktionen eines Clients ausführt.
@@ -27,3 +26,5 @@ WAL basiert auf \texttt{UNDO}, Informationen müssen vor der Propagation\footnot
 	persistente Datenbankzustand, welcher nach einem Absturz vorhanden ist~\cite{Haerder1983}.}
 der entsprechenden Änderung in das Log geschrieben werden, und \texttt{REDO}, Informationen muss in das temp, archive
 Log geschrieben werden bevor die Bestätigung des EOT\footnote{End of Transaction} kommt~\cite{Haerder1983}.
+
+\textbf{In diesem Abschnitt fehlen noch pandas und psycopg2!!!}

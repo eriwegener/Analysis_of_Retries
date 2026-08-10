@@ -1,1 +1,49 @@
 % !TeX root = ../../main.tex
+
+Da die Datenbank für jede Transaktion einen SQLSTATE-Code zurückgibt, müssen diese Rückgabewerte entsprechend
+ausgewertet werden.
+Die Verarbeitung der SQLSTATE-Codes erfolgt im Modul \texttt{retry} innerhalb der Funktion
+\texttt{\_start\_transaktion}.
+Dort wird die Transaktion in einem \texttt{try: ... except: ...}-Block gestartet.
+Tritt während der Ausführung ein von \texttt{psycopg2} Datenbankfehler auf, wird dieser abgefangen und
+entsprechend verarbeitet~\ref{lst:errorDetection}.
+
+\begin{lstlisting}[language=Python, caption={Fehlererkennung}, label={lst:errorDetection}]
+def _start_transaction():
+    try:
+        ...
+    except psycopg2.Error as e:
+        res = "failed"
+        pgcode = e.pgcode
+def run_retry_with_jitter_delay():
+    ...
+    while data == "failed" and retries < retry_count:
+        ...
+\end{lstlisting}
+
+Im Fehlerfall wird neben dem von der Datenbank zurückgegebenen \texttt{pgcode} auch die Variable \texttt{res} auf
+den Wert \texttt{failed} gesetzt.
+Dadurch wird die weitere Verarbeitung unabhängig vom konkreten SQLSTATE-Code gesteuert.
+Der \texttt{pgcode} wird dabei für die spätere Auswertung erfasst, während die Variable \texttt{res} zur Bestimmung des
+weiteren Ablaufs des Retry-Mechanismus verwendet wird.
+
+Die eigentliche Entscheidung über einen erneuten Ausführungsversuch erfolgt anschließend in der Retry Funktion.
+Dazu wird zunächst geprüft, ob die vorherige Ausführung fehlgeschlagen ist.
+Gleichzeitig wird überprüft, ob die maximal zulässige Anzahl an Retries bereits erreicht wurde.
+Solange beide Bedingungen erfüllt sind, wird die Transaktion erneut ausgeführt.
+Nach jedem fehlgeschlagenen, außer dem initial Versuch wird der Retry-Zähler erhöht, sodass die Anzahl der
+erneuten Ausführungen begrenzt bleibt.
+Sobald die Transaktion erfolgreich ausgeführt wurde oder die maximale Anzahl an Retries erreicht ist, wird die
+Schleife verlassen und das vorliegende Ergebnis zurückgegeben.
+Die Begrenzung der Anzahl der Retries ist insbesondere deshalb relevant, da ein Fehler andernfalls zu einer
+unbegrenzten Folge von Wiederholungsversuchen führen könnte.
+
+Für die vorliegende Untersuchung ist außerdem zu beachten, dass auf eine dynamische Klassifikation der Fehler
+anhand der SQLSTATE-Codes verzichtet wurde.
+Die Fehler werden in den Experimenten gezielt erzeugt und dienen jeweils der Untersuchung einer bestimmten
+Fehlerklasse.
+Stattdessen wird der zurückgegebene SQLSTATE-Code lediglich erfasst.
+Im Rahmen der Versuchsauswertung wurde zusätzlich überprüft, dass bei der Durchführung der Experimente
+ausschließlich die jeweils vorgesehenen Fehlerklassen auftraten.
+Dadurch kann sichergestellt werden, dass die gemessenen Ergebnisse nicht durch unerwartete Fehlerarten beeinflusst
+werden.
