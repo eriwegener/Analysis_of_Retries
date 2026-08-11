@@ -42,13 +42,13 @@
 			]
 
 			\node (start) [startstop] {Anwendung starten};
-			\node (error) [process, below=of start] {Namensgebende Funktion\\ startet Experimente}
-			\node (experiment) [process, below=of error] {Experiment startet Retry\\ anhand der definierten Parameter}
-			\node (run) [process, below=of experiment] {SQL ausführen}
-			\node (sOrf) [decision, below=of run] {success or failure}
-			\node (possible) [decision, below right=1.5cm of sOrf] {Retry möglich?}
-			\node (retry) [process, below right=2cm of possible] {Retry ausführen}
-			\node (log) [process, below left=2cm of possible] {Log result}
+			\node (error) [process, below=of start] {Namensgebende Funktion\\ startet Experimente};
+			\node (experiment) [process, below=of error] {Experiment startet Retry\\ anhand der definierten Parameter};
+			\node (run) [process, below=of experiment] {SQL ausführen};
+			\node (sOrf) [decision, below=of run] {success or failure};
+			\node (possible) [decision, below right=1.5cm of sOrf] {Retry möglich?};
+			\node (retry) [process, below right=2cm of possible] {Retry ausführen};
+			\node (log) [process, below left=2cm of possible] {Log result};
 			\node (calc) [process, below=of log] {Kenngrößen berechnen};
 			\node (result) [process, below=of calc] {Ergebnisse auswerten};
 			\node (end) [startstop, below=of result] {Experiment beenden};

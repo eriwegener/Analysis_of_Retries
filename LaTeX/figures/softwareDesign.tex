@@ -60,7 +60,7 @@
 				\node (database) [process, below=of config] {database.py};
 				\node (retry) [process, below=of experiment] {retry.py};
 				\node (service) [process, below=of database] {service.py};
-				\node (log) [storage, below=of analysis] {Logs}
+				\node (log) [storage, below=of analysis] {Logs};
 
 				\draw [arrow, shorten <=5pt, shorten >=5pt] (start) -- (runner);
 				\draw [arrow, shorten <=5pt, shorten >=5pt] (start) -| (analysis);
