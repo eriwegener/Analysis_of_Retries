@@ -1,5 +1,28 @@
 % !TeX root = ../main.tex
 
-Einleitung xyz
+In diesem Kapitel werden die durchgeführten Experimente ausgewertet, um die Auswirkungen verschiedener
+Retry-Konfigurationen auf das Verhalten und die Leistungsfähigkeit der PostgreSQL-Datenbank zu untersuchen.
+Dazu werden die zuvor beschriebenen Fehlerszenarien unter unterschiedlichen Konfigurationen betrachtet und anhand
+definierter Messgrößen miteinander verglichen.
 
-\section{Versuchaufbau}
+Zunächst werden der Versuchsaufbau und die verwendeten Konfigurationen beschrieben.
+Anschließend werden die Ergebnisse dargestellt und hinsichtlich des Einflusses der verschiedenen Retry-Parameter
+verglichen.
+Abschließend werden die Ergebnisse interpretiert und im Hinblick auf die in der Problemanalyse beschriebenen
+Anforderungen und Grenzen von Retry-Mechanismen bewertet.
+
+\section{Versuchsaufbau}
+\label{sec:experimentSetup}
+\input{chapters/07-evaluation/07.1-experimentSetup}
+
+\section{Testergebnisse}
+\label{sec:results}
+\input{chapters/07-evaluation/07.2-results}
+
+\section{Vergleich der Konfigurationen}
+\label{sec:configComparison}
+\input{chapters/07-evaluation/07.3-configComparison}
+
+\section{Interpretation}
+\label{sec:interpretation}
+\input{chapters/07-evaluation/07.4-interpretation}

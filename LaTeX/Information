@@ -218,27 +218,33 @@
     6.6 Implementierungsentscheidungen
         - Warum python, postgres, psycopg2, jsonl, pandas, local DB, künstliche Fehler, kein Docker, keine sqlstate auswertung usw
 07 Evaluation
-    7.1 Versuchsaufbau
-        - Was für experimente wurden durchgeführt
-        - Wie viele Wiederholungen für die Konfigurationen (5 insgesamt, für Stabilität über die versuche)
-        - welche configs gibt es
-        - variation der parameter
-            - Count, delay, strategy, concurrency
+    7.1 Versuchsaufbau (vieles leider schon in 5.1 erwähnt)
+        - Was für experimente wurden durchgeführt, was sollen sie aussagen, nur kurz is in 6.4 schon mit reingeflossen
+        - welche configs gibt es, kurz beschreiben, für die experimente aber abkürzen, zB nicht schreiben 3 Retries für 2, 5, 7, 10, 20CC, dann das für 5 Retries usw
+            - variation der parameter
+                - Count, delay, strategy, concurrency
         - konstante parameter
+            - Wie viele Wiederholungen für die Konfigurationen (5 insgesamt, für Stabilität über die versuche, sonst keinen nutzen)
+            - Workload begründen warum 500, iwie sollte nen paar tx werden aber nicht zu viele, bringt nicht mehr als das die experimente länger dauern
         - messgrößen
             - erfolgsrate, retry verteilung, execution time, quartile, overhead, throughput
+                - kurz erwähnen und auf 5.1 referenzieren, da die da schon beschrieben sind
         - Einheit der Messwerte
+            - prozent bei rates
+            - ms bei exec time, quartile, overhead
+            - anzahl an transaktionen bei retry verteilung
+            - tx pro dauer des experiments für throughput
     7.2 Testergebnisse
-        - Für die einzelnen Fehlerklassen,
-            - dann strategien und experimente, und was sonst noch in analysis.py steht (maybe nur experimente darstellen)
+        - Für die einzelnen Fehlerklassen
+            - maybe einfach alle 6, sonst einfach nur rates, exec_time, overhead und throughput
         - Wichtige Messwerte darstellen, passende diagramme
-        - Danach einfach nur darstellen nach Strategien, Count, Delays, Concurrency und knapp erklären, was man erkennt
     7.3 Vergleich der Konfigurationen
-        - alles für die einzelnen fehlerklassen
-        - schnellste Strategie, höchste erfolgsrate, höchste Last, geringster overhead
-        - Änderungen bei anderen parametern
-        - gibt es config die gut die über alle fehlerklassen funktioniert
-        - gibts optimale parameter oder abhängig von Fehlerszenario
+        - Gegenüberstellung in einzelnen Unterkapiteln für die fehlerklassen, in den Anhang und einfach die diagramme auseinander, nachfragen
+            - Danach einfach nur darstellen nach Strategien, Count, Delays, Concurrency und knapp erklären, was man erkennt
+            - schnellste Strategie, höchste erfolgsrate, höchste Last, geringster overhead
+            - Verhalten wenn sich
+            - gibt es config die gut die über alle fehlerklassen funktioniert
+            - gibts optimale parameter oder abhängig von Fehlerszenario
     7.4 Interpretation
         - Was bedeuten die Ergebnisse für Retry allgemein?
         - Wann lohnt sich Retry?

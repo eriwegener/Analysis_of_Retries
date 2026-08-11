@@ -1,0 +1,54 @@
+% !TeX root = ../../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		xbar,
+		bar width=2pt,
+		enlarge y limits=0.3,
+		width=0.7\textwidth,
+		height=0.5\textwidth,
+		xmin=0,
+		xmax=17,
+		xlabel={tx/s},
+		scaled ticks=false,
+		symbolic y coords={Deadlock, Serialization, Lock Timeout},
+		ytick=data,
+		legend style={
+			at={(0.5,-0.75)},
+			anchor=north,
+			legend columns=4
+		},
+	]
+
+		% e0
+		\addplot[fill=ezerocolor, draw=none] coordinates {
+			(0.5485,Deadlock)
+			(13.9250,Serialization)
+			(0.9903,Lock Timeout)
+		};
+
+		% e1
+		\addplot[fill=eonecolor, draw=none] coordinates {
+			(0.5604,Deadlock)
+			(16.3201,Serialization)
+			(0.9926,Lock Timeout)
+		};
+
+		% e2
+		\addplot[fill=etwocolor, draw=none] coordinates {
+			(0.4627,Deadlock)
+			(14.7587,Serialization)
+			(0.9934,Lock Timeout)
+		};
+
+		% e3
+		\addplot[fill=ethreecolor, draw=none] coordinates {
+			(0.5024,Deadlock)
+			(15.0863,Serialization)
+			(0.9930,Lock Timeout)
+		};
+
+		\legend{\(\mathrm{e}_0\), \(\mathrm{e}_1\), \(\mathrm{e}_2\), \(\mathrm{e}_3\)}
+
+	\end{axis}
+\end{tikzpicture}

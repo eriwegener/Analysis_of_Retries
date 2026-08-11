@@ -1,0 +1,42 @@
+% !TeX root = ../../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		xbar,
+		bar width=2pt,
+		enlarge y limits=0.3,
+		width=0.7\textwidth,
+		height=0.5\textwidth,
+		trim axis left,
+        trim axis right,
+		xmin=0,
+		xmax=11000,
+		xlabel={ms},
+		scaled ticks=false,
+		symbolic y coords={Deadlock, Serialization, Lock Timeout},
+		ytick=data,
+		legend style={
+			at={(0.5,-0.75)},
+			anchor=north,
+			legend columns=2
+		},
+	]
+
+		% Success
+		\addplot[fill=successcolor, draw=none] coordinates {
+			(3511.47,Deadlock)
+			(123.16,Serialization)
+			(957.19,Lock Timeout)
+		};
+
+		% Failed
+		\addplot[fill=failedcolor, draw=none] coordinates {
+			(8854.39,Deadlock)
+			(170.44,Serialization)
+			(408.65,Lock Timeout)
+		};
+
+		\legend{Success, Failed}
+
+	\end{axis}
+\end{tikzpicture}

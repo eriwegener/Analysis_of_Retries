@@ -1,1 +1,43 @@
 % !TeX root = ../../main.tex
+
+Die Diagramme~\ref{fig:results} beschreiben die wichtigsten Kenngrößen über die durchgeführten Experimente und
+ermöglichen einen Vergleich der drei untersuchten Fehlerklassen.
+Bei der Erfolgsrate zeigen sich merkliche Unterschiede zwischen den Fehlerklassen.
+Deadlocks erreichen über alle Experimente eine durchschnittliche Erfolgsrate von 45.66\%.
+Bei Lock Timeout Fehlern liegt diese bei 13.69\%, während Serialization Fehler mit 56.33\% die einzige Fehlerklasse
+mit einer Erfolgsrate von über 50\% darstellen.
+
+Auch bei der Ausführungszeit zeigen sich deutliche Unterschiede.
+Erfolgreiche Transaktionen weisen bei Deadlocks mit durchschnittlich 4602.26ms die höchste Ausführungszeit auf.
+Bei Lock Timeout Fehlern beträgt diese 1232.09ms und bei Serialization Fehlern lediglich 165.11ms.
+Ein ähnliches Verhältnis zeigt sich bei den fehlgeschlagenen Transaktionen.
+Hier benötigen Deadlocks mit durchschnittlich 10739.17ms ebenfalls länger, bevor die Transaktion
+abgebrochen wird.
+Bei Lock Timeout Fehlern beträgt die durchschnittliche Ausführungszeit 509.93ms und bei Serialization Fehlern 214.39ms.
+
+Analog dazu ist der Retry Overhead.
+Hier entsteht bei Deadlock Fehlern passend zu der Ausführungszeit sowohl bei erfolgreichen als auch bei
+fehlgeschlagenen Transaktionen der größte zusätzliche Zeitaufwand.
+Bei einer erfolgreichen Transaktion liegt der Overhead bei 3511.47ms und bei einer fehlgeschlagenen bei 8854.39ms.
+Auch hier ist der Overhead bei Lock Timeouts höher als der bei Serialization Fehlern, wie es bei der
+Ausführungszeit schon der Fall ist.
+Ein Lock Timeout hat bei einer erfolgreichen Transaktion 957.19ms und bei einer fehlgeschlagener Transaktion
+408.65ms an Overhead erzeugt.
+Serialization Fehler verursachen dagegen mit 123.16ms bei erfolgreichen und 170.44ms bei fehlgeschlagenen
+Transaktionen einen geringeren Overhead.
+
+Beim Durchsatz zeigen sich ebenfalls erkennbare Unterschiede zwischen den Fehlerklassen.
+Über alle Experimente weisen Deadlocks im Durchschnitt mit 0.5185 Transaktionen pro Sekunde den
+niedrigsten Durchsatz auf.
+Innerhalb dieser Fehlerklasse erreicht \texttt{Experiment1} mit 0.5604tx/s den höchsten Wert, während
+\texttt{Experiment2} mit 0.4627tx/s den niedrigsten Durchsatz aufweist.
+Der durchschnittliche Durchsatz bei Lock Timeouts liegt mit 0.9923 Transaktionen pro Sekunde höher.
+Der höchste Wert wird in \texttt{Experiment2} mit 0.9934tx/s erreicht während \texttt{Experiment0} mit 0.9903tx/s
+den niedrigsten Durchsatz aufweist.
+Die Unterschiede zwischen den einzelnen Experimenten fallen hier somit geringer aus als bei den Deadlocks.
+Serialization-Fehler weisen mit durchschnittlich 15.0225tx/s den mit Abstand höchsten Durchsatz der drei
+Fehlerklassen auf.
+Der höchste Wert wird in \texttt{Experiment1} mit 16.3201tx/s erreicht.
+Der niedrigste Durchsatz tritt mit 13.9250tx/s in \texttt{Experiment0} auf.
+
+\input{figures/overallResults}

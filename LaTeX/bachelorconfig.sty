@@ -66,9 +66,11 @@
 \RequirePackage{graphicx}
 \RequirePackage[table]{xcolor}
 \RequirePackage{tikz}
+\RequirePackage{pgfplots}
 \RequirePackage{svg}
 \graphicspath{{figures/}}
 \usetikzlibrary{positioning, shapes.geometric, arrows.meta}
+\pgfplotsset{compact=1.18}
 
 % Include a build-optimized copy when latexmk has generated one. The third
 % argument specifies the maximum image width in pixels; smaller originals are
@@ -92,6 +94,12 @@
 \definecolor{TitleAccent}{HTML}{\ProjectTitleAccentHex}
 \definecolor{TitleGraphBase}{HTML}{\ProjectTitleGraphBaseHex}
 \definecolor{TitleGraphTint}{HTML}{\ProjectTitleGraphTintHex}
+\definecolor{successcolor}{RGB}{0,200,0}
+\definecolor{failedcolor}{RGB}{220,0,0}
+\definecolor{ezerocolor}{RGB}{31,119,180}
+\definecolor{eonecolor}{RGB}{255,127,14}
+\definecolor{etwocolor}{RGB}{44,160,44}
+\definecolor{ethreecolor}{RGB}{214,39,40}
 
 % -----------------------------------------------------------------------------
 % Tables

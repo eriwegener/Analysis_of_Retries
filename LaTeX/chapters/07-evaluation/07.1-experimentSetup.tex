@@ -1,1 +1,41 @@
 % !TeX root = ../../main.tex
+
+Die einzelnen Experimente verfolgen unterschiedliche Schwerpunkte.
+Wie in Abschnitt~\ref{subsec:experimentFunctionsImpl} beschrieben, untersucht das erste Experiment die Fehlerklassen,
+ohne den Einsatz eines Retry-Mechanismus.
+Das dient als Baseline, mit der die Ergebnisse verglichen werden.
+Das zweite Experiment(\texttt{experiment\_1}) untersucht den grundlegenden Einfluss von Retries auf die Transaktionen.
+Dadurch kann bestimmt werden, wie sich das Verhalten eines Retries ohne Verzögerungsmechaniken auf das System auswirkt.
+Im dritten Experiment wird der Einfluss von Delay ermittelt, um festzustellen, wie unterschiedliche Wartezeiten sich
+auf Systemverhalten auswirken.
+Das letzte Experiment vergleicht die einzelnen Retry-Strategien miteinander.
+Dadurch kann in der anschließenden Analyse untersucht werden, ob sich bestimmte Strategien unter den gewählten
+Bedingungen als vorteilhafter oder nachteiliger erweisen.
+
+Für die Durchführung der Experimente stehen die in Codeausschnitt~\ref{lst:params} dargestellten Parameter zur
+Verfügung.
+Aus deren möglichen Werten werden die einzelnen Konfigurationen für die Experimente abgeleitet.
+Für das Baseline-Experiment werden ausschließlich die verschiedenen Concurrency-Werte betrachtet.
+Bei fünf Concurrency-Werten und fünf Wiederholungen ergeben sich somit insgesamt 25 Konfigurationen.
+Im Experiment zur Untersuchung des Retry-Einflusses wird zusätzlich die maximale Anzahl der möglichen Retries variiert.
+Dabei werden die Werte 1, 3 und 5 für jede der fünf Concurrency-Stufen untersucht.
+Der Wert 0 wird nicht erneut betrachtet, da dieser bereits durch das Baseline-Experiment abgedeckt wird und somit
+keine zusätzlichen Erkenntnisse liefert.
+Daraus ergeben sich $(5 \cdot 3 \cdot 5 = 75)$ Konfigurationen.
+Für die Untersuchung des Delays werden die vier von null verschiedenen Werte des initialen Delays für jede
+Concurrency-Stufe getestet.
+Auch hier wird jede Konfiguration fünfmal wiederholt, wodurch sich insgesamt $(5 \cdot 4 \cdot 5 = 100)$
+Konfigurationen ergeben.
+Im letzten Experiment werden erneut alle fünf Concurrency-Werte betrachtet.
+Zusätzlich werden zwei Retry-Strategien sowie die drei von null verschiedenen Retry-Counts untersucht.
+Daraus ergeben sich $(5 \cdot 2 \cdot 3 \cdot 5 = 150)$ Konfigurationen.
+Aus den 350 Konfigurationen und den jeweils 500 ausgeführten Transaktionen entstehen insgesamt 175.000
+Transaktionsausführungen, deren Ergebnisse in den Logdateien erfasst und anschließend ausgewertet werden.
+
+Für die Auswertung werden die in Abschnitt~\ref{sec:purpose} beschriebenen Kenngrößen verwendet.
+Dazu gehören die Erfolgsrate, die Retry-Verteilung, die durchschnittliche Ausführungszeit, die Quartile der
+Ausführungszeit, der durch Retries entstehende Overhead sowie der Durchsatz pro Experiment.
+Die durchschnittliche Ausführungszeit, die Quartile und der Overhead werden in Millisekunden angegeben.
+Die Erfolgsrate wird als Prozentwert dargestellt, während die Retry-Verteilung die Anzahl der Transaktionen je
+durchgeführter Retries angibt.
+Der Durchsatz wird als Anzahl erfolgreicher Transaktionen pro Sekunde und Experiment angegeben.
