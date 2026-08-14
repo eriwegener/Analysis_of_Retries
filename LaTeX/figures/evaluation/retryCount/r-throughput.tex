@@ -1,0 +1,201 @@
+% !Tex root = ../main.tex
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			width=0.7\textwidth,
+			height=0.6\textwidth,
+			ylabel={Durchsatz},
+			xlabel={Retry Count},
+			xtick={1,2,3,4},
+			xticklabels={r0, r1, r3, r5},
+			x tick label style={
+				rotate=45,
+				anchor=east
+			},
+			ymax=20,
+			ymode=log,
+			ytick={0.2,0.5,1,3,5,10,20},
+			yticklabels={0.2,0.5,1,3,5,10,20},
+			scaled y ticks=false,
+			legend style={
+				at={(0.5,-0.30)},
+				anchor=north,
+				legend columns=2,
+				legend cell align=left
+			},
+		]
+
+			% ==========================================================
+			% Deadlock
+			% ==========================================================
+
+			% e0
+			\addplot[
+				color=ezerocolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,0.548508)
+			};
+			\addlegendentry{Deadlock -- e0}
+
+			% e1
+			\addplot[
+				color=eonecolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(2,0.135413)
+				(3,0.195982)
+				(4,0.229033)
+			};
+			\addlegendentry{Deadlock -- e1}
+
+			% e2
+			\addplot[
+				color=etwocolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(3,0.462728)
+			};
+			\addlegendentry{Deadlock -- e2}
+
+			% e3
+			\addplot[
+				color=ethreecolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(2,0.126911)
+				(3,0.169984)
+				(4,0.205532)
+			};
+			\addlegendentry{Deadlock -- e3}
+
+
+			% ==========================================================
+			% Serialization
+			% ==========================================================
+
+			% e0
+			\addplot[
+				color=ezerocolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,13.925028)
+			};
+			\addlegendentry{Serialization -- e0}
+
+			% e1
+			\addplot[
+				color=eonecolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(2,3.946786)
+				(3,5.538805)
+				(4,6.834494)
+			};
+			\addlegendentry{Serialization -- e1}
+
+			% e2
+			\addplot[
+				color=etwocolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(3,14.758689)
+			};
+			\addlegendentry{Serialization -- e2}
+
+			% e3
+			\addplot[
+				color=ethreecolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(2,3.726831)
+				(3,5.053221)
+				(4,6.306281)
+			};
+			\addlegendentry{Serialization -- e3}
+
+
+			% ==========================================================
+			% Timeout
+			% ==========================================================
+
+			% e0
+			\addplot[
+				color=ezerocolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,0.990297)
+			};
+			\addlegendentry{Timeout -- e0}
+
+			% e1
+			\addplot[
+				color=eonecolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(2,0.194373)
+				(3,0.327201)
+				(4,0.471012)
+			};
+			\addlegendentry{Timeout -- e1}
+
+			% e2
+			\addplot[
+				color=etwocolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(3,0.993386)
+			};
+			\addlegendentry{Timeout -- e2}
+
+			% e3
+			\addplot[
+				color=ethreecolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(2,0.193122)
+				(3,0.330640)
+				(4,0.469278)
+			};
+			\addlegendentry{Timeout -- e3}
+
+		\end{axis}
+	\end{tikzpicture}
+
+	\caption{Durchsatz bei verschiedenem Retry Count.}
+	\label{fig:r-throughput}
+\end{figure}

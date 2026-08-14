@@ -1,0 +1,133 @@
+% !TeX root = ../main.tex
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			width=0.7\textwidth,
+			height=0.6\textwidth,
+			ylabel={Overhead (ms)},
+			xlabel={Concurrency},
+			xtick={1,2,3,4,5},
+			xticklabels={cc2,cc5,cc7,cc10,cc20},
+			ymax=15000,
+			ymode=log,
+			ytick={50,100,200,500,1000,2000,5000,10000,15000},
+			yticklabels={50,100,200,500,1000,2000,5000,10000,15000},
+			scaled y ticks=false,
+			legend style={
+				at={(0.5,-0.30)},
+				anchor=north,
+				legend columns=2,
+				legend cell align=left
+			},
+		]
+
+			% ==========================================================
+			% Deadlock -- Success
+			% ==========================================================
+			\addplot[
+				color=successcolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,1015.792651)
+				(2,3273.940616)
+				(3,5433.775517)
+				(4,7002.952322)
+				(5,12951.217277)
+			};
+			\addlegendentry{Deadlock -- Success}
+
+			% Deadlock -- Failed
+			\addplot[
+				color=failedcolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,1698.421355)
+				(2,4341.292626)
+				(3,6994.707150)
+				(4,8264.092150)
+				(5,12953.876134)
+			};
+			\addlegendentry{Deadlock -- Failed}
+
+
+			% ==========================================================
+			% Serialization -- Success
+			% ==========================================================
+			\addplot[
+				color=successcolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,67.672101)
+				(2,146.342355)
+				(3,154.568593)
+				(4,161.829357)
+				(5,143.336945)
+			};
+			\addlegendentry{Serialization -- Success}
+
+			% Serialization -- Failed
+			\addplot[
+				color=failedcolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,54.538804)
+				(2,139.071825)
+				(3,161.853814)
+				(4,176.873771)
+				(5,192.143151)
+			};
+			\addlegendentry{Serialization -- Failed}
+
+
+			% ==========================================================
+			% Timeout -- Success
+			% ==========================================================
+			\addplot[
+				color=successcolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,854.487719)
+				(2,1092.124794)
+				(3,1063.453042)
+				(4,1048.561321)
+				(5,1072.592843)
+			};
+			\addlegendentry{Timeout -- Success}
+
+			% Timeout -- Failed
+			\addplot[
+				color=failedcolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,335.404143)
+				(2,450.487128)
+				(3,431.536720)
+				(4,413.570590)
+				(5,393.315374)
+			};
+			\addlegendentry{Timeout -- Failed}
+
+		\end{axis}
+	\end{tikzpicture}
+
+	\caption{Retry Overhead für Concurrency.}
+	\label{fig:cc-overhead}
+\end{figure}

@@ -1,4 +1,4 @@
-% \def\PrintVersion
+%\def\PrintVersion
 
 \ifdefined\PrintVersion
 \documentclass[12pt,a4paper,twoside,openright]{report}
@@ -74,19 +74,18 @@
 	]
 
 	\clearpage
-	\phantomsection
-	\addcontentsline{toc}{chapter}{\listfigurename}
-	\listoffigures
-	\clearpage
-	\phantomsection
-	\addcontentsline{toc}{chapter}{\listtablename}
-	\listoftables
+	%\phantomsection
+	%\addcontentsline{toc}{chapter}{\listfigurename}
+	%\listoffigures
+	%\clearpage
+	%\phantomsection
+	%\addcontentsline{toc}{chapter}{\listtablename}
+	%\listoftables
 %
 	\appendix
 	\chapter{Anhang}
 	\label{chap:anhang}
-	%\label{app:requirements}
-	%\input{appendices/requirements}
+	\input{appendices/diagrams}
 
 	\chapter{Erklärung zum Einsatz von KI}
 	\label{app:ki-nutzung}

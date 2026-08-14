@@ -201,8 +201,8 @@ def _overall(data):
 def start_analysis(path):
     data = _get_data(path)
 
-    _overall(data)
-    _influence_concurrency(data)
-    _influence_delay(data)
+    #_overall(data)
+    #_influence_concurrency(data)
+    #_influence_delay(data)
     _influence_retry(data)
-    _influence_strategy(data)
+   # _influence_strategy(data)

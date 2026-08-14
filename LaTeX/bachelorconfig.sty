@@ -71,6 +71,7 @@
 \graphicspath{{figures/}}
 \usetikzlibrary{positioning, shapes.geometric, arrows.meta}
 \pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
 
 % Include a build-optimized copy when latexmk has generated one. The third
 % argument specifies the maximum image width in pixels; smaller originals are
@@ -175,8 +176,8 @@
 	\TerminalCaption{terminaloutputlisting}{#1}{#2}%
 }
 
-\definecolor{TerminalBackground}{HTML}{EEEEEE}
-\definecolor{TerminalFrame}{HTML}{2CAADE}
+\definecolor{TerminalBackground}{HTML}{F0F0F0}
+\definecolor{TerminalFrame}{HTML}{C0C0C0}
 \definecolor{TerminalText}{HTML}{000000}
 \definecolor{CodeKeyword}{HTML}{005CC5}
 \definecolor{CodeString}{HTML}{22863A}

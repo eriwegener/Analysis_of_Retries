@@ -1,0 +1,65 @@
+% !TeX root = ../main.tex
+
+Die Grafik~\ref{fig:d-rateExec} zeigt die Erfolgs- und Fehlerrate der Fehlerklassen für einzelnen Delay Werte.
+Die Erfolgsrate von Lock Timeouts ist über alle Delay Werte die niedrigste, sie startet bei 10\% und steigt über die
+Werte leicht auf 18\% bei 0.1s.
+Die Erfolgsrate von Deadlocks orientiert sich um die 50\%.
+Bei einem Delay von 0s liegt sie bei 43.65\%, daraufhin steigt sie leicht an und fällt bei einem Delay von 0.05s wieder
+auf 43.69\%.
+Die höchste Erfolgsrate haben Deadlocks bei einem Delay 0.1s mit 48.16\%.
+Serialization Failure haben für alle Delay Werte außer 0s eine Erfolgsrate über 50\%.
+Sie sind außerdem die einzigen die eine höhere Erfolgsrate als Fehlerrate haben.
+Die höchste Erfolgsrate liegt bei 70\% bei einem Delay von 0.1s.
+Generell zeigt das Diagramm, dass die Erfolgsrate steigt, je höher der Delay wird.
+Jede Fehlerklasse hat ihre höchste Erfolgsrate bei einem Delay von 0.1s.
+Das Diagramm daneben zeigt die Ausführungszeiten für die einzelnen Fähigkeiten.
+Dabei haben Deadlocks die höchsten Ausführungszeiten.
+Vor allem bei erfolgreichen Transaktionen stagniert die Ausführungszeit und auch bei nicht erfolgreichen Transaktionen
+ist nach ab einem Delay von 0.005s kein großer Anstieg mehr zu sehen.
+Die Dauer einer erfolgreichen Transaktion bleibt bei ungefähr 5000ms.
+Für Lock Timeouts liegt die Ausführungszeit einer erfolgreichen Transaktion durchschnittlich bei 1000ms bis 1400ms.
+Die Dauer sinkt bei 0.005s leicht, steigt für 0.01s und 0.05s weiter an und sinkt für 0.1s wieder ab.
+Im Gegensatz zu Deadlocks hat eine erfolgreiche Transaktion eine höhere durchschnittliche Ausführungszeit als nicht
+erfolgreiche Transaktionen.
+Diese steigen aber über die Delay Werte recht linear an.
+Für 0s Delay haben Lock Timeouts eine Dauer von 383ms und steigen über alle Werte auf 785ms bei 0.1s.
+Die niedrigste Ausführungszeit haben Serialization Failures.
+Diese steigt sowohl bei erfolgreichen als auch bei nicht erfolgreichen Transaktionen an.
+Bei erfolgreichen ist nur ein leichter Anstieg zu sehen, während bei nicht erfolgreichen die Dauer recht stark ansteigt.
+Die Fehlerrate hat bei 0s eine Dauer von 134ms, steigt bei 0.005s auf 222ms und bleibt für 0.01s bei diesem Wert.
+Für 0.05s steigt es stark an auf 360ms und erreicht bei 0.1s den höchsten Wert bei 508ms.
+Die Dauer erfolgreicher Transaktionen bleiben für 0s-0.01s bei 150ms-160ms und steigen danach leicht an, der höchste
+Wert liegt mit 215ms bei 0.1s.
+Alle Fehlerklassen steigt in der Regel mit dem Delay die Ausführungszeit, wobei Lock Timeouts die einzige Klasse ist,
+bei der die Dauer einer erfolgreichen Transaktion über der von nicht erfolgreichen liegt.
+
+\input{figures/d-rateExec}
+
+Die Tabelle~\ref{tab:d-retryDistribution} zeigt die Verteilung der benötigten Retries an.
+Es ist zu beachten, dass ein Delay von 0s der Strategie \emph{immediate Retry} entspricht.
+Diese wird in Abschnitt~\ref{subsec:s} genauer betrachtet.
+Des Weiteren wurde bei dem Delay von 0.01s auf die beiden Experimente \texttt{Experiment2} und \texttt{Experiment3}
+aufgeteilt, damit mit man einen Vergleich zwischen dem Einfluss von Delay ziehen kann.
+An der Tabelle sieht man, dass Deadlocks die meisten erfolgreichen Transaktionen bei einem Delay von 0.1 und
+bei 0 benötigten Retries haben.
+Für Serialization Failures ist die Kombination 0.1s Delay und 1 benötigter Retry und für Lock Timeouts besteht die
+Kombination aus 0.005s Delay und keinem Retry.
+Die Quantile~\ref{tab:d-quantiles} zeigen eine Auffälligkeit bei den Serialization Failures.
+Denn im $p_{99.9}$-Quantil ist die Ausführungsdauer bei 0.005s Delay deutlich höher als im $p_{99}$-Quantil.
+Dies ist auch bei 0.05s Delay zu sehen.
+Des Weiteren ist zu sehen, dass bei Serialization die Dauer einer Transaktion, egal ob erfolgreich oder nicht, über
+die ersten drei Quantile nah beieinander liegt.
+Erst im $p_{99.9}$-Quantil gehen die Werte deutlicher auseinander und bei einem Delay von 0.01s hat eine
+erfolgreiche Transaktion länger gebraucht als einer nicht erfolgreiche.
+
+Das Diagramm~\ref{fig:d-overhead} zeigt den Retry Overhead von Transaktionen anhand ihres Statuses, über die Werte
+des Delays.
+Darin sieht man, dass der Overhead bei Deadlocks stagniert.
+Der Overhead für Serialization Failure orientiert sich an der durchschnittlichen Ausführungszeit mit niedrigeren Werten.
+Der einzige große Unterschied besteht darin, dass bei einem Delay von 0.1s der Overhead für Lock Timeouts einer
+erfolgreichen Transaktion niedriger ist als bei einer nicht erfolgreichen.
+Die Abbilung~\ref{fig:d-throughput} beschreibt den Durchsatz der Delay Werte.
+Interessant ist, dass bei steigendem Delay der Durchsatz von Deadlocks in etwa gleich bleibt und kurz absinkt bei 0.05s.
+Dahingegen steigt der Durchsatz für die anderen beiden Fehlerklassen, je höher der Delay wird.
+Die anderen Experimente sind nur der Vollständigkeit halber mit angegeben, da diese aber den Delay nicht testen sind
+diese nicht relevant für die Auswertung von Delay.

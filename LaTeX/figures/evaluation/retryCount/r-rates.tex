@@ -1,0 +1,106 @@
+% !Tex root = ../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		width=0.8\textwidth,
+		height=0.8\textwidth,
+		ylabel={Rate (\%)},
+		xlabel={Retry Count},
+		xtick={1,2,3,4},
+		xticklabels={r0,r1,r3,r5},
+		ymin=0,
+		ymax=100,
+		ytick={0,20,40,60,80,100},
+		scaled y ticks=false,
+		legend style={
+			at={(0.5,-0.30)},
+			anchor=north,
+			legend columns=2,
+			align=left,
+			legend cell align=left
+		},
+	]
+
+		% Deadlock
+		\addplot[
+			color=successcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,18.192000)
+			(2,36.074667)
+			(3,47.840000)
+			(4,59.328000)
+		};
+
+		\addplot[
+			color=failedcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,81.808000)
+			(2,63.925333)
+			(3,52.160000)
+			(4,40.672000)
+		};
+
+		% Serialization Failure
+		\addplot[
+			color=successcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,25.464000)
+			(2,41.570667)
+			(3,60.824000)
+			(4,70.893333)
+		};
+
+		\addplot[
+			color=failedcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,74.536000)
+			(2,58.429333)
+			(3,39.176000)
+			(4,29.106667)
+		};
+
+		% Lock Timeout
+		\addplot[
+			color=successcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,4.568000)
+			(2,8.021333)
+			(3,14.944000)
+			(4,19.474667)
+		};
+
+		\addplot[
+			color=failedcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,95.432000)
+			(2,91.978667)
+			(3,85.056000)
+			(4,80.525333)
+		};
+
+	\end{axis}
+\end{tikzpicture}

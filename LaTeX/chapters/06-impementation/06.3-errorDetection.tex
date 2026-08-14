@@ -8,7 +8,7 @@ Dort wird die Transaktion in einem \texttt{try: ... except: ...}-Block gestartet
 Tritt während der Ausführung ein von \texttt{psycopg2} Datenbankfehler auf, wird dieser abgefangen und
 entsprechend verarbeitet~\ref{lst:errorDetection}.
 
-\begin{lstlisting}[language=Python, caption={Fehlererkennung}, label={lst:errorDetection}]
+\begin{lstlisting}[style=pythoncode, caption={Fehlererkennung}, label={lst:errorDetection}]
 def _start_transaction():
     try:
         ...

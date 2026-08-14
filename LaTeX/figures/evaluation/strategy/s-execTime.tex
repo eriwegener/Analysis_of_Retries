@@ -1,0 +1,105 @@
+% !TeX root = ../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		width=0.8\textwidth,
+		height=0.8\textwidth,
+		ylabel={Execution Time (ms)},
+		xlabel={Strategy},
+		xtick={1,2,3,4},
+		xticklabels={s0,s1,s2,s3},
+		ymax=15000,
+		ymode=log,
+		ytick={50,100,500,1000,2000,5000,10000},
+		yticklabels={50,100,500,1000,2000,5000,10000},
+		scaled y ticks=false,
+		legend style={
+			at={(0.5,-0.30)},
+			anchor=north,
+			legend columns=2,
+			legend cell align=left
+		},
+	]
+		% Deadlock
+		\addplot[
+			color=successcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,2039.574758)
+			(2,4851.925528)
+			(3,4575.785648)
+			(4,4719.379372)
+		};
+
+		\addplot[
+			color=failedcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,2344.174946)
+			(2,12100.889353)
+			(3,11883.918222)
+			(4,11131.789586)
+		};
+
+		% Serialization Failure
+		\addplot[
+			color=successcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,52.534716)
+			(2,163.355737)
+			(3,182.930695)
+			(4,138.373454)
+		};
+
+		\addplot[
+			color=failedcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,54.115380)
+			(2,180.970461)
+			(3,263.765234)
+			(4,233.960602)
+		};
+
+		% Timeout
+		\addplot[
+			color=successcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,1051.702277)
+			(2,1145.097704)
+			(3,1262.914410)
+			(4,1252.792115)
+		};
+
+		\addplot[
+			color=failedcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,128.710454)
+			(2,475.576582)
+			(3,573.741955)
+			(4,538.986180)
+		};
+
+	\end{axis}
+\end{tikzpicture}

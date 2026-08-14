@@ -1,24 +1,4 @@
-- https://dl.acm.org/doi/epdf/10.1145/289.291 (Härder, Reuter) 2.8.26 15:50
-    - end of transaction EOT, ist das erfolgreiche Ende einer tx S.289
-    - ACID, definition siehe S.289f
-    - Transaction Failure, tx erreicht commit nicht S.290
-    - System Failure, System stürzt ab, durch bug, hardware failure usw S.291
-    - Media Failure, Speicher geht verloren oder kaputt S.291
-    - Transactions müssen ACID conform sein, wenn nicht commited, dann verschwinden S.291
-    - Transaction UNDO, entfernt alle effekte der abgebrochenen tx S.292
-    - Global UNDO, macht alle effekte von abgebrochenen tx rückgängig nach zB Systemabsturz S.292
-    - Partial REDO, ergebnisse von tx können noch nicht in der DB stehen und müssen deswegen wiederholt werden S.292
-    - Global REDO, wenn ein altes Backup geladen werden musste, muss eine Kopie der effekte von allen tx commited werden, nach Media Failure S.292
-    - materialized Database, persistenter Datenbankzustand der nach einem Absturz noch vorhanden ist S.295
-    - propagation, die Operation, die geschriebene Seiten zu einem teil der materialized DB macht S.295
-    - STEAL, modifizierte Seiten können immer geschrieben oder propagiert werden S.299
-    - NO-STEAL, modifizierte Seiten werden min im buffer gelassen, bis EOT S.299
-    - FORCE, alle modifizierten Seiten werden während der EOT bearbeitung geschrieben und propagiert S.300
-    - NO-FORCE, es wird während der EOT Bearbeitung keine propagation aufgerufen S.300
-    - write ahead log WAL
-        - UNDO informationen müssen vor propagation der entsprechenden Änderung ins Log geschrieben werden S.302
-        - REDO informationen müssen ins temp, archive Log geschrieben werden bevor die Bestätigung des EOT kommt S.302
-    - Checkpoints, man sammelt informationen an sicheren punkten um den REDO recovery aufwand zu limitieren und optimieren S.303
+01 Einleitung
 
 02 Grundlagen:
     2.1 PostgreSQL, Quellen direkt über die Documentation
@@ -77,6 +57,28 @@
     2.4 Erklärung von Manueller Fehlerbehandlung
         - einfach runterschreiben
 
+    - https://dl.acm.org/doi/epdf/10.1145/289.291 (Härder, Reuter) 2.8.26 15:50
+        - end of transaction EOT, ist das erfolgreiche Ende einer tx S.289
+        - ACID, definition siehe S.289f
+        - Transaction Failure, tx erreicht commit nicht S.290
+        - System Failure, System stürzt ab, durch bug, hardware failure usw S.291
+        - Media Failure, Speicher geht verloren oder kaputt S.291
+        - Transactions müssen ACID conform sein, wenn nicht commited, dann verschwinden S.291
+        - Transaction UNDO, entfernt alle effekte der abgebrochenen tx S.292
+        - Global UNDO, macht alle effekte von abgebrochenen tx rückgängig nach zB Systemabsturz S.292
+        - Partial REDO, ergebnisse von tx können noch nicht in der DB stehen und müssen deswegen wiederholt werden S.292
+        - Global REDO, wenn ein altes Backup geladen werden musste, muss eine Kopie der effekte von allen tx commited werden, nach Media Failure S.292
+        - materialized Database, persistenter Datenbankzustand der nach einem Absturz noch vorhanden ist S.295
+        - propagation, die Operation, die geschriebene Seiten zu einem teil der materialized DB macht S.295
+        - STEAL, modifizierte Seiten können immer geschrieben oder propagiert werden S.299
+        - NO-STEAL, modifizierte Seiten werden min im buffer gelassen, bis EOT S.299
+        - FORCE, alle modifizierten Seiten werden während der EOT bearbeitung geschrieben und propagiert S.300
+        - NO-FORCE, es wird während der EOT Bearbeitung keine propagation aufgerufen S.300
+        - write ahead log WAL
+            - UNDO informationen müssen vor propagation der entsprechenden Änderung ins Log geschrieben werden S.302
+            - REDO informationen müssen ins temp, archive Log geschrieben werden bevor die Bestätigung des EOT kommt S.302
+        - Checkpoints, man sammelt informationen an sicheren punkten um den REDO recovery aufwand zu limitieren und optimieren S.303
+
 03:
     3.1 Fehlerbehandlung in DBS
         - klassische Fehlerbehandlung
@@ -106,7 +108,7 @@
                 - backoff höchster negativer faktor, dann multiplier, retries, gleicht sich, wenn workload und fail rates steigen
             - Fazit
                 - feine balance der parameter notwendig
-                - unterstreicht wie wichtig is, die Betriebsumgebung zu berücksictigen
+                - unterstreicht wie wichtig is, die Betriebsumgebung zu berücksichtigen
     3.4 kurze Anbindung an Self-Healing
         - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1160055 (https://ieeexplore.ieee.org/document/1160055)
             - probleme mit nicht autonomen Systemen:
@@ -258,3 +260,47 @@
             - teilweise einfach too much concurrency
             - nur bestimmte Fehlerklassen
             - fünf Wiederholungen
+08 Diskussion
+    8.1 Bewertung des Retry Ansatzes, Beantwortung der Forschungsfrage
+        - Auswirkungen auf die Datenbank
+        - Erhöht Retry die Erfolgschance
+        - Auswirkungen auf
+            - Execution Time
+            - Overhead
+            - Throughput
+            - Datenbanklast
+        - abghängigkeit der Auswirkungen von Fehlerart und Konfiguration
+        - allgemeine Konfiguration oder nicht
+        - Bestätigen die Ergebnisse die Annahmen aus der Problemanalyse
+        - erfüllt Anforderungen oder nicht
+            - Zuverlässigkeit
+            - Performance
+            - Flexibilität
+    8.2 Grenzen der Untersuchung
+        - lokale DB und keine Netzwerkkommunikation
+        - künstlich erzeugte Fehler
+        - keine SQLSTATE Überprüfung
+        - WL von 500, it von 5
+        - nur drei Fehlerklassen
+        - definierte cc werte
+        - begrenzte getestete configs
+        - keine reale last
+        - andere abhängigkeiten
+
+        - was kann ich aus den ergebnissen schließen und was nicht
+    8.3 Übertragbarkeit und Verbesserungsmöglichkeiten
+        - Übertragbarkeit
+            - übertragbare Erkenntnisse auf andere Systeme
+            - posgres Spezifische Ergebnisse
+            - andere Ergebnisse bei anderer Hardware
+            - änderungen bei verteilten Anwendungen
+        - Verbesserungen
+            - reale Last, längere Testdauer, mehr Iterationen, mehr Fehlerklassen, größere WL
+            - Netzwerkfehler
+            - andere Hardware
+            - SQLSTATE auswertung
+            - andere Strategien(adaptiv, weitere backoff)
+            - Retry nur für retrybare Fehler?
+            - andere DBMS
+09 Fazit und Ausblick
+    9.1

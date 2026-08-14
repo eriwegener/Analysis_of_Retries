@@ -1,0 +1,18 @@
+% !TeX root = ../main.tex
+
+\begin{figure}[ht]
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\caption*{(a) Erfolgs- und Fehlerraten}
+		\input{figures/evaluation/concurrency/cc-rates}
+	\end{minipage}
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\caption*{(b) Ausführungszeiten}
+		\input{figures/evaluation/concurrency/cc-execTime}
+	\end{minipage}
+	\pgfplotslegendfromname{gemeinsameLegende}
+	\caption{Raten und durchschnittliche Ausführungszeit für einzelne Concurrency Werte}
+	\label{fig:cc-rateExec}
+\end{figure}

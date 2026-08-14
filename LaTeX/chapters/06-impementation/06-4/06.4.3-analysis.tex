@@ -15,7 +15,7 @@ Dadurch werden die Ergebnisse in der numerisch korrekten Reihenfolge und nicht l
 Wenn der Einfluss eines bestimmten Parameters betrachtet wird, steht dieser in dem ersten Level des Index, sodass die
 Sortierung zunächst anhand dieses Parameters und anschließend anhand des zweiten Levels erfolgt.
 
-\begin{lstlisting}[language=Python, caption={Numerische Sortierung der Ergebnisse}, label={lst:sortNumeric}]
+\begin{lstlisting}[style=pythoncode, caption={Numerische Sortierung der Ergebnisse}, label={lst:sortNumeric}]
 def _sort_numeric(data):
     return data.sort_index(
         level=[0, 1],

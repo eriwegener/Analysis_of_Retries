@@ -4,8 +4,8 @@
 	\centering
 	\begin{tikzpicture}
 		\node[
-			fill=gray!10,
-			draw=gray!30,
+			fill=TerminalBackground,
+			draw=TerminalFrame,
 			rounded corners,
 			inner sep=10pt
 		] {
@@ -48,23 +48,23 @@
 			\node (sOrf) [decision, below=of run] {success or failure};
 			\node (possible) [decision, below right=1.5cm of sOrf] {Retry möglich?};
 			\node (retry) [process, below right=2cm of possible] {Retry ausführen};
-			\node (log) [process, below left=2cm of possible] {Log result};
+			\node (log) [process, below=3cm of sOrf] {Log result};
 			\node (calc) [process, below=of log] {Kenngrößen berechnen};
 			\node (result) [process, below=of calc] {Ergebnisse auswerten};
 			\node (end) [startstop, below=of result] {Experiment beenden};
 
-			\draw [arrow] (start) -- (error);
-			\draw [arrow] (error) -- (experiment);
-			\draw [arrow] (experiment) -- (run);
-			\draw [arrow] (run) -- (sOrf);
-			\draw [arrow] (sOrf) -- node[midway, above right] {failed} (possible);
-			\draw [arrow] (sOrf) -- node[midway, above left] {succeeded} (log);
-			\draw [arrow] (possible) -- node[below left] {possible} (retry);
-			\draw [arrow] (possible) -- node[below right] {not possible} (log);
-			\draw [arrow] (retry) |- (sOrf);
-			\draw [arrow] (log) -- (calc);
-			\draw [arrow] (calc) -- (result);
-			\draw [arrow] (result) -- (end);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (start) -- (error);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (error) -- (experiment);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (experiment) -- (run);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (run) -- (sOrf);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (sOrf) -- node[midway, above right] {failed} (possible);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (sOrf) -- node[midway, above left] {succeeded} (log);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (possible) -- node[below left] {possible} (retry);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (possible) -- node[below right] {not possible} (log);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (retry) |- (sOrf);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (log) -- (calc);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (calc) -- (result);
+			\draw [arrow, shorten <=5pt, shorten >=5pt] (result) -- (end);
 
 			\end{tikzpicture}};
 	\end{tikzpicture}

@@ -1,0 +1,73 @@
+\begin{table}[htbp]
+	\centering
+	\caption{Retry Verteilung für die Fehlerklassen.
+	Werte sind dargestellt als Failed / Success.}
+	\label{tab:r-retryDistribution}
+	\footnotesize
+	\setlength{\tabcolsep}{3pt}
+
+	\begin{tabular}{llrrrrrrr}
+		\toprule
+		& & \multicolumn{6}{c}{Retries} & \\
+		Type & RC & 0 & 1 & 2 & 3 & 4 & 5 \\
+		\midrule
+
+		\multirow{5}{*}{Deadlock}
+		& r0
+		& 10226/2274 & - & -
+		& - & - & - \\
+
+		& r1
+		& 0/6681 & 23972/6847 & -
+		& - & - & - \\
+
+		& r3
+		& 0/15828 & 0/14409 & 0/6423
+		& 45640/5200 & - & - \\
+
+		& r5
+		& 0/6217 & 0/7026 & 0/2922
+		& 0/2550 & 0/1930 & 15252/1603 \\
+
+		\midrule
+
+		\multirow{5}{*}{Serialization}
+		& r0
+		& 9317/3183 & - & -
+		& - & - & - \\
+
+		& r1
+		& 0/3633 & 21911/11956 & -
+		& - & - & - \\
+
+		& r3
+		& 0/7720 & 0/19044 & 0/13223
+		& 34279/13234 & - & - \\
+
+		& r5
+		& 0/1736 & 0/8337 & 0/2345
+		& 0/3202 & 0/7901 & 10915/3064 \\
+
+		\midrule
+
+		\multirow{5}{*}{Timeout}
+		& r0
+		& 11929/571 & - & -
+		& - & - & - \\
+
+		& r1
+		& 0/1679 & 34492/1329 & -
+		& - & - & - \\
+
+		& r3
+		& 0/6489 & 0/2243 & 0/2392
+		& 74424/1952 & - & - \\
+
+		& r5
+		& 0/1859 & 0/1710 & 0/2341
+		& 0/301 & 0/508 & 30197/584 \\
+
+		\bottomrule
+	\end{tabular}
+	\vspace{0.3em}
+\end{table}

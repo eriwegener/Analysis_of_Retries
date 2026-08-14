@@ -1,0 +1,127 @@
+% !TeX root = ../main.tex
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			width=0.7\textwidth,
+		height=0.6\textwidth,
+		ylabel={Overhead (ms)},
+		xlabel={Strategy},
+		xtick={1,2,3,4,5},
+		xticklabels={s0,s1,s2,s3},
+		ymax=15000,
+		ymode=log,
+		ytick={50,100,200,500,1000,2000,5000,10000},
+		yticklabels={50,100,200,500,1000,2000,5000,10000},
+		scaled y ticks=false,
+		legend style={
+			at={(0.5,-0.30)},
+			anchor=north,
+			legend columns=2,
+			legend cell align=left
+		},
+		]
+
+			% ==========================================================
+			% Deadlock -- Success
+			% ==========================================================
+			\addplot[
+				color=successcolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,2039.574758)
+				(2,3656.516495)
+				(3,3450.346744)
+				(4,3685.146384)
+			};
+			\addlegendentry{Deadlock -- Success}
+
+			% Deadlock -- Failed
+			\addplot[
+				color=failedcolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,2344.174946)
+				(2,9662.105967)
+				(3,9883.444597)
+				(4,9052.694847)
+			};
+			\addlegendentry{Deadlock -- Failed}
+
+
+			% ==========================================================
+			% Serialization -- Success
+			% ==========================================================
+			\addplot[
+				color=successcolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,52.534716)
+				(2,117.621520)
+				(3,139.471825)
+				(4,97.776975)
+			};
+			\addlegendentry{Serialization -- Success}
+
+			% Serialization -- Failed
+			\addplot[
+				color=failedcolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,54.115380)
+				(2,130.838477)
+				(3,213.748681)
+				(4,183.948101)
+			};
+			\addlegendentry{Serialization -- Failed}
+
+
+			% ==========================================================
+			% Timeout -- Success
+			% ==========================================================
+			\addplot[
+				color=successcolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,1051.702277)
+				(2,1052.459708)
+				(3,923.621239)
+				(4,945.142615)
+			};
+			\addlegendentry{Timeout -- Success}
+
+			% Timeout -- Failed
+			\addplot[
+				color=failedcolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,128.710454)
+				(2,364.952950)
+				(3,462.754515)
+				(4,432.050716)
+			};
+			\addlegendentry{Timeout -- Failed}
+
+		\end{axis}
+	\end{tikzpicture}
+
+	\caption{Retry Overhead für unterschiedliche Strategien.}
+	\label{fig:s-overhead}
+\end{figure}

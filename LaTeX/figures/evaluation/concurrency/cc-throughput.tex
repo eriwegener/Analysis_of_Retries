@@ -1,0 +1,233 @@
+% !Tex root = ../main.tex
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			width=0.7\textwidth,
+			height=0.6\textwidth,
+			ylabel={Durchsatz},
+			xlabel={Concurrency},
+			xtick={1,2,3,4,5},
+			xticklabels={cc2,cc5,cc7,cc10,cc20},
+			ymax=7,
+			ymode=log,
+			ytick={0.2,0.5,1,3,5},
+			yticklabels={0.2,0.5,1,3,5},
+			scaled y ticks=false,
+			legend style={
+				at={(0.5,-0.30)},
+				anchor=north,
+				legend columns=2,
+				legend cell align=left
+			},
+		]
+
+			% ==========================================================
+			% Deadlock
+			% ==========================================================
+
+			% e0
+			\addplot[
+				color=ezerocolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,0.301993)
+				(2,0.149791)
+				(3,0.048242)
+				(4,0.031116)
+				(5,0.017367)
+			};
+			\addlegendentry{Deadlock -- e0}
+
+			% e1
+			\addplot[
+				color=eonecolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,0.214729)
+				(2,0.151896)
+				(3,0.103710)
+				(4,0.061716)
+				(5,0.028378)
+			};
+			\addlegendentry{Deadlock -- e1}
+
+			% e2
+			\addplot[
+				color=etwocolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,0.190063)
+				(2,0.129132)
+				(3,0.075770)
+				(4,0.046669)
+				(5,0.021094)
+			};
+			\addlegendentry{Deadlock -- e2}
+
+			% e3
+			\addplot[
+				color=ethreecolor,
+				solid,
+				thick,
+				mark=*
+			] coordinates {
+				(1,0.215839)
+				(2,0.140418)
+				(3,0.072883)
+				(4,0.049127)
+				(5,0.024160)
+			};
+			\addlegendentry{Deadlock -- e3}
+
+
+			% ==========================================================
+			% Serialization
+			% ==========================================================
+
+			% e0
+			\addplot[
+				color=ezerocolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,5.477265)
+				(2,2.261778)
+				(3,2.183031)
+				(4,2.029913)
+				(5,1.973040)
+			};
+			\addlegendentry{Serialization -- e0}
+
+			% e1
+			\addplot[
+				color=eonecolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,5.615911)
+				(2,4.058666)
+				(3,3.060063)
+				(4,2.251203)
+				(5,1.334242)
+			};
+			\addlegendentry{Serialization -- e1}
+
+			% e2
+			\addplot[
+				color=etwocolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,4.634458)
+				(2,3.568213)
+				(3,2.891843)
+				(4,2.252096)
+				(5,1.412080)
+			};
+			\addlegendentry{Serialization -- e2}
+
+			% e3
+			\addplot[
+				color=ethreecolor,
+				dashed,
+				thick,
+				mark=diamond*,
+				mark size=4pt
+			] coordinates {
+				(1,5.301964)
+				(2,3.484558)
+				(3,2.734016)
+				(4,2.139477)
+				(5,1.426318)
+			};
+			\addlegendentry{Serialization -- e3}
+
+
+			% ==========================================================
+			% Timeout
+			% ==========================================================
+
+			% e0
+			\addplot[
+				color=ezerocolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,0.546311)
+				(2,0.190775)
+				(3,0.121402)
+				(4,0.078044)
+				(5,0.053764)
+			};
+			\addlegendentry{Timeout -- e0}
+
+			% e1
+			\addplot[
+				color=eonecolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,0.538151)
+				(2,0.193751)
+				(3,0.130756)
+				(4,0.087240)
+				(5,0.042687)
+			};
+			\addlegendentry{Timeout -- e1}
+
+			% e2
+			\addplot[
+				color=etwocolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,0.533353)
+				(2,0.197353)
+				(3,0.132277)
+				(4,0.088059)
+				(5,0.042344)
+			};
+			\addlegendentry{Timeout -- e2}
+
+			% e3
+			\addplot[
+				color=ethreecolor,
+				dotted,
+				thick,
+				mark=triangle*,
+				mark size=4pt
+			] coordinates {
+				(1,0.518818)
+				(2,0.208143)
+				(3,0.134812)
+				(4,0.088538)
+				(5,0.042729)
+			};
+			\addlegendentry{Timeout -- e3}
+
+		\end{axis}
+	\end{tikzpicture}
+
+	\caption{Durchsatz bei verschiedenen Concurrency.}
+	\label{fig:cc-throughput}
+\end{figure}

@@ -42,7 +42,7 @@ innerhalb des angegebenen Intervalls erzeugt.
 Die exponentielle Erhöhung des maximalen Delays wird durch \texttt{2 ** retries} umgesetzt.
 Mit \texttt{time.sleep(delay)} wartet das System den definierten Delay ab und führt die Transaktion danach erneut aus.
 
-\begin{lstlisting}[language=Python, caption={Berechnung des Delay mit Backoff + Jitter}, label={lst:jitter}]
+\begin{lstlisting}[style=pythoncode, caption={Berechnung des Delay mit Backoff + Jitter}, label={lst:jitter}]
 delay = random.uniform(0, retry_delay * (2 ** retries))
 \end{lstlisting}
 

@@ -9,12 +9,12 @@ Befehle für die Einstellungen für die Serialisation und den Lock-Timeout befin
 In den einzelnen \texttt{service\_....py}-Modulen werden die Transaktionen für die jeweiligen Fehlerklassen
 implementiert.
 Der Codeausschnitt~\ref{lst:deadlockImpl} zeigt beispielhaft die Implementierung eines Deadlocks.
-Hierfür werden zwei Transaktionen verwendet, die jeweils ein Zeile der Tabelle \texttt{deadlocks} sperren und
+Hierfür werden zwei Transaktionen verwendet, die jeweils eine Zeile der Tabelle \texttt{deadlocks} sperren und
 anschließend versuchen, auf die von der anderen Transaktion gesperrte Zeile zuzugreifen.
 Über die \texttt{client\_id} wird mit dem Modulo-Operator entschieden, welche der beiden Transaktionen ein Client
 ausführen soll.
 
-\begin{lstlisting}[language=Python, caption={Implementierung eines Deadlocks}, label={lst:deadlockImpl}]
+\begin{lstlisting}[style=pythoncode, caption={Implementierung eines Deadlocks}, label={lst:deadlockImpl}]
 def _tx_a(db):
     cur = db.conn.cursor()
     cur.execute("SELECT salary FROM deadlocks WHERE id = 1 FOR UPDATE;")
@@ -51,9 +51,9 @@ aufrufenden Funktion aus.
 Der Name wird bis zum Ende mit übergeben, damit die Funktionen wissen, welche Fehlerklassen behandelt und wohin die
 Logeinträge geschrieben werden sollen.
 
-\begin{lstlisting}[language=Python, caption={Ermittlung des Namens der aufrufenden Funktion}, label={lst:caller-name}]
-	caller_frame = inspect.currentframe().f_back
-	caller_name = caller_frame.f_code.co_name
+\begin{lstlisting}[style=pythoncode, caption={Ermittlung des Namens der aufrufenden Funktion}, label={lst:caller-name}]
+caller_frame = inspect.currentframe().f_back
+caller_name = caller_frame.f_code.co_name
 \end{lstlisting}
 
 \subsection{Modul experimentFunctions}

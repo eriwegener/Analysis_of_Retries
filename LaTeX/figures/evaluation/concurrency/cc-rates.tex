@@ -1,0 +1,118 @@
+% !Tex root = ../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		width=0.8\textwidth,
+		height=0.8\textwidth,
+		ylabel={Rate (\%)},
+		xlabel={Concurrency},
+		xtick={1,2,3,4,5},
+		xticklabels={cc2,cc5,cc7,cc10,cc20},
+		ymin=0,
+		ymax=100,
+		ytick={0,20,40,60,80,100},
+		scaled y ticks=false,
+		legend style={
+			at={(0.5,-0.30)},
+			anchor=north,
+			legend columns=2,
+			align=left,
+			legend cell align=left
+		},
+	]
+
+		% Deadlock
+		\addplot[
+			color=successcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,95.022857)
+			(2,63.268571)
+			(3,36.222857)
+			(4,22.951429)
+			(5,10.848571)
+		};
+		%\addlegendentry{Deadlock -- Success}
+
+		\addplot[
+			color=failedcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,4.977143)
+			(2,36.731429)
+			(3,63.777143)
+			(4,77.048571)
+			(5,89.151429)
+		};
+		%\addlegendentry{Deadlock -- Failed}
+
+		% Serialization Failure
+		\addplot[
+			color=successcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,95.508571)
+			(2,66.505714)
+			(3,52.545714)
+			(4,40.720000)
+			(5,26.371429)
+		};
+		%\addlegendentry{Serialization Failure -- Success}
+
+		\addplot[
+			color=failedcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,4.491429)
+			(2,33.494286)
+			(3,47.454286)
+			(4,59.280000)
+			(5,73.628571)
+		};
+		%\addlegendentry{Serialization Failure -- Failed}
+
+		% Lock Timeout
+		\addplot[
+			color=successcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,36.408571)
+			(2,13.874286)
+			(3,9.157143)
+			(4,6.057143)
+			(5,2.954286)
+		};
+		%\addlegendentry{Lock Timeout -- Success}
+
+		\addplot[
+			color=failedcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,63.591429)
+			(2,86.125714)
+			(3,90.842857)
+			(4,93.942857)
+			(5,97.045714)
+		};
+		%\addlegendentry{Lock Timeout -- Failed}
+
+	\end{axis}
+\end{tikzpicture}

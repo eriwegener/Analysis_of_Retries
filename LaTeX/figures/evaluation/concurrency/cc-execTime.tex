@@ -1,0 +1,118 @@
+% !TeX root = ../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		width=0.8\textwidth,
+		height=0.8\textwidth,
+		ylabel={Time (ms)},
+		xlabel={Concurrency},
+		xtick={1,2,3,4,5},
+		xticklabels={cc2,cc5,cc7,cc10,cc20},
+		ymax=20000,
+		ymode=log,
+		ytick={100,500,1000,2000,10000,20000},
+		yticklabels={100,500,1000,2000,10000,20000},
+		scaled y ticks=false,
+		legend to name=gemeinsameLegende,
+		legend style={
+			at={(0.5,-0.5)},
+			anchor=north,
+			legend columns=2,
+			legend cell align=left
+		},
+	]
+		% Deadlock
+		\addplot[
+			color=successcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,1064.688887)
+			(2,4551.058210)
+			(3,7329.881527)
+			(4,9299.472551)
+			(5,16841.528048)
+		};
+		\addlegendentry{Deadlock -- Success}
+
+		\addplot[
+			color=failedcolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,2000.259472)
+			(2,5665.410003)
+			(3,8633.981095)
+			(4,10013.359736)
+			(5,15450.776143)
+		};
+		\addlegendentry{Deadlock -- Failed}
+
+		% Serialization Failure
+		\addplot[
+			color=successcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,108.246410)
+			(2,192.771362)
+			(3,198.141210)
+			(4,201.469618)
+			(5,179.362189)
+		};
+		\addlegendentry{Serialization Failure -- Success}
+
+		\addplot[
+			color=failedcolor,
+			dashed,
+			thick,
+			mark=diamond*,
+			mark size=2pt
+		] coordinates {
+			(1,64.888677)
+			(2,180.644204)
+			(3,205.836354)
+			(4,222.019906)
+			(5,238.216414)
+		};
+		\addlegendentry{Serialization Failure -- Failed}
+
+		% Timeout
+		\addplot[
+			color=successcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,1174.135368)
+			(2,1306.345140)
+			(3,1288.045242)
+			(4,1293.637264)
+			(5,1297.858801)
+		};
+		\addlegendentry{Lock Timeout -- Success}
+
+		\addplot[
+			color=failedcolor,
+			dotted,
+			thick,
+			mark=triangle*,
+			mark size=2pt
+		] coordinates {
+			(1,430.505818)
+			(2,555.022691)
+			(3,534.203680)
+			(4,515.267457)
+			(5,494.049608)
+		};
+		\addlegendentry{Lock Timeout -- Failed}
+
+	\end{axis}
+\end{tikzpicture}
