@@ -1,46 +1,50 @@
 % !Tex root = ../main.tex
 
-Die Abbildung~\ref{fig:cc-rateExec} zeigt den Einfluss von Concurrency auf die Erfolgs-/Fehlerraten und auf die
-Ausführungszeiten der Transaktionen.
-Über alle Fehlerklassen sinkt die Erfolgsrate bei höherer Konkurrenz.
-Bei Lock Timeout Fehlern ist die Erfolgschance über alle Concurrency Werte die Geringste.
-Sie startet bei 36\% und fällt exponentiell auf 3\% bei Concurrency von 20.
-Die höchste Erfolgschance haben Serialization Failures die bei 95\% starten und bei 26\% enden.
-Den stärksten Abfall haben Deadlocks, die auch bei 95\% starten aber bis auf 10\% sinken.
-Die Ausführungszeiten von Serialization Failures sind die geringsten.
-Dabei ist es interessant zu sehen, dass bis zu einer Concurrency von 7 die Ausführungszeit von erfolgreichen
-Transaktionen über der von nicht erfolgreichen Transaktionen liegt.
-Ein Unterschied wird erst ab 10 gleichzeitigen Anwendungen erkennbar.
-Des Weiteren lässt sich festellen, dass die Ausführungszeit von erfolgreichen Transaktionen bei höherer Concurrence
-wieder sinkt, während sie bei allen anderen stagniert oder steigt.
-Die Ausführungszeiten bei Lock Timeouts laufen parallel zueinander, wobei der Abstand zwischen diesen darauf
-zurückzuführen ist, dass eine Transaktion wegen der Implementierung mindestens eine Sekunde warten muss.
-In der Zeit kann eine weitere schon abgebrochen werden.
-Die höchste Ausführungszeit haben Deadlocks.
-Bei einer Concurrency von 2 liegt diese noch unter 2000ms und steigt dann stark an auf über 15000ms.
+Die Abbildung~\ref{fig:cc-rateExec} stellt den Einfluss von Concurrency auf die Erfolgs-/Fehlerraten und auf die
+Ausführungszeiten der Transaktionen dar.
+Auch bei den Ausführungszeiten zeigen sich Unterschiede zwischen den Fehlerklassen.
+Über alle Fehlerklassen hinweg nimmt die Erfolgsrate mit steigender Concurrency ab.
+Deadlocks haben bei einer Concurrency von 2 95\% Erfolgsrate, fallen jedoch auf 10\% bei einer Concurrency von 20.
+Sie haben die höchsten Ausführungszeiten.
+Bei einer Concurrency von 2 liegen diese noch unter 2000ms und steigen dann an auf über 15000ms.
 Erfolgreiche und nicht erfolgreiche Transaktionen gleichen sich bei steigender Concurrency an und bei Concurrency
 von 20 haben erfolgreiche Transaktion im Durchschnitt länger gebraucht.
 Die durchschnittliche Dauer einer erfolgreichen Transaktion liegt bei 16841ms, während die von nicht erfolgreichen
 Transaktionen bei 15450ms liegt.
+Die höchste Erfolgschance haben Serialization Failures die von 95\% aud 26\% zurückgehen.
+Sie weisen die niedrigsten Ausführungszeiten auf.
+Bis zu einer Concurrency von 7 liegt die durchschnittliche Ausführungszeit erfolgreicher Transaktionen über der
+von nicht erfolgreichen Transaktionen.
+Ein Unterschied wird erst ab 10 gleichzeitigen Anwendungen erkennbar.
+Die Ausführungszeit erfolgreicher Transaktionen sinkt bei weiter steigender Concurrency wieder, während die
+Ausführungszeit nicht erfolgreicher Transaktionen weitgehend stagniert beziehungsweise weiter ansteigt.
+Lock Timeouts weisen dabei die niedrigste Erfolgschance über alle Concurrency Werte auf.
+Diese sinkt von 36\% bei einer Concurrency von 2 auf 3\% bei einer Concurrency von 20.
+Bei Lock Timeouts verlaufen die Ausführungszeiten erfolgreicher und nicht erfolgreicher Transaktionen weitgehend
+parallel.
+Zwischen den beiden Verläufen besteht ein nahezu konstanter Abstand.
 
 \input{figures/cc-rateExec}
 
-Interessant ist außerdem, dass sowohl bei Deadlocks, als auch bei Serialization Failures für eine Concurrency von 2
-nicht mehr als 3 Retries benötigt wurden, wie die Tabelle~\ref{tab:cc-retryDistribution} zeigt.
-Die in Tabelle~\ref{tab:cc-quantiles} gezeigten Quantile zeigen auch eine Besonderheit.
-Während bei Deadlocks und Lock Timeouts die Ausführungszeit über die Quantile und über die Concurrency steigt, hat bei
-Serialization die Concurrency von 5 die längste Ausführungszeit in dem Quantil $p_{99.9}$.
-Dies ist bei erfolgreichen und nicht erfolgreichen Transaktionen der Fall.
-In diesem Quantil steigt die Ausführungszeit erst mit höheren Concurrency Werten und dann sinkt sie wieder ab
-einer Concurrency von 10.
+Die in Tabelle~\ref{tab:cc-retryDistribution} dargestellte Retry-Verteilung zeigt, dass bei einer Concurrency von 2
+sowohl bei Deadlocks als auch bei Serialization Failures nicht mehr als drei Retries auftreten.
+Mit steigender Concurrency verändert sich die Verteilung der benötigten Retries.
+Die in Tabelle~\ref{tab:cc-quantiles} dargestellten Quantile zeigen insgesamt ein ähnliches Verhalten wie die
+durchschnittlichen Ausführungszeiten.
+Bei Deadlocks und Lock Timeouts steigen die Ausführungszeiten sowohl über die Quantile als auch mit zunehmender
+Concurrency.
+Bei Serialization Failures zeigt sich im $p_{99.9}$-Quantil ein abweichender Verlauf.
+Sowohl bei erfolgreichen als auch bei nicht erfolgreichen Transaktionen wird die höchste Ausführungszeit bei einer
+Concurrency von 5 erreicht.
+Ab einer Concurrency von 10 sinkt die Ausführungszeit in diesem Quantil wieder.
 
-Der Retry Overhead~\ref{fig:cc-overhead} verhält sich analog zur Ausführungszeit, außer das die Werte niedriger sind
-und bei Concurrency von 2 der durchschnittliche Overhead für Deadlocks größer ist als der von Lock Timeouts.
+Der Retry Overhead~\ref{fig:cc-overhead} zeigt einen ähnlichen Verlauf wie die Ausführungszeiten.
+Bei einer Concurrency von 2 liegt der durchschnittliche Overhead von Deadlocks über dem von Lock Timeouts.
 Bei der Ausführungszeit war dies noch andersherum.
-Der Durchsatz sinkt mit höherer Concurrency wie Abbildung~\ref{fig:cc-throughput} zeigt.
-Dabei ist interessant, dass bei 20 Concurrency der Durchsatz ohne Retry höher ist als mit Retry.
-Dies ist aber nur bei Serialization Failure und Lock Timeout der Fall.
-Bei Deadlocks hingegen hat \texttt{Experiment0} den höchsten Durchsatz bei Concurrency von 2 und den schlechtesten 20.
-Generell ist der Durchsatz von Deadlocks bei jedem Concurrency Level niedriger als der, der anderen beiden
-Fehlerklassen.
-Serialization Failures haben den höchsten Durchsatz.
+Der in Abbildung~\ref{fig:cc-throughput} dargestellte Durchsatz nimmt mit steigender Concurrency insgesamt ab.
+Bei einer Concurrency von 20 liegt der Durchsatz ohne Retry bei Serialization Failures und Lock Timeouts über dem
+Durchsatz mit Retry.
+Bei Deadlocks weist \texttt{Experiment0} bei einer Concurrency von 2 den höchsten und bei einer Concurrency von 20
+den niedrigsten Durchsatz auf.
+Über die betrachteten Concurrency-Level liegt der Durchsatz von Deadlocks durchgehend unter dem der beiden anderen
+Fehlerklassen, während Serialization Failures den höchsten Durchsatz aufweisen.

@@ -3,55 +3,62 @@
 Die Diagramme~\ref{fig:r-rateExec} beschreiben den Einfluss von möglichen Retries auf die Erfolgs-/Fehlerraten und
 die Ausführungszeiten von Transaktionen.
 Es ist zu sehen, dass die Erfolgsquote für jeden weitern möglichen Retry für alle Fehlerklassen ansteigt.
-Der Anstieg erfolgt linear und Serialization Failures haben die höchste Erfolgsrate über alle Retry Counts.
-Alle Klassen haben bei keinem Retry eine niedrige Erfolgsquote.
-Die von Serialization Failure liegt bei 25\%, Deadlocks 18\% und Lock Timeouts haben eine Erfolgsrate von 5\%.
-Mit jedem weiteren Retry steigt die Erfolgsrate, sodass diese nach fünf möglichen Retries bei 70\%, die von
-Deadlocks bei 59\% und die von Lock Timeouts bei 19\% liegt.
-Bei den Ausführungszeiten sieht es ähnlich aus wie bei den vorherigen Kapiteln.
-Die Deadlocks haben die längste Dauer, wobei sie mit 2040ms (erfolgreich) und 2344ms (nicht erfolgreich) nah
-beieinander liegen.
-Mit mehreren möglichen Retries steigt sowohl die Dauer erfolgreicher Transaktionen, als auch die nicht erfolgreicher.
-Dabei steigt sie stärker bei nicht erfolgreichen Transaktionen.
-Für fünf Retries liegt die Dauer bei 19765ms für eine nicht erfolgreiche und 6215ms für eine erfolgreiche Transaktion.
-Bei Lock Timeouts stagniert die durchschnittliche Ausführungszeit für erfolgreiche Transaktionen eher.
-Diese liegt bei keinem Retry bei 1051ms und für fünf Retries bei 1312ms.
-Nicht erfolgreiche Transaktionen hingegen steigen stark an in ihrer Ausführungszeit.
-So benötigen diese bei null Retries 128ms und steigen recht linear an und benötigen für fünf Retries 804ms.
-Die niedrigste Ausführungszeit haben Serialization Failures.
-Eine Transaktion, erfolgreich oder nicht, benötigt durchschnittlich 52ms-54ms.
-Für einen Retry sind die Ausführungszeiten noch nah beieinander, gehen aber ab drei möglichen Retries auseinander.
-Nach fünf möglichen Retries hat eine erfolgreiche Transaktion 204ms benötigt, während eine nicht erfolgreiche
-Transaktion nach 377ms fehlgeschlagen ist.
+Bei Deadlocks steigt die Erfolgsrate mit zunehmender Anzahl möglicher Retries von 18\% ohne möglichen Retry auf 59\%
+bei fünf möglichen Retries.
+Die Ausführungszeiten erfolgreicher und nicht erfolgreicher Transaktionen liegen ohne möglichen Retry mit 2040ms
+beziehungsweise 2344ms noch nah beieinander.
+Mit zunehmender Anzahl möglicher Retries steigen beide Ausführungszeiten an, wobei die Ausführungszeit nicht
+erfolgreicher Transaktionen stärker zunimmt.
+Bei fünf möglichen Retries beträgt die durchschnittliche Ausführungszeit erfolgreicher Transaktionen 6215ms,
+während nicht erfolgreiche Transaktionen durchschnittlich 19765ms benötigen.
+Deadlocks weisen damit über die betrachteten Retry Counts hinweg die höchsten Ausführungszeiten auf.
+Bei Serialization Failures steigt die Erfolgsrate ebenfalls mit jedem weiteren möglichen Retry an.
+Sie liegt über alle Retry Counts über den Erfolgsraten der anderen beiden Fehlerklassen und steigt von 25\% ohne
+möglichen Retry auf 70\% bei fünf möglichen Retries.
+Die Ausführungszeiten sind dagegen die niedrigsten der drei Fehlerklassen.
+Ohne möglichen Retry liegen die durchschnittlichen Ausführungszeiten erfolgreicher und nicht erfolgreicher
+Transaktionen bei 52ms bis 54ms.
+Auch bei einem möglichen Retry bleiben die Werte vergleichbar.
+Ab drei möglichen Retries gehen die Ausführungszeiten stärker auseinander.
+Bei fünf möglichen Retries benötigen erfolgreiche Transaktionen durchschnittlich 204ms und nicht erfolgreiche
+Transaktionen 377ms.
+Bei Lock Timeouts steigt die Erfolgsrate von 5\% ohne möglichen Retry auf 19\% bei fünf möglichen Retries.
+Die Ausführungszeit erfolgreicher Transaktionen verändert sich über die Retry Counts vergleichsweise wenig und
+steigt von 1051ms ohne möglichen Retry auf 1312ms bei fünf möglichen Retries.
+Die Ausführungszeit nicht erfolgreicher Transaktionen steigt dagegen nahezu linear von 128ms auf 804ms.
 
 \input{figures/r-rateExec}
 
-Die Verteilung~\ref{tab:r-retryDistribution} zeigt keine Besonderheiten, außer das in den anderen Verteilungen No
-Retry extra gezählt wurde, da aber ein Retry Count von null besagt, dass es kein Retry stattfand, wurde auf diese
-Spalte verzichtet.
+Die Verteilung~\ref{tab:r-retryDistribution} zeigt keine Besonderheiten, außer das in den anderen Verteilungen
+\texttt{No Retry} extra gezählt wurde, da aber ein Retry Count von null besagt, dass es kein Retry stattfand, wurde
+auf diese Spalte verzichtet.
 Die Ergebnisse stehen nun unter \texttt{r0} und \texttt{Retries 0}.
-In den Quantilen~\ref{tab:r-quantiles} zeigen Serialization Failures eine Besonderheit.
-So ist bei drei möglichen Retries die Ausführungsdauer in Quantil $p_{99.9}$ fast doppelt so hoch wie im $p_{99}$
+Die Quantile in Tabelle~\ref{tab:r-quantiles} zeigen überwiegend ähnliche Verläufe wie die durchschnittlichen
+Ausführungszeiten.
+Eine Auffälligkeit zeigt sich bei Serialization Failures.
+Bei drei möglichen Retries liegt die Ausführungsdauer im $p_{99.9}$-Quantil nahezu doppelt so hoch wie im $p_{99}$
 -Quantil.
-Das Gleiche sieht man auch bei erfolgreichen Transaktionen mit fünf möglichen Retries.
+Ein ähnlicher Unterschied zeigt sich bei erfolgreichen Transaktionen bei fünf möglichen Retries.
 
 In der Abbildung~\ref{fig:r-overhead} sieht man den Retry Overhead.
 Deadlocks haben den höchsten Overhead, wobei dieser erst ab drei möglichen Retries merklich steigt.
 Davor geht der Overhead für erfolgreiche Transaktionen runter und steigt minimal an für nicht erfolgreiche.
-Bei Lock Timeouts sinkt der Overhead für einen Retry deutlich ab im Vergleich zu keinem Retry.
-Danach jedoch steigt der Overhead wieder und bleibt für fünf Retries gleich zu drei Retries.
-Der Overhead nicht erfolgreicher Transaktion für Lock Timeouts nähert sich mit mehreren Retries dem der
-erfolgreichen Transaktionen an.
 Serialization Failures haben für erfolgreiche und nicht erfolgreiche Transaktionen bei keinem und einem möglichen
 Retry den gleichen Overhead.
 Erst ab drei Retries spaltet sich das auf und die nicht erfolgreichen Transaktionen haben einen höheren Overhead.
+Bei Lock Timeouts sinkt der Overhead für einen Retry ab im Vergleich zu keinem Retry.
+Danach jedoch steigt der Overhead wieder und bleibt für fünf Retries gleich zu drei Retries.
+Der Overhead nicht erfolgreicher Transaktion für Lock Timeouts nähert sich mit mehreren Retries dem der
+erfolgreichen Transaktionen an.
 Allgemein sieht man, dass der Overhead nicht erfolgreicher Transaktionen sich fast parallel zueinander verhält.
 Des Weiteren ist zu erkennen, dass der Overhead erst ab drei möglichen Transaktionen steigt.
-Von null auf eins bleibt der Overhead entweder gleich oder sinkt.
-Beim Durchsatz~\ref{fig:r-throughput} erkennt man \texttt{Experiment1} für Lock Timeouts nicht, da sie die gleichen
-Werte $\pm0.003$ haben.
-Für Serialization Failures steigt der Durchsatz in \texttt{Experiment1} zu \texttt{Experiment2}
-im Bereich von \texttt{r1} bis \texttt{r3} leicht an, von \texttt{r3} zu \texttt{r5} steigen sie parallel zueinander.
+Von keinem zu einem möglichen Retry bleibt der Overhead entweder gleich oder sinkt.
+
+Beim Durchsatz~\ref{fig:r-throughput} weist nur geringe Unterschiede zwischen den betrachteten Experimenten auf.
 Deadlocks hingegen haben einen höheren Durchsatz bei drei möglichen Retries in \texttt{Experiment1} im Gegensatz zu
 \texttt{Experiment2}.
+Für Serialization Failures steigt der Durchsatz in \texttt{Experiment1} zu \texttt{Experiment2}
+im Bereich von \texttt{r1} bis \texttt{r3} leicht an, von \texttt{r3} zu \texttt{r5} steigen sie parallel zueinander.
 Bei einem Retry besitzen sie fast den gleichen Durchsatz und zu fünf möglichen Retries gleichen sie sich wieder an.
+Bei Lock Timeouts unterscheiden sich die Werte von \texttt{Experiment1} und \texttt{Experiment2} lediglich um
+$\pm0.003$.

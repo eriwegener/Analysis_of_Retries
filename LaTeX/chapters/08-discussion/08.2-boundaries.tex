@@ -1,0 +1,47 @@
+% !TeX root = ../main.tex
+
+Die durchgeführten Experimente unterliegen verschiedenen Einschränkungen, die bei der
+Interpretation der Ergebnisse berücksichtigt werden müssen.
+
+Die Experimente wurden lokal auf einer Datenbank ohne Netzwerkkommunikation durchgeführt.
+Dadurch werden mögliche Einflüsse von Netzwerklatenzen und Netzwerkfehlern nicht berücksichtigt.
+Zudem hängen die gemessenen Ausführungszeiten von der verwendeten Hardware ab, sodass bei einer anderen
+Hardwarekonfiguration abweichende Ergebnisse zu erwarten sind.
+Eine weitere Einschränkung stellt die verwendete Concurrency dar.
+Die Experimente wurden mit fest definierten Concurrency-Werten durchgeführt und bilden keine realitätsnahe, variable
+Systemlast ab.
+Dadurch kann nicht beurteilt werden, wie sich ein Retry bei höheren oder zwischen den untersuchten Werten liegenden
+Werten verhält.
+Die Ergebnisse zeigen zwar einen Rückgang der Erfolgsraten bei steigender Concurrency, erlauben jedoch keine Aussage
+darüber, ab welchem Wert dieses Verhalten in einer anderen Systemumgebung auftritt.
+Die Größe der Workload und die Anzahl der Iterationen sind auch begrenzt.
+Mit einer Workload von 500 und fünf Iterationen konnten für die untersuchte Testumgebung ausreichend stabile
+Ergebnisse erzielt werden.
+Für deutlich größere Workloads oder längere Testzeiträume lässt sich jedoch nicht ausschließen, dass sich die
+beobachteten Verhältnisse verändern.
+
+Darüber hinaus wurden die untersuchten Fehler künstlich erzeugt.
+Dadurch lässt sich gezielt untersuchen, wie sich der Retry-Ansatz bei den jeweiligen Fehlerklassen verhält.
+Die dabei verwendeten Fehlerraten entsprechen jedoch nicht notwendigerweise realen
+Produktivsystemen.
+Insbesondere die in den Experimenten auftretenden hohen Fehlerraten sind für ein produktives System nicht
+repräsentativ.
+Die Ergebnisse zeigen daher primär die Wirkung von Retries unter kontrollierten Bedingungen und nicht
+dessen Verhalten unter einer realen Fehlerverteilung.
+Eine weitere Einschränkung besteht darin, dass lediglich drei Fehlerklassen untersucht wurden.
+Für Deadlocks, Serialization Failures und Lock Timeouts konnten dadurch konkrete Aussagen über das Verhalten des
+Retry-Ansatzes getroffen werden.
+Daraus lässt sich jedoch nicht ableiten, dass die untersuchten Strategien auch für andere transiente oder
+persistente Fehler gleichermaßen geeignet sind.
+Die fehlende Auswertung der SQLSTATE-Codes stellt eine weitere Einschränkung dar.
+Die Untersuchung betrachtet die Fehlerklassen gezielt, wodurch eine Überprüfung des Codes nicht weiter notwendig
+war, neben der Überprüfung, ob nur die tatsächlichen Fehler aufgetreten sind.
+In einem produktiven System sollte jedoch geprüft werden, ob ein aufgetretener Fehler tatsächlich für einen Retry
+geeignet ist.
+Andernfalls besteht die Gefahr, dass Transaktionen wiederholt werden, bei denen ein erneuter Ausführungsversuch
+keine Aussicht auf Erfolg hat und dadurch lediglich zusätzliche Systemlast verursacht.
+
+Schließlich sind auch die untersuchten Parameter begrenzt.
+Es wurden nur eine begrenzte Anzahl an Retry-Strategien, Delays und Retry Counts betrachtet.
+Es kann daher nicht ausgeschlossen werden, dass andere Parameterkombinationen oder Strategien für die untersuchten
+Fehlerklassen ein besseres Verhältnis zwischen Erfolgsrate und Ausführungszeit erreichen.

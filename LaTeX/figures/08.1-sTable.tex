@@ -1,0 +1,30 @@
+% !TeX root = ../main.tex
+
+\begin{table}[htbp]
+	\centering
+	\smallsize
+	\begin{tabular}{l|c|ccc}
+		\toprule
+		& & \multicolumn{3}{c}{Faktoren} \\
+		\cmidrule(lr){3-5}
+		Type & S & Erfolgsrate-Faktor & Ausführungszeit-Faktor & Effizienzverhältnis \\
+		\midrule
+		\multirow{3}{*}{Deadlock}
+		& s1 & 2.89 & 2.38 & 1.21 \\
+		& s2 & 2.61 & 2.24 & 1.17 \\
+		& s3 & 2.56 & 2.31 & 1.08 \\
+		\midrule
+		\multirow{3}{*}{Serialization}
+		& s1 & 2.32 & 3.08 & 0.75 \\
+		& s2 & 2.44 & 3.45 & 0.71 \\
+		& s3 & 2.20 & 2.60 & 0.85 \\
+		\midrule
+		\multirow{3}{*}{Lock Timeouts}
+		& s1 & 2.60 & 1.09 & 2.39 \\
+		& s2 & 3.00 & 1.20 & 2.50 \\
+		& s3 & 2.80 & 1.19 & 2.35 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Erfolgsrate und Ausführungszeit relativ zu s0 sowie deren Verhältnis.}
+	\label{tab:rDeadlocks}
+\end{table}

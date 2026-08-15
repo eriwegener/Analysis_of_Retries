@@ -34,6 +34,7 @@ def _sort_numeric(data):
 
 def _rates(data, param, pstatus):
     df = data.copy()
+    df["cc"] = df["run_id"].str.extract(fr"(cc[\d.]+)")
 
     if param:
         df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
@@ -203,6 +204,6 @@ def start_analysis(path):
 
     #_overall(data)
     #_influence_concurrency(data)
-    #_influence_delay(data)
-    _influence_retry(data)
-   # _influence_strategy(data)
+    _influence_delay(data)
+    #_influence_retry(data)
+    #_influence_strategy(data)

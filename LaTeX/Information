@@ -261,21 +261,14 @@
             - nur bestimmte Fehlerklassen
             - fünf Wiederholungen
 08 Diskussion
-    8.1 Bewertung des Retry Ansatzes, Beantwortung der Forschungsfrage
-        - Auswirkungen auf die Datenbank
-        - Erhöht Retry die Erfolgschance
-        - Auswirkungen auf
-            - Execution Time
-            - Overhead
-            - Throughput
-            - Datenbanklast
-        - abghängigkeit der Auswirkungen von Fehlerart und Konfiguration
-        - allgemeine Konfiguration oder nicht
-        - Bestätigen die Ergebnisse die Annahmen aus der Problemanalyse
-        - erfüllt Anforderungen oder nicht
-            - Zuverlässigkeit
-            - Performance
-            - Flexibilität
+    8.1 Bewertung des Retry Ansatzes
+        - Bedeutung der Ergebnisse
+        - Warum verhalten sich Strategien unterschiedlich
+        - Tradeoff zwischen Erfolgsrate und Performance
+        - Sinnvolle Parameter
+        - Bestätigungen aus 04
+        - erfüllte Anforderungen
+        - besonders Relevante Ergebnisse
     8.2 Grenzen der Untersuchung
         - lokale DB und keine Netzwerkkommunikation
         - künstlich erzeugte Fehler
@@ -286,8 +279,6 @@
         - begrenzte getestete configs
         - keine reale last
         - andere abhängigkeiten
-
-        - was kann ich aus den ergebnissen schließen und was nicht
     8.3 Übertragbarkeit und Verbesserungsmöglichkeiten
         - Übertragbarkeit
             - übertragbare Erkenntnisse auf andere Systeme

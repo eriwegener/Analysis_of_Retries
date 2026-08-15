@@ -1,48 +1,51 @@
 % !TeX root = ../main.tex
 
 Die in Abbildung~\ref{fig:s-rateExec} gezeigten Erfolgs- und Fehlerraten zeigen den Einfluss einer Strategie.
-Für Deadlocks steigt die Erfolgsrate von \texttt{Strategie0} mit 18\% zu \texttt{Strategie1} 52\% extrem.
-Dies ist auch die einzige Stelle, an der die Erfolgsrate höher ist als die Fehlerrate.
-Bei \texttt{Strategie2} ist die Erfolgsrate wieder auf 46\% gesunken und bleibt gleich für \texttt{Strategie3}.
+Bei Deadlocks steigt die Erfolgsrate zunächst deutlich von 18\% bei \texttt{s0} auf 52\% bei \texttt{s1}.
+Anschließend sinkt sie auf 46\% und bleibt bei \texttt{s3} unverändert.
+\texttt{s1} ist auch die einzige Stelle, an der die Erfolgsrate höher ist als die Fehlerrate.
+Die Ausführungszeiten erfolgreicher Transaktionen steigen von 2039ms auf 4851ms und erreichen somit bei \texttt{s1}
+ihren Höchstwert.
+Für \texttt{s2} sinkt diese auf 4575ms und steigt wieder auf 4719ms für \texttt{s3}.
+Bei nicht erfolgreichen Transaktionen hat \texttt{Strategie0} 2344ms und \texttt{Strategie1} den höchsten Wert mit
+12100ms, danach sinkt dieser wieder auf 11883ms für \texttt{s2}.
+Mit 11131ms bei \texttt{s3} sinkt die Dauer weiterhin.
 Die Erfolgsrate für Serialization Failures schaut ähnlich aus.
-Erst steigt sie von 25\% für \texttt{Strategie0} auf 57\% für \texttt{Strategie1} stark an und schwächt ab und steigt
-nur noch leicht an auf 60\% für \texttt{Strategie2}.
+Erst steigt sie von 25\% für \texttt{Strategie0} auf 57\% für \texttt{Strategie1} an, schwächt ab und steigt
+nur noch leicht auf 60\% für \texttt{Strategie2}.
 \texttt{Strategie3} hat mit 54\% eine geringere Erfolgsrate als die anderen beiden Retry Strategien.
 Ab der ersten Strategie bleibt die Erfolgsrate über der Fehlerrate.
-Lock Timeouts haben die niedrigste Erfolgsrate die für \texttt{Strategie0} bei 5\%.
-Diese steigt dann mit \texttt{Strategie1} auf 12\%, mit \texttt{Strategie2} auf 15\% und sinkt leicht mit
+Serialization Failures haben mit 52ms-54ms die niedrigste Ausführungszeit in \texttt{Strategie0}.
+Zu \texttt{Strategie1} steigen die Ausführungszeiten an auf 163ms (erfolgreich) und 180ms (nicht erfolgreich).
+Nicht erfolgreiche Transaktionen haben bei \texttt{Strategie2} durchschnittlich 263ms benötigt und dies ist der
+höchste Wert.
+Für erfolgreiche Transaktionen liegt der höchste Wert mit 182ms auch bei \texttt{Strategie2}.
+Bei \texttt{s3} benötigten erfolgreiche Transaktionen 138ms und nicht erfolgreiche 233ms.
+Lock Timeouts weisen die niedrigste Erfolgsrate auf, die bei \texttt{Strategie0} 5\% beträgt.
+Diese steigt dann durch \texttt{Strategie1} auf 12\%, mit \texttt{Strategie2} auf 15\% und sinkt leicht mit
 \texttt{Strategie3} auf 14\%.
-Die Ausführungszeiten von Deadlocks beginnen bei 2039ms und 2344ms und steigen im Laufe der Strategien.
-Bei nicht erfolgreichen Transaktionen hat \texttt{Strategie1} den höchsten Wert mit 12100ms, danach sinkt dieser
-wieder.
-Erfolgreiche Transaktionen haben die höchste Ausführungszeit auch bei \texttt{Strategie2}.
 Die Ausführungsdauer erfolgreicher Transaktion bei Lock Timeouts verhält sich wie bei den anderen Parametern.
 Sie steigt leicht linear an bei knapp über 1000ms.
-Für nicht erfolgreiche Transaktionen steigt die Dauer stark an von \texttt{Strategie0} zu \texttt{Strategie1}.
+Für nicht erfolgreiche Transaktionen steigt die Dauer an von \texttt{Strategie0} 128ms auf \texttt{Strategie1} 475ms.
 Danach steigt sie leicht weiter an und erreicht den Höchstwert bei \texttt{Strategie2} mit 573ms und sinkt bei
-\texttt{Strategie3} wieder leicht ab.
-Serialization Failures haben mit 52ms-54ms die niedrigste Ausführungszeit in \texttt{Strategie0}.
-Zu \texttt{Strategie1} steigen beide Zeiten gleich an und trennen sich danach.
-Nicht erfolgreiche Transaktionen haben bei \texttt{Strategie2} 263ms und dies ist damit der höchste Wert.
-Für erfolgreiche Transaktionen liegt der höchste Wert mit 182ms bei \texttt{Strategie2}
+\texttt{Strategie3} wieder ab auf 538ms.
 
 \input{figures/s-rateExec}
 
-Bei der Retry Verteilung~\ref{tab:s-retryDistribution} gibt es keine Auffälligkeiten, aber es ist wichtig zu erwähnen,
-da der \emph{No Retry} wieder nicht auftaucht, da dieser unter \texttt{Strategie0} fällt.
-Bei den Quantilen~\ref{tab:s-quantiles} ist erwähnenswert, dass bei Strategie das $p_{99.9}$-Quantil eine doppelt so
-hohe Ausführungszeit wie $p_{99}$ hat.
-Dies ist nur der Fall bei Serialization Failures in \texttt{s2} und \texttt{s3}.
-Während es bei \texttt{s2} für erfolgreiche und nicht erfolgreiche Transaktionen der Fall ist, trifft der Fall bei
-\texttt{s3} nur bei erfolgreichen Transaktionen zu.
+Die Retry-Verteilung~\ref{tab:s-retryDistribution} zeigt keine auffälligen Abweichungen zwischen den Strategien.
+Die Verteilung bestätigt damit im Wesentlichen die erwartete Verwendung der jeweiligen Strategien.
+Der No-Retry-Fall wird nicht separat dargestellt, da dieser bereits durch \texttt{s0} repräsentiert wird.
+Die Quantile~\ref{tab:s-quantiles} zeigen insgesamt ein ähnliches Verhalten wie die durchschnittlichen
+Ausführungszeiten.
+Eine auffällige Abweichung zeigt sich bei Serialization Failures für \texttt{s2} und \texttt{s3}, bei denen
+das $p_{99.9}$-Quantil teilweise deutlich über dem $p_{99}$-Quantil liegt.
+Für die Bewertung der Strategien ergibt sich daraus jedoch keine zusätzliche Differenzierung.
 
-Der Overhead~\ref{fig:s-overhead} verhält sich ähnlich wie die durchschnittliche Ausführungszeit mit kleineren Werten.
-Deshalb ist haben Deadlocks den höchsten Overhead, und Serialization failures starten gleich und gehen erst ab
-\texttt{Strategie2} deutlicher auseinander.
-Dazu verhält sich der Overhead nicht erfolgreicher Transaktion parallel zu den von Lock Timeouts.
-Die einzige Besonderheit ist für erfolgreiche Transaktionen bei Lock Timeouts, dass der Overhead erst um 1ms steigt von
-\texttt{s0} auf \texttt{s1}, dann stark abfällt zu \texttt{s2} und dann wieder um 20ms steigt für \texttt{s3}.
-Das Diagramm~\ref{fig:s-throughput} zeigt den Durchsatz während der einzelnen Experimente.
-In diesem Fall ist nur \texttt{Experiment3} zu beachten.
-Dadurch ist zu sehen, dass der Durchsatz gleichbleibend ist für Deadlocks und Lock Timeouts.
-Bei Serialization failure sinkt der Durchsatz leicht.
+Der Overhead~\ref{fig:s-overhead} folgt weitgehend dem Verlauf der Ausführungszeit.
+Die Strategien zeigen daher beim Overhead keine grundlegend andere Bewertung als bei der Ausführungszeit.
+Einzelne Abweichungen, insbesondere bei erfolgreichen Lock-Timeout-Transaktionen, sind zwar sichtbar, ändern jedoch
+die grundsätzliche Betrachtung nicht.
+Der Durchsatz~\ref{fig:s-throughput} bleibt für Deadlocks und Lock Timeouts weitgehend konstant, während bei
+Serialization Failures ein leichter Rückgang über die Strategien zu beobachten ist.
+Da sich daraus keine abweichende Bewertung der Strategien gegenüber der Erfolgsrate und Ausführungszeit ergibt, wird
+der Durchsatz im weiteren Verlauf nur ergänzend betrachtet.

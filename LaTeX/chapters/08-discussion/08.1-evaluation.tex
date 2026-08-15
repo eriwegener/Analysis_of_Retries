@@ -1,0 +1,108 @@
+% !TeX root = ../main.tex
+
+Die Ergebnisse zeigen, dass der Retry Ansatz grundsätzlich geeignet ist um die Erfolgsrate von den beschriebenen
+Fehlerklassen zu erhöhen.
+Der Nutzen eines Retries unterscheidet sich jedoch deutlich zwischen den Fehlerklassen.
+Unterschiedliche Fehlerklassen profitieren mehr als andere.
+Gleichzeitig sorgt der Retry für zusätzliche Ausführungskosten, sodass eine möglichst hohe Erfolgsrate nicht
+unabhängig von der dafür benötigten Ausführungszeit betrachtet werden kann.
+Eine allgemeingültige Konfiguration für Retries ist daher nicht ableitbar.
+Stattdessen müssen die Strategie und ihre Parameter sorgfältig an die jeweilige Fehlerklasse angepasst werden.
+Darüber hinaus zeigen die Ergebnisse einen negativen Einfluss steigender Concurrency auf die Erfolgsraten.
+Unter den untersuchten Bedingungen ist insbesondere ab einer Concurrency von 5 ein deutlicher Rückgang der
+Erfolgsraten zu beobachten.
+Dies deutet darauf hin, dass der Retry-Ansatz bei zunehmender Konkurrenz um Datenbankressourcen an seine Grenzen
+gelangt.
+
+Wie in Kapitel~\ref{subsec:s} beschrieben bringen unterschiedliche Strategien unterschiedliche Erfolgsraten für die
+einzelnen Fehlerklassen.
+Für Deadlocks ist Strategie 1 die mit der höchsten Rate.
+Eine mögliche Erklärung für das gute Abschneiden des Immediate Retry ist, dass sich der Konflikt nach dem Auflösen
+des Deadlocks gelöst hat.
+Der zusätzliche Delay könnte eher wieder dafür sorgen, dass eine Transaktion in einen anderen Deadlock verwickelt wird.
+Dies könnte erklären, warum die Erfolgsrate für die \texttt{s2} und \texttt{s3} wieder sinkt.
+Serialization Failures haben die höchste Erfolgsrate hingegen bei \texttt{s2}.
+Das bessere Abschneiden eines Retries mit Delay deutet darauf hin, dass ein direkter Wiederholungsversuch bei der
+Fehlerklasse häufiger erneut mit einer Transaktion konkurriert.
+Ein kurzer Delay kann der konkurrierenden Transaktion zusätzliche Zeit geben, ihren Vorgang abzuschließen.
+Bei Lock Timeouts hat auch \texttt{s2} die beste Erfolgsrate.
+Da die Transaktion vorher auf ein Lock gewartet hat, kann ein Delay dabei helfen nicht wieder in diese Situation zu
+geraten.
+Der starke Anstieg der Ausführungszeiten nicht erfolgreicher Transaktionen steht dabei mit den zusätzlichen
+Wiederholungsversuchen in Zusammenhang.
+Die höheren Ausführungszeiten erfolgreicher Transaktionen lassen sich durch die in der Testumgebung künstlich
+verlängerte Transaktionsdauer erklären.
+Dies könnte auch die niedrigen Erfolgsraten erklären.
+
+Wie schon gesagt, lässt sich eine gute Strategie nicht nur über die Erfolgsrate definieren.
+Es wär sinnlos eine Erfolgsrate von 90\% zu erreichen, wenn eine Transaktion dafür 1000 Wiederholungen durchführen
+muss und dadurch 2 Stunden benötigt.
+Es muss also ein Punkt gefunden werden, bei der die Erfolgsrate steigt, die Ausführungszeit sich aber noch in einem
+möglichst vertretbaren Rahmen befindet.
+
+\input{figures/08.1-sTable}
+
+Die Tabelle~\ref{tab:rDeadlocks} zeigt beispielsweise Verhältnis von Erfolgsrate zur Ausführungszeit für die
+einzelnen Strategien gruppiert nach den Fehlerklassen.
+Die Strategien werden anhand des Verhältnisses zwischen dem Gewinn an Erfolgsrate und dem damit verbundenen Anstieg
+der Ausführungszeit bewertet.
+Dabei erfolgt der Vergleich jeweils innerhalb einer Fehlerklasse, da sich die absoluten Ausführungszeiten der
+verschiedenen Fehlerklassen aufgrund ihrer unterschiedlichen Fehlercharakteristika nicht direkt miteinander
+vergleichen lassen.
+Bei allen Fehlerklassen führt bereits ein möglicher Retry zu einer deutlichen Steigerung der Erfolgsrate.
+Im Verhältnis zur zusätzlich benötigten Ausführungszeit sind die Strategien jedoch unterschiedlich effizient.
+So ist die beste Strategie für Deadlocks die Strategie1, so wie es die Erfolgsrate schon zeigt.
+Bei Lock Timeouts hat die Strategie mit der höchsten Erfolgsrate ebenfalls das beste Verhältnis zur Ausführungszeit.
+Serialization Failures hingegen haben bei der höchsten Erfolgsrate nicht das beste Verhältnis.
+Generell erreicht bei dieser Fehlerklasse keine Strategie ein Verhältnis von größer 1.
+Gemessen daran bietet somit keine der untersuchten Retry-Strategien gegenüber \texttt{s0} einen Vorteil.
+Wenn sich jedoch auf eine Retry Strategie festgelegt werden sollte, so wär für Serialization Failures die dritte
+Strategie noch die beste Strategie, da sie das höchste Verhältnis hat.
+
+Nach diesem Schema kann man die besten Parameter für die einzelnen Strategien herausfinden.
+In Tabelle~\ref{tab:bestConfig} wird dies dargestellt.
+Für Serialization Failures bietet ein Retry gemäß dem gewählten Bewertungsverhältnis keinen Vorteil gegenüber
+\texttt{s0}.
+Für die weitere Betrachtung wird dennoch \texttt{s3} als beste Retry-Strategie herangezogen, da sie innerhalb der
+Strategien mit Wiederholungsversuch das beste Verhältnis aus Erfolgsrate und Ausführungszeit erreicht.
+
+\input{figures/08.1-bestParams}
+Aus der Tabelle kann man die besten Konfigurationen ablesen.
+So ist für Deadlocks die beste Konfiguration \texttt{s1} mit einer möglichen Wiederholung.
+Für Serialization Failures ist die beste Strategie mit Wiederholen einer Transaktion \texttt{s3} mit 0.005s Delay
+und ebenfalls einem möglichen Retry.
+Da eine Retry Strategie bei dieser Fehlerart im Verhältnis keinen Nutzen hat ist es eine Überlegung wert, keinen
+Retry zu verwenden.
+Wenn jedoch eine Retry Strategie verwendet werden soll, so wäre die Konfiguration die beste.
+Bei Lock Timeouts ist \texttt{s2} die beste Strategie und die Parameter sollten mit 0.1s Delay und fünf möglichen
+Retries gewählt werden.
+Diese Konfigurationen setzen dabei voraus, dass Erfolgsrate und Ausführungszeit gleich gewichtet werden.
+Wird einer der beiden Metriken eine höhere Bedeutung gegeben, kann sich die bevorzugte Konfiguration
+entsprechend verschieben.
+
+In der Problemanalyse wurden Anforderungen an einen Retry-Mechanismus abgeleitet, die anhand der Ergebnisse
+abschließend bewertet werden können.
+Die Anforderung an die Zuverlässigkeit wird durch die Ergebnisse grundsätzlich bestätigt.
+Die untersuchten Retry-Strategien können die Erfolgsrate nach einem Fehler deutlich erhöhen.
+Gleichzeitig zeigen die Ergebnisse, dass ein Retry nicht für jede Fehlerklasse gleichermaßen geeignet ist.
+Insbesondere bei Serialization Failures bietet ein Retry unter dem gewählten Bewertungsmaßstab keinen Vorteil
+gegenüber einer Ausführung ohne Wiederholungsversuch.
+Auch die Anforderung an die Performance wird durch die Ergebnisse bestätigt.
+Mit zunehmender Anzahl möglicher Retries steigen in der Regel die Ausführungskosten, während der zusätzliche Gewinn
+der Erfolgsrate ab einem bestimmten Punkt nur noch geringer ausfällt.
+Ebenso zeigt sich, dass der Delay einen Einfluss auf das Verhältnis zwischen Erfolgsrate und Ausführungszeit hat.
+Retry Count und Delay stellen damit wesentliche Parameter dar, die kontrolliert und an die jeweilige Fehlerklasse
+angepasst werden müssen.
+Die Anforderung an die Flexibilität wird durch die Ergebnisse unterstützt.
+Diese zeigen, dass unterschiedliche Fehlerklassen von unterschiedlichen Strategien profitieren.
+Während für Deadlocks ein unmittelbarer Wiederholungsversuch das beste Verhältnis zwischen Erfolgsrate und
+Ausführungszeit erreicht, ist für Lock Timeouts und unter den untersuchten Bedingungen auch für Serialization
+Failures eine Strategie mit Delay vorteilhafter beziehungsweise die beste verfügbare Retry-Strategie.
+
+Insgesamt bestätigen die Ergebnisse damit die in der Problemanalyse formulierte Notwendigkeit, Fehlertoleranz und
+Systembelastung gemeinsam zu betrachten.
+Eine maximale Erfolgsrate stellt nicht automatisch die beste Konfiguration dar.
+Stattdessen muss ein angemessenes Verhältnis zwischen zusätzlicher Erfolgswahrscheinlichkeit und den dadurch
+entstehenden Ausführungskosten gefunden werden.
+Die Evaluation zeigt somit, dass ein konfigurierbarer und fehlerklassenspezifischer Retry-Ansatz grundsätzlich
+geeignet ist, diese Anforderungen zu erfüllen.

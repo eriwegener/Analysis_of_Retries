@@ -6,8 +6,8 @@ Ein Retry-Mechanismus muss verschiedene Anforderungen erfüllen, um die Vorteile
 dabei die Leistung und Stabilität der Datenbank negativ zu beeinflussen.
 
 Eine wesentliche Anforderung ist die Zuverlässigkeit.
-Der Retry-Mechanismus muss in der Lage sein, zwischen Fehlern zu unterscheiden, bei denen eine erneute Ausführung
-sinnvoll ist und Fehler bei denen ein Retry keinen Erfolg haben kann.
+Der Retry-Mechanismus soll die Erfolgswahrscheinlichkeit fehlgeschlagener Transaktionen durch geeignete Retries
+erhöhen, ohne dauerhaft fehlerhafte Transaktionen unnötig wiederholt auszuführen.
 Dadurch kann unnötige Last auf die Datenbank vermieden und dauerhafte Fehler schneller erkannt werden.
 
 Neben der Zuverlässigkeit spielt die Performance eine entscheidende Rolle.

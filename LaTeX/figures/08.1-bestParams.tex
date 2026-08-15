@@ -1,0 +1,17 @@
+% !TeX root = ../main.tex
+
+\begin{table}[htbp]
+	\centering
+	\smallsize
+	\begin{tabular}{l|lcc}
+		\toprule
+		Type & Strategy & Delay & Retry Count \\
+		\midrule
+		Deadlocks     & s1 & -- & 1 \\
+		Serialization & s3 & 0.005s & 1 \\
+		Lock Timeout  & s2 & 0.1s & 5 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Beste Konfigurationen für die Fehlerklassen bei gleichgewichtung.}
+	\label{tab:bestConfig}
+\end{table}
