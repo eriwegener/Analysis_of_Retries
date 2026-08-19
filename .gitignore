@@ -10,7 +10,6 @@ dataSources.local.xml
 # Python
 .venv/
 .env
-LaTeX/
 
 # Build / output
 out/
