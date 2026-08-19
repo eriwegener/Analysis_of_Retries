@@ -3,14 +3,14 @@
 Retry-Mechanismen stellen eine verbreitete Strategie dar, um temporäre Fehler automatisiert zu behandeln.
 Besonders geeignet sind sie für Fehler, deren Ursache sich innerhalb eines kurzen Zeitraums selbstständig behebt.
 Dazu zählen Verbindungsabbrüche, Überlastungen oder Konflikte durch parallele Transaktionen.
-In solchen Fällen kann eine erneute Ausführung dazu führen, dass eine Transaktion erfolgreich abschließt, ohne
+In solchen Fällen kann eine erneute Ausführung dazu führen, dass eine Transaktion erfolgreich abschließt ohne
 einen manuellen Eingriff.
 
 Da Retry eine Transaktion einfach nur wiederholt, wird dadurch das System mehr belastet.
 Deswegen muss abgewägt werden, ob ein schneller Abbruch der Transaktion nicht sinnvoller ist, als häufiges Wiederholen.
 Des Weiteren kann vor allem aggressives Wiederholen, also häufiges Wiederholen mit geringen Intervallen, dafür
 sorgen, dass ein System an die Belastungsgrenze stößt.
-Das ist vor allem ein Problem für Systeme die von Anfang an, an dem Ende ihrer Kapazitäten laufen.
+Das ist vor allem ein Problem für Systeme, die von Anfang an am Ende ihrer Kapazitäten laufen.
 Um unnötiges Wiederholen der Transaktionen zu vermeiden, sollten die Fehlercodes ausgelesen werden, um
 sicherzustellen, dass es sich um ein transient failure handelt und nicht um einen anderen Fehler.
 Darüber hinaus sollte ein Retry-Mechanismus nur für idempotente oder entsprechend abgesicherte Transaktionen
@@ -24,7 +24,7 @@ Ein solcher Fehler kann entstehen, wenn die Transaktion inhaltliche Fehler enth�
 In diesem Fall würde ein erneuter Versuch das gleiche Ergebnis liefern.
 Die Fehlerbehebung muss manuell erfolgen.
 Zusätzlich hängt der Erfolg eines Retries von der gewählten Strategie ab.
-Eine schlecht optimierte Konfiguration kann die Situation begünstigen, anstatt sie zu beheben.
+Eine schlecht optimierte Konfiguration kann die Situation verschärfen, anstatt sie zu beheben.
 
 Neben den Grenzen der Fehlerbehebung können Retry-Mechanismen selbst neue Herausforderungen erzeugen.
 Jeder wiederholte Versuch einer Transaktion verursacht zusätzliche Last für die Datenbank.

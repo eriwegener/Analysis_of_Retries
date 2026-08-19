@@ -1,0 +1,22 @@
+% !TeX root = main.tex
+
+Datenbanktransaktionen können aufgrund von Fehlern wie Deadlocks, Serialization Failures und Lock Timeouts fehlschlagen.
+Retry-Mechanismen ermöglichen eine automatische Wiederholung fehlgeschlagener Transaktionen und können dadurch die
+Erfolgsrate erhöhen.
+Gleichzeitig verursachen zusätzliche Wiederholungsversuche weitere Ausführungszeit und Datenbanklast.
+Diese Arbeit untersucht daher den Einfluss verschiedener Retry-Strategien und deren Parameter auf die Performance und
+Zuverlässigkeit von PostgreSQL bei den genannten Fehlerklassen.
+Hierzu wurden verschiedene Retry-Strategien sowie die Parameter Retry-Count und Delay unter unterschiedlichen
+Concurrency-Werten systematisch untersucht.
+Die Bewertung erfolgte anhand der Erfolgsrate und der Ausführungszeit.
+Ergänzend wurden Retry-Verteilung, Quantile, Overhead und Durchsatz betrachtet.
+Die Ergebnisse zeigen, dass Retry die Erfolgsrate der untersuchten Fehlerklassen grundsätzlich erhöhen kann,
+wobei der Nutzen und die entstehenden Performancekosten stark von der jeweiligen Fehlerklasse und Konfiguration
+abhängen.
+Eine höhere Anzahl an Wiederholungsversuchen führt nicht grundsätzlich zu einem besseren Ergebnis, da zusätzliche
+Ausführungszeit entsteht.
+Auch der Delay beeinflusst das Verhältnis zwischen Erfolgsrate und Performance.
+Für die untersuchten Fehlerklassen konnten unterschiedliche geeignete Konfigurationen identifiziert werden,
+sodass keine allgemein optimale Retry-Konfiguration abgeleitet werden kann.
+Die Untersuchung zeigt damit, dass Retry-Mechanismen grundsätzlich zur Erhöhung der Zuverlässigkeit beitragen können,
+ihre Strategie und Parameter jedoch an die jeweilige Fehlerklasse und die Systembedingungen angepasst werden müssen.

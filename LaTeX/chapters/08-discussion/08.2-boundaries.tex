@@ -10,8 +10,7 @@ Hardwarekonfiguration abweichende Ergebnisse zu erwarten sind.
 Eine weitere Einschränkung stellt die verwendete Concurrency dar.
 Die Experimente wurden mit fest definierten Concurrency-Werten durchgeführt und bilden keine realitätsnahe, variable
 Systemlast ab.
-Dadurch kann nicht beurteilt werden, wie sich ein Retry bei höheren oder zwischen den untersuchten Werten liegenden
-Werten verhält.
+Dadurch kann nicht beurteilt werden, wie sich ein Retry bei anderen Werten verhält.
 Die Ergebnisse zeigen zwar einen Rückgang der Erfolgsraten bei steigender Concurrency, erlauben jedoch keine Aussage
 darüber, ab welchem Wert dieses Verhalten in einer anderen Systemumgebung auftritt.
 Die Größe der Workload und die Anzahl der Iterationen sind auch begrenzt.
@@ -35,13 +34,15 @@ Daraus lässt sich jedoch nicht ableiten, dass die untersuchten Strategien auch 
 persistente Fehler gleichermaßen geeignet sind.
 Die fehlende Auswertung der SQLSTATE-Codes stellt eine weitere Einschränkung dar.
 Die Untersuchung betrachtet die Fehlerklassen gezielt, wodurch eine Überprüfung des Codes nicht weiter notwendig
-war, neben der Überprüfung, ob nur die tatsächlichen Fehler aufgetreten sind.
+war neben der Überprüfung, ob nur die tatsächlichen Fehler aufgetreten sind.
 In einem produktiven System sollte jedoch geprüft werden, ob ein aufgetretener Fehler tatsächlich für einen Retry
 geeignet ist.
 Andernfalls besteht die Gefahr, dass Transaktionen wiederholt werden, bei denen ein erneuter Ausführungsversuch
 keine Aussicht auf Erfolg hat und dadurch lediglich zusätzliche Systemlast verursacht.
 
 Schließlich sind auch die untersuchten Parameter begrenzt.
-Es wurden nur eine begrenzte Anzahl an Retry-Strategien, Delays und Retry Counts betrachtet.
+Es wurden nur eine begrenzte Anzahl an Retry-Strategien, Delays und Retry-Counts betrachtet.
 Es kann daher nicht ausgeschlossen werden, dass andere Parameterkombinationen oder Strategien für die untersuchten
 Fehlerklassen ein besseres Verhältnis zwischen Erfolgsrate und Ausführungszeit erreichen.
+Dazu wurden in der Analyse die Parameter nur einzeln betrachtet, ohne den Einfluss der Parameter aufeinander zu
+beachten.

@@ -1,10 +1,28 @@
 % !TeX root = ../../main.tex
 
-Abbildung~\ref{fig:experiment_flow} zeigt den Ablauf eines Experiments.
-Nach dem Start der Anwendung werden die Experimente gestartet und die definierten Parameter ausgewählt.
-Für jede Transaktion wird zunächst eine SQL-Anfrage ausgeführt und anschließend anhand des Ergebnisses entschieden,
-ob ein Retry erforderlich ist.
-Falls ein erneuter Versuch möglich ist, wird dieser ausgeführt und der Ablauf wiederholt.
-Nach Abschluss der Transaktionen werden die Ergebnisse geloggt und die beschriebenen Kenngrößen berechnet.
-\textbf{Ausführlicher beschreiben!}
+Abbildung~\ref{fig:experiment_flow} veranschaulicht den grundlegenden Ablauf eines Experiments.
+Nach dem Start der Anwendung werden zunächst die für das jeweilige Experiment definierten Parameter geladen
+und die entsprechenden Versuchsbedingungen festgelegt.
+Dazu gehören unter anderem die Anzahl der durchzuführenden Transaktionen sowie die für den Versuch relevanten
+Konfigurationsparameter.
+Anschließend wird das Experiment gestartet und die einzelnen Transaktionen entsprechend der vorgegebenen Konfiguration
+ausgeführt.
+Für jede Transaktion wird zunächst eine SQL-Anfrage an die Datenbank gesendet und ausgeführt.
+Nach der Ausführung wird das Ergebnis der Transaktion ausgewertet.
+Dabei wird insbesondere geprüft, ob die Transaktion erfolgreich abgeschlossen wurde oder ob ein Fehler aufgetreten ist,
+der einen erneuten Ausführungsversuch erforderlich macht.
+Tritt ein entsprechender Fehler auf und steht gemäß der definierten Retry-Strategie noch ein weiterer Versuch zur
+Verfügung, wird die Transaktion erneut ausgeführt.
+Dieser Ablauf kann sich abhängig vom Ergebnis und der maximal zulässigen Anzahl an Wiederholungsversuchen
+mehrfach wiederholen.
+Sobald die Transaktion erfolgreich abgeschlossen wurde oder keine weiteren Versuche mehr möglich sind, wird mit der
+nächsten Transaktion fortgefahren.
+Nach Abschluss aller für das Experiment vorgesehenen Transaktionen werden die während der Ausführung erfassten
+Ergebnisse und Messwerte gespeichert.
+Hierzu gehören hauptsächlich die Informationen über erfolgreiche und fehlgeschlagene Transaktionen sowie die Anzahl
+der durchgeführten Wiederholungsversuche.
+Auf Grundlage dieser aufgezeichneten Daten werden anschließend die für die Auswertung relevanten Kenngrößen berechnet.
+Dadurch kann das Verhalten des untersuchten Systems unter den jeweiligen Versuchsbedingungen nachvollziehbar
+erfasst und anschließend mit den Ergebnissen anderer Experimente verglichen werden.
+
 \input{figures/flowchart}

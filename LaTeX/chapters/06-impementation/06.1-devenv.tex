@@ -9,7 +9,16 @@ Windows 11 Home ausgestattet.
 Für die Implementierung kam die Programmiersprache Python (Version 3.14) zum Einsatz.
 Als Datenbankmanagementsystem wurde PostgreSQL (Version 16.13) genutzt, wobei die Anbindung über psycopg2 erfolgte.
 Diese wurde aufgrund ihrer Threadsicherheit ausgewählt.
+Die Datenbank lieft nativ auf dem Rechner und hat auf eine NVMe-SSD geschrieben.
+Bei dem Initialisieren der Datenbank werden drei Tabellen mit jeweils drei Zeilen erstellt.
 Die anschließende Datenanalyse wurde mit pandas durchgeführt, um eine performante und strukturierte Auswertung zu
 gewährleisten.
 
 Die Entwicklung erfolgte in JetBrains IntelliJ IDEA Ultimate und für das Versionsmanagement wurde GitLab eingesetzt.
+
+Der \texttt{lock\_timeout}-Wert, wurde auf 100\,ms gesetzt, für Deadlocks wurde der Default-Wert mit einer Sekunde
+gewählt.
+Ebenso wurde für diese beiden Fehlerklassen das \emph{Isolation-Level} \texttt{read commited} gewählt,
+für Serialization Failures wurde dieses auf \texttt{serializable} gesetzt.
+Es wurden in der PostgreSQL Konfiguration folgende Parameter für alle Fehlerklassen festgelegt.
+\texttt{shared\_buffers} wurden auf 1\,GB gesetzt und die \texttt{max\_connections} wurden auf 100000 erhöht.

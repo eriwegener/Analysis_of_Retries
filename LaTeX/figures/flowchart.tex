@@ -41,17 +41,17 @@
 				}
 			]
 
-			\node (start) [startstop] {Anwendung starten};
-			\node (error) [process, below=of start] {Namensgebende Funktion\\ startet Experimente};
-			\node (experiment) [process, below=of error] {Experiment startet Retry\\ anhand der definierten Parameter};
-			\node (run) [process, below=of experiment] {SQL ausführen};
+			\node (start) [startstop] {start};
+			\node (error) [process, below=of start] {namegiving function\\ starts experiments};
+			\node (experiment) [process, below=of error] {experiment starts retry with params};
+			\node (run) [process, below=of experiment] {execute SQL};
 			\node (sOrf) [decision, below=of run] {success or failure};
-			\node (possible) [decision, below right=1.5cm of sOrf] {Retry möglich?};
-			\node (retry) [process, below right=2cm of possible] {Retry ausführen};
-			\node (log) [process, below=3cm of sOrf] {Log result};
-			\node (calc) [process, below=of log] {Kenngrößen berechnen};
-			\node (result) [process, below=of calc] {Ergebnisse auswerten};
-			\node (end) [startstop, below=of result] {Experiment beenden};
+			\node (possible) [decision, below right=1.5cm of sOrf] {retry possible?};
+			\node (retry) [process, below right=2cm of possible] {execute retry};
+			\node (log) [process, below=3cm of sOrf] {log result};
+			\node (calc) [process, below=of log] {calculate metrics};
+			\node (result) [process, below=of calc] {analyse results};
+			\node (end) [startstop, below=of result] {finish experiment};
 
 			\draw [arrow, shorten <=5pt, shorten >=5pt] (start) -- (error);
 			\draw [arrow, shorten <=5pt, shorten >=5pt] (error) -- (experiment);

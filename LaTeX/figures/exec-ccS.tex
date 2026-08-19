@@ -1,0 +1,29 @@
+% !TeX root = ../main.tex
+
+\begin{figure}[ht]
+	\centering
+
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\caption*{(a) Deadlock}
+		\input{figures/evaluation/ccS/e-deadlock}
+	\end{minipage}
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\caption*{(b) Serialization Failure}
+		\input{figures/evaluation/ccS/e-serialization}
+	\end{minipage}
+
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\caption*{(c) Lock Timeout}
+		\input{figures/evaluation/ccS/e-timeout}
+
+		\vspace{0.5em}
+		\hspace{1.2cm}
+		\pgfplotslegendfromname{gemeinsameLegende2}
+	\end{minipage}
+
+	\caption{Ausführungszeiten erfolgreicher Transaktionen in Bezug auf Concurrency und Strategie}
+	\label{fig:exec-ccS}
+\end{figure}

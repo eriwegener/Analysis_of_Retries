@@ -1,0 +1,82 @@
+% !TeX root = ../main.tex
+
+\begin{tikzpicture}
+	\begin{axis}[
+		width=0.8\textwidth,
+		height=0.8\textwidth,
+		ylabel={Time (ms)},
+		xlabel={Concurrency},
+		xtick={1,2,3,4,5},
+		xticklabels={cc2,cc5,cc7,cc10,cc20},
+		ymax=1500,
+		ymode=log,
+		ytick={1000,1100,1200,1300,1400,1500},
+		yticklabels={1000,1100,1200,1300,1400,1500},
+		scaled y ticks=false,
+		legend to name=gemeinsameLegende,
+		legend style={
+			at={(0.5,-0.5)},
+			anchor=north,
+			legend columns=2,
+			legend cell align=left
+		},
+	]
+		% Strategie
+		\addplot[
+			color=ezerocolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,1005.666667)
+			(2,1103.863636)
+			(3,1122.242857)
+			(4,1101.733333)
+			(5,1102.483871)
+		};
+
+		\addplot[
+			color=eonecolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,1147.402387)
+			(2,1140.713369)
+			(3,1124.719493)
+			(4,1155.845606)
+			(5,1176.398058)
+		};
+
+		\addplot[
+			color=etwocolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,1205.040327)
+			(2,1325.804914)
+			(3,1324.368806)
+			(4,1339.259762)
+			(5,1338.164894)
+		};
+
+		\addplot[
+			color=ethreecolor,
+			solid,
+			thick,
+			mark=*,
+			mark size=1pt
+		] coordinates {
+			(1,1138.836072)
+			(2,1417.340444)
+			(3,1356.938187)
+			(4,1320.743697)
+			(5,1333.673820)
+		};
+
+	\end{axis}
+\end{tikzpicture}

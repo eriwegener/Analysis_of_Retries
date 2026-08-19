@@ -7,7 +7,7 @@
 			width=0.7\textwidth,
 		height=0.6\textwidth,
 		ylabel={Overhead (ms)},
-		xlabel={Retry Count},
+		xlabel={Retry-Count},
 		xtick={1,2,3,4,5},
 		xticklabels={r0,r1,r3,r5},
 		ymax=20000,
@@ -32,10 +32,10 @@
 				thick,
 				mark=*
 			] coordinates {
-				(1,2039.574758)
-				(2,1846.033930)
-				(3,3328.850215)
-				(4,5018.179477)
+				(1,0.000000)
+				(2,773.255544)
+				(3,2680.469900)
+				(4,4361.956446)
 			};
 			\addlegendentry{Deadlock -- Success}
 
@@ -46,10 +46,10 @@
 				thick,
 				mark=*
 			] coordinates {
-				(1,2344.174946)
-				(2,2629.454989)
-				(3,10426.336635)
-				(4,18299.298387)
+				(1,0.000000)
+				(2,2967.619514)
+				(3,9741.434926)
+				(4,17140.188172)
 			};
 			\addlegendentry{Deadlock -- Failed}
 
@@ -64,10 +64,10 @@
 				mark=diamond*,
 				mark size=4pt
 			] coordinates {
-				(1,52.534716)
-				(2,57.168901)
-				(3,129.257192)
-				(4,158.096521)
+				(1,0.000000)
+				(2,43.468215)
+				(3,119.419158)
+				(4,152.158172)
 			};
 			\addlegendentry{Serialization -- Success}
 
@@ -79,10 +79,10 @@
 				mark=diamond*,
 				mark size=4pt
 			] coordinates {
-				(1,54.115380)
-				(2,58.741819)
-				(3,223.401558)
-				(4,327.653962)
+				(1,0.000000)
+				(2,56.234266)
+				(3,220.305493)
+				(4,326.054421)
 			};
 			\addlegendentry{Serialization -- Failed}
 
@@ -97,10 +97,10 @@
 				mark=triangle*,
 				mark size=4pt
 			] coordinates {
-				(1,1051.702277)
-				(2,647.152261)
-				(3,1000.280284)
-				(4,1000.363138)
+				(1,0.000000)
+				(2,482.968750)
+				(3,632.802539)
+				(4,943.708476)
 			};
 			\addlegendentry{Timeout -- Success}
 
@@ -112,16 +112,16 @@
 				mark=triangle*,
 				mark size=4pt
 			] coordinates {
-				(1,128.710454)
-				(2,135.680303)
-				(3,462.304391)
-				(4,698.778720)
+				(1,0.000000)
+				(2,124.865505)
+				(3,432.319655)
+				(4,667.137961)
 			};
 			\addlegendentry{Timeout -- Failed}
 
 		\end{axis}
 	\end{tikzpicture}
 
-	\caption{Retry Overhead für unterschiedliche Anzahl an Retries.}
+	\caption{Retry-Overhead für unterschiedliche Anzahl an Retries.}
 	\label{fig:r-overhead}
 \end{figure}

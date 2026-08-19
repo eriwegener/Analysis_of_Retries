@@ -3,7 +3,7 @@
 PostgreSQL orientiert sich an den SQL Standardkonventionen für \texttt{SQLSTATE} codes.
 Daher sind die Rückgabewerte für Transaktionen fünfstellig und bestehen sowohl aus Zahlen, als auch aus Buchstaben.
 
-Für die Arbeit sind die folgenden Fehlercodes relevant.
+Für die Arbeit sind die folgenden SQLSTATE-Codes relevant:
 \begin{itemize}
 	\item \texttt{00000}: successful completion
 	\item \texttt{40001}: Serialization Failure
@@ -11,7 +11,7 @@ Für die Arbeit sind die folgenden Fehlercodes relevant.
 	\item \texttt{55P03}: Lock not available
 \end{itemize}
 Der Fehler \texttt{40001 Serialization Failure} tritt unter anderem bei dem \emph{Serializable Isolation Level} auf.
-Dieses Level garantiert, dass gleichzeitig laufende Transaktionen kein Ergebnis erzeugen dürfen, der nicht entstehen
+Dieses Level garantiert, dass gleichzeitig laufende Transaktionen kein Ergebnis erzeugen dürfen, das nicht entstehen
 würde, wenn die Transaktionen nacheinander ausgeführt würden.
 Falls das passiert, wird für eine Transaktion ein Serialization Failure Fehler zurückgegeben, während eine andere
 erfolgreich abschließen kann~\cite{PostgreSQLSerializable}.
@@ -25,15 +25,17 @@ Die abgebrochene Transaktion gibt den Fehler \texttt{40P01 Deadlock detected} zu
 welches nicht verfügbar ist, da dieses von einer anderen Transaktion schon benutzt wird~\cite{PostgreSQLRowLocks}.
 Kann die Transaktion das Lock nicht innerhalb der konfigurierten Wartezeit erhalten, welche durch
 \texttt{lock\_timeout} festgelegt wird, dann bricht PostgreSQL die Anfrage ab~\cite{PostgreSQLClientDefaults}.
-Da die Transaktion explizit ein Lock mit \texttt{SELECT ... FOR UPDATE} anfordert und dieses Lock aufgrund des Timeouts
-nicht erhält, wird die Transaktion mit dem Code \texttt{55P03 lock not available} abgebrochen.
+Wenn die Transaktion explizit ein Lock mit \texttt{SELECT ... FOR UPDATE} anfordert und dieses Lock aufgrund des
+Timeouts nicht erhält, wird die Transaktion mit dem Code \texttt{55P03 lock not available} abgebrochen.
 
-Alle diese Fehler haben eine Sache gemeinsam, sie sind sogenannte \emph{transient Failures}.
-Das bedeutet, dass sich die Probleme der Transaktionen von selbst wieder lösen.
-Jeder Fehler der, oben erwähnt wurde, kann sich durch langes Warten lösen.
+Deadlocks und Serialization Failures haben eine Sache gemeinsam, sie sind sogenannte \emph{transient Failures}.
+Das bedeutet, dass die Fehler nur temporär sind und durch einen späteren Retry gelöst werden können.
+Serialization Failures und Deadlocks können sich durch Warten vor der erneuten Ausführung der Transaktion lösen.
 Wenn die abgebrochene Transaktion wartet, bis die andere erfolgreich abgeschlossen ist, dann kann bei nur zwei
-Transaktionen kein Deadlock, Serialization Failure oder Lock not available mehr entstehen.
-Deswegen sind diese Fehler transient Failures und sollten wiederholt werden~\cite{MicrosoftRetryPattern}.
+Transaktionen kein erneuter Deadlock oder Serialization Failure mehr entstehen.
+Deswegen sollten diese Fehlerklassen wiederholt werden~\cite{MicrosoftRetryPattern}.
+Lock not available muss kein transient Failure sein, kann aber durch Retry gelöst werden, sodass diese Fehlerklasse
+Teil der Untersuchung ist.
 
 Eine \texttt{Constraint-Violation} wäre kein transient Failure, da sich der Fehler nicht so schnell automatisch lösen
 wird.

@@ -1,23 +1,24 @@
 % !TeX root = ../../main.tex
 
-Wie im vorherigen Abschnitt schon angemerkt, sollten solche transient Failures wiederholt werden.
-Dafür gibt es verschiedene Retry Policies.
-Eine Retry Policy beschreibt sowohl die einzelnen Strategien, welche im Folgendem genauer erklärt werden, als auch
+Wie im vorherigen Abschnitt schon angemerkt, sollten Transaktionen die in transient Failures geendet sind
+wiederholt werden.
+Dafür gibt es verschiedene Retry-Policies.
+Eine Retry-Policy beschreibt sowohl die einzelnen Strategien, welche im Folgendem genauer erklärt werden, als auch
 die Fehlererkennung, sowie die Anzahl der Retries und die Dauer des Delays~\cite{MicrosoftTransientFaults}.
 PostgreSQL führt die Fehlererkennung mit internen Algorithmen durch, dessen Erläuterung im Rahmen dieser Arbeit
 aufgrund ihrer Komplexität nicht möglich ist.
 
-Es gibt verschiedene mögliche Retry Strategien, die in der Praxis Anwendung finden.
+Es gibt verschiedene mögliche Retry-Strategien, die in der Praxis Anwendung finden.
 Eine ist der \emph{immediately Retry}, bei dem die Transaktion ohne zu warten direkt wiederholt wird.
 Dabei wird nur in der Anzahl der möglichen Retries variiert.
-Eine weitere in dieser Arbeit behandelten Strategie ist \emph{Retry after Delay}.
+Eine weitere in dieser Arbeit behandelte Strategie ist \emph{Retry after Delay}.
 Bei diesem Mechanismus wird eine kurze Zeit gewartet, bis das Programm die Transaktion wiederholt.
 Es ist sowohl der Delay als auch die Anzahl der Wiederholungen frei wählbar, sollte aber auf das System optimiert
 sein~\cite{MicrosoftRetryPattern}.
 Des Weiteren gibt es den \emph{Exponential back-off} und den \emph{Exponential back-off with jitter}.
 Bei Exponential back-off handelt es sich um ein Verfahren, bei dem mit jedem erfolglosem Retry einer Transaktion der
 Delay exponentiell länger wird.
-Durch jitter wird der Delay zufällig zwischen einem Grundwert und dem Exponential back-off Wert gewählt.
+Durch jitter wird der Delay zufällig zwischen einem Grundwert und dem Exponential back-off Wert gewählt~\cite{MicrosoftTransientFaults}.
 
 Der Vollständigkeit halber sollten \emph{Cancel Retry} und \emph{Circuit Breaker}, als gängige praktische Methoden
 genannt werden.
@@ -29,6 +30,6 @@ Wenn dieser überschritten wird, dann öffnet sich der Kreis und alle Transaktio
 System erholen kann.
 Zudem empfiehlt Microsoft, in ihrem Guide zum Umgang mit transient faults, für jede Strategie die einen Delay
 verwendet, diesen zufällig zu generieren~\cite{MicrosoftTransientFaults}.
-Für Retry Strategien müssen Transaktionen idempotent
+Für Retry-Strategien müssen Transaktionen idempotent
 \footnote{Eine Transaktion ist idempotent, wenn sie bei mehrfacher Ausführung
-das gleiche Ergebnis liefert.} sein~\cite{MicrosoftRetryPattern}.
+den gleichen Effekt liefert.} sein~\cite{MicrosoftRetryPattern}.

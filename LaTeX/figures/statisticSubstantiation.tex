@@ -1,0 +1,27 @@
+% !TeX root = ../main.tex
+
+\begin{table}[htbp]
+	\centering
+	\smallsize
+	\begin{tabular}{l|c|ccc}
+		\toprule
+		& & \multicolumn{3}{c}{Statistische Kennwerte} \\
+		\cmidrule(lr){3-5}
+		Typ & Status & Durchschnitt(ms) & Standardabweichung(ms) & 95\%-KI($\pm$ms)\\
+		\midrule
+		\multirow{2}{*}{Deadlock}
+		& success & 4602.22 & 40.19 & 49.91 \\
+		& failed & 10739.24 & 56.90 & 70.65 \\
+		\midrule
+		\multirow{2}{*}{Serialization}
+		& success & 165.11 & 0.81 & 1.00 \\
+		& failed & 214.39 & 0.31 & 0.38 \\
+		\midrule
+		\multirow{2}{*}{Lock Timeouts}
+		& success & 1232.08 & 3.62 & 4.49 \\
+		& failed & 509.93 & 0.40 & 0.50 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Durchschnitt, Standardabweichung und 95\%-Konfidenzintervall der Ausführungszeiten}
+	\label{tab:statisticSubstantiation}
+\end{table}

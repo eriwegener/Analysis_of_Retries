@@ -1,4 +1,5 @@
 import pandas as pd
+from scipy import stats
 
 from config.settings import LOG_PATH_E, BASE_DIR, ENABLE_TEST
 
@@ -32,9 +33,38 @@ def _sort_numeric(data):
         key=lambda x: x.str.extract(r"([\d.]+)")[0].astype(float) if hasattr(x, 'str') else x
     )
 
+def _evaluate_metric_with_stats(data, metric_col="total_ms", param=None, pstatus=None):
+    df = data.copy()
+
+    df["it"] = df["run_id"].str.extract(r"(i\d+)")
+    if param:
+        df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
+
+    if pstatus:
+        df = df[df["status"] == pstatus]
+
+    group_cols_it = [param, "status", "it"] if param else ["status", "it"]
+    df_it = df.groupby(group_cols_it)[metric_col].mean().reset_index()
+
+    def _calc_ci95(series):
+        n = len(series)
+        if n < 2:
+            return 0.0
+        return stats.sem(series) * stats.t.ppf((1 + 0.95) / 2., n - 1)
+
+    agg_cols = [param, "status"] if param else ["status"]
+
+    result = df_it.groupby(agg_cols)[metric_col].agg(
+        mean="mean",
+        std="std",
+        count="count",
+        ci95=_calc_ci95
+    ).reset_index()
+
+    print(result)
+
 def _rates(data, param, pstatus):
     df = data.copy()
-    df["cc"] = df["run_id"].str.extract(fr"(cc[\d.]+)")
 
     if param:
         df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
@@ -73,7 +103,6 @@ def _retry_distribution(data, param, pstatus):
 
 def _execution_comparison(data, param, pstatus):
     df = data.copy()
-    df["e"] = df["run_id"].str.extract(r"(e\d+)_")
 
     if param:
         df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
@@ -90,7 +119,7 @@ def _execution_comparison(data, param, pstatus):
 
     _print(result, "execution_comparison", "", "")
 
-def _quartiles(data, param, pstatus):
+def _quantiles(data, param, pstatus):
     df = data.copy()
     if param:
         df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
@@ -105,24 +134,25 @@ def _quartiles(data, param, pstatus):
 
     quantiles = _sort_numeric(quantiles)
 
-    _print(quantiles, "quartiles", param, pstatus)
+    _print(quantiles, "quantiles", param, pstatus)
 
 def _retry_overhead(data, param, pstatus):
-    df_overhead = data.copy()
+    df = data.copy()
 
-    df_overhead["e"] = df_overhead["run_id"].str.extract(fr"(e[\d.]+)")
-    df_overhead[param] = df_overhead["run_id"].str.extract(fr"({param}[\d.]+)")
+    df["e"] = df["run_id"].str.extract(fr"(e[1-9]\d*)")
+    df[param] = df["run_id"].str.extract(fr"({param}[\d.]+)")
 
-    df_overhead["attempts_trimmed"] = (df_overhead["attempts_ms"].
-                                       apply(lambda x: x[1:] if isinstance(x, list) and len(x) > 1 else []))
-    df_overhead["best_ms"] = (df_overhead["attempts_trimmed"].
-                                      apply(lambda x: min(x) if len(x) > 0 else 0))
-    df_overhead["overhead"] = df_overhead["total_ms"] - df_overhead["best_ms"]
+    df["overhead"] = df.apply(
+        lambda row: row["total_ms"] - row["attempts_ms"][0]
+        if isinstance(row["attempts_ms"], list) and len(row["attempts_ms"]) > 1
+        else 0,
+        axis=1
+    )
 
     if param:
-        result = df_overhead.groupby([param, "status"])["overhead"].mean().unstack(fill_value=0)
+        result = df.groupby([param, "status"])["overhead"].mean().unstack(fill_value=0)
     else:
-        result = df_overhead.groupby(["status"])["overhead"].mean()
+        result = df.groupby(["status"])["overhead"].mean()
 
     if pstatus == "success":
         result = result["success"]
@@ -159,7 +189,7 @@ def _influence_concurrency(data):
     _rates(data, "cc", "")
     _retry_distribution(data, "cc", "")
     _execution_comparison(data, "cc", "")
-    _quartiles(data, "cc", "")
+    _quantiles(data, "cc", "")
     _retry_overhead(data, "cc", "")
     _throughput(data, "cc")
 
@@ -168,7 +198,7 @@ def _influence_delay(data):
     _rates(data, "d", "")
     _retry_distribution(data, "d", "")
     _execution_comparison(data, "d", "")
-    _quartiles(data, "d", "")
+    _quantiles(data, "d", "")
     _retry_overhead(data, "d", "")
     _throughput(data, "d")
 
@@ -177,7 +207,7 @@ def _influence_retry(data):
     _rates(data, "r", "")
     _retry_distribution(data, "r", "")
     _execution_comparison(data, "r", "")
-    _quartiles(data, "r", "")
+    _quantiles(data, "r", "")
     _retry_overhead(data, "r", "")
     _throughput(data, "r")
 
@@ -186,7 +216,7 @@ def _influence_strategy(data):
     _rates(data, "s", "")
     _retry_distribution(data, "s", "")
     _execution_comparison(data, "s", "")
-    _quartiles(data, "s", "")
+    _quantiles(data, "s", "")
     _retry_overhead(data, "s", "")
     _throughput(data, "s")
 
@@ -195,15 +225,16 @@ def _overall(data):
     _rates(data, "", "")
     _retry_distribution(data, "", "")
     _execution_comparison(data, "", "")
-    _quartiles(data, "", "")
+    _quantiles(data, "", "")
     _retry_overhead(data, "", "")
     _throughput(data, "")
 
 def start_analysis(path):
     data = _get_data(path)
 
-    #_overall(data)
-    #_influence_concurrency(data)
+    _evaluate_metric_with_stats(data)
+    _overall(data)
+    _influence_concurrency(data)
     _influence_delay(data)
-    #_influence_retry(data)
-    #_influence_strategy(data)
+    _influence_retry(data)
+    _influence_strategy(data)

@@ -4,9 +4,10 @@ Da die Datenbank für jede Transaktion einen SQLSTATE-Code zurückgibt, müssen 
 ausgewertet werden.
 Die Verarbeitung der SQLSTATE-Codes erfolgt im Modul \texttt{retry} innerhalb der Funktion
 \texttt{\_start\_transaktion}.
-Dort wird die Transaktion in einem \texttt{try: ... except: ...}-Block gestartet.
+Dort wird die Transaktion in einem \texttt{try/except}-Block gestartet.
 Tritt während der Ausführung ein von \texttt{psycopg2} Datenbankfehler auf, wird dieser abgefangen und
-entsprechend verarbeitet~\ref{lst:errorDetection}.
+entsprechend verarbeitet.
+Der Pseudocode in Ausschnitt~\ref{lst:errorDetection} zeigt dies visuell.
 
 \begin{lstlisting}[style=pythoncode, caption={Fehlererkennung}, label={lst:errorDetection}]
 def _start_transaction():
@@ -15,8 +16,12 @@ def _start_transaction():
     except psycopg2.Error as e:
         res = "failed"
         pgcode = e.pgcode
+
+    return res
+
 def run_retry_with_jitter_delay():
     ...
+    data = _start_transaction()
     while data == "failed" and retries < retry_count:
         ...
 \end{lstlisting}
@@ -27,11 +32,11 @@ Dadurch wird die weitere Verarbeitung unabhängig vom konkreten SQLSTATE-Code ge
 Der \texttt{pgcode} wird dabei für die spätere Auswertung erfasst, während die Variable \texttt{res} zur Bestimmung des
 weiteren Ablaufs des Retry-Mechanismus verwendet wird.
 
-Die eigentliche Entscheidung über einen erneuten Ausführungsversuch erfolgt anschließend in der Retry Funktion.
+Die eigentliche Entscheidung über einen erneuten Ausführungsversuch erfolgt anschließend in der Retry-Funktion.
 Dazu wird zunächst geprüft, ob die vorherige Ausführung fehlgeschlagen ist.
 Gleichzeitig wird überprüft, ob die maximal zulässige Anzahl an Retries bereits erreicht wurde.
 Solange beide Bedingungen erfüllt sind, wird die Transaktion erneut ausgeführt.
-Nach jedem fehlgeschlagenen, außer dem initial Versuch wird der Retry-Zähler erhöht, sodass die Anzahl der
+Nach jedem fehlgeschlagenen Versuch, außer dem Initialem, wird der Retry-Zähler erhöht, sodass die Anzahl der
 erneuten Ausführungen begrenzt bleibt.
 Sobald die Transaktion erfolgreich ausgeführt wurde oder die maximale Anzahl an Retries erreicht ist, wird die
 Schleife verlassen und das vorliegende Ergebnis zurückgegeben.
@@ -42,7 +47,7 @@ Für die vorliegende Untersuchung ist außerdem zu beachten, dass auf eine dynam
 anhand der SQLSTATE-Codes verzichtet wurde.
 Die Fehler werden in den Experimenten gezielt erzeugt und dienen jeweils der Untersuchung einer bestimmten
 Fehlerklasse.
-Stattdessen wird der zurückgegebene SQLSTATE-Code lediglich erfasst.
+Stattdessen wird lediglich der zurückgegebene SQLSTATE-Code erfasst.
 Im Rahmen der Versuchsauswertung wurde zusätzlich überprüft, dass bei der Durchführung der Experimente
 ausschließlich die jeweils vorgesehenen Fehlerklassen auftraten.
 Dadurch kann sichergestellt werden, dass die gemessenen Ergebnisse nicht durch unerwartete Fehlerarten beeinflusst

@@ -1,34 +1,34 @@
 % !TeX root = ../../main.tex
 
-Die Experimente bestimmen, mit welcher Konfiguration eine Retry Strategie ausgeführt wird.
-Eine Konfiguration besteht aus den folgenden Parametern.
+Die Experimente bestimmen mit welcher Konfiguration eine Retry-Strategie ausgeführt wird.
+Eine Konfiguration besteht aus den folgenden Parametern:
 \begin{itemize}
-	\item Retry Count
-	\item Retry Delay
-	\item Retry Strategie
+	\item Retry-Count
+	\item Retry-Delay
+	\item Retry-Strategie
 	\item Concurrency
 	\item Workload (nicht variabel)
 	\item Iterations (nicht variabel)
 \end{itemize}
-Der Retry Count legt fest, wie häufig eine Transaktion wiederholt werden darf.
-Retry Delay beschreibt, wie lange eine Strategie initial warten muss, bevor sie die Transaktion wiederholen darf.
-Durch Retry Strategie legt ein Experiment fest, mit welchen Strategien es den Retry ausführen soll.
+Der Retry-Count legt fest, wie häufig eine Transaktion wiederholt werden darf.
+Retry-Delay beschreibt, wie lange eine Strategie initial warten muss, bevor sie die Transaktion wiederholen darf.
+Durch Retry-Strategie legt ein Experiment fest, mit welchen Strategien es den Retry ausführen soll.
 Der Concurrency Parameter legt fest, wie viele gleichzeitige Anfragen eine Datenbank bekommt, die alle den SQL-Code
 ausführen wollen.
-Workload ist fest definiert, damit man vergleichbare Ergebnisse bekommt und Iterations sorgt dafür, dass die
+Workload ist fest definiert, damit vergleichbare Ergebnisse entstehen und Iterations sorgt dafür, dass die
 Ergebnisse eine gewisse Stabilität haben und keine großen Ausreißer sind.
-Durch diese Parameter lassen sich die Strategien testen, ohne dass es zu viel wird.
+Mithilfe dieser Parameter lassen sich die Strategien testen ohne den Rahmen der Untersuchung zu sprengen.
 
-Der Aufbau einer Retry Strategie besteht daraus, dass sie SQL-Code ausführen soll.
+Der Aufbau einer Retry-Strategie besteht daraus, dass sie SQL-Code ausführen soll.
 Daraufhin bekommt sie von der Datenbank einen Status zurück, entweder ist die Transaktion erfolgreich gewesen oder
 nicht.
 Im nächsten Schritt wird dies getestet.
-Gleichzeitig wird noch getestet ob der Retry Count überschritten wird oder nciht.
+Gleichzeitig wird noch getestet ob der Retry-Count überschritten wird oder nicht.
 Ist die Überprüfung positiv, dass ein weiterer Retry möglich ist, wird der Retry angewandt.
-Es wird der Retry Count erhöht und so lange gewartet, wie Delay besagt.
+Der Retry-Count wird erhöht und für die durch den Delay vorgegebene Dauer gewartet.
 Danach wird die Transaktion erneut ausgeführt.
 
 Dies geschieht so lange bis eine der Abbruchbedingungen zutrifft.
-Entweder war die Transaktion erfolgreich, oder die Transaktion hat die maximal zulässige Anzahl an Wiederholungen
+Entweder war die Transaktion erfolgreich oder die Transaktion hat die maximal zulässige Anzahl an Wiederholungen
 überschritten.
 Ist das passiert, wird das Ergebnis zurückgegeben und in die Logdatei geschrieben.

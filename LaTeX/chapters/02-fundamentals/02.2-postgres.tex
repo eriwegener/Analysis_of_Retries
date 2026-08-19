@@ -1,28 +1,38 @@
 % !TeX root = ../../main.tex
 
-PostgreSQL ist eine open-source Datenbank die seit 35 Jahren aktiv entwickelt wird.
-Die aktuell veröffentliche Version ist, 18.4.
+PostgreSQL ist ein open-source Datenbankmanagementsystem (DBMS) das seit über 35 Jahren aktiv entwickelt wird.
+Die aktuell veröffentlichte Version ist 18.4.
 Version 19 wird gerade entwickelt und befindet sich in der Beta~\cite{PostgreSQL}.
 
-Die Architektur von PostgreSQL sieht folgendermaßen aus, es gibt einen Serverprozess der die Datenbank verwaltet,
-Verbindungen akzeptiert und die Datenbankaktionen eines Clients ausführt.
+Die Architektur von PostgreSQL sieht folgendermaßen aus.
+Es gibt einen Serverprozess der die Datenbank verwaltet, Verbindungen akzeptiert und die Datenbankaktionen eines
+Clients ausführt.
 Dieses Programm heißt postgres.
 Der Client kann dabei vielseitig sein, sei es ein textbasierter Client, eine grafische App oder ein Webserver.
-Alle bauen eine TCP/IP-Verbindung zu dem Server auf, welcher mehrere Verbindungen gleichzeitig eingehen kann~\cite{PostgreSQLArchitecture}.
+Alle bauen eine TCP/IP-Verbindung zu dem Server auf, welcher mehrere Verbindungen gleichzeitig annehmen kann~\cite{PostgreSQLArchitecture}.
 
 Für PostgreSQL Datenbanken sind Transaktionen das fundamentale Konzept.
 Sie bündeln mehrere Schritte in eine einzige Operation.
 Die Transaktionen basieren auf dem ACID Prinzip\footnote{Atomicity, eine Transaktion wird entweder ganz oder gar nicht ausgeführt.
 	Consistency, nach jeder Transaktion bleiben alle Daten in einem gültigen und korrekten Zustand.
-	Isolation, gleichzeitig ablaufende Transaktionen beeinflussen sich nicht gegenseitig.
+	Isolation, gleichzeitig ablaufende Transaktionen stören sich nicht gegenseitig.
 	Durability, bestätigte Änderungen bleiben dauerhaft gespeichert~\cite{Haerder1983}.}, sodass eine Transaktion immer
 gültig oder ungültig ist.
 Eine Transaktion beginnt immer mit einem \texttt{BEGIN;} und endet mit einem \texttt{COMMIT;} oder \texttt{ROLLBACK;},
 um eine Transaktion zu beenden~\cite{PostgreSQLTransactions}.
 
 Um eine erfolgreiche Recovery bei Abstürzen zu gewährleisten, arbeitet PostgreSQL mit write ahead log (WAL)~\cite{PostgreSQLWAL}.
-WAL basiert auf \texttt{UNDO}, Informationen müssen vor der Propagation\footnote{Propagation ist die Operation,
+Klassisches WAL basiert auf \texttt{UNDO} Informationen, um unvollständige Transaktionen zurückzurollen.
+Diese müssen vor der Propagation, \footnote{Propagation ist die Operation,
 	die geschriebene Seiten zu einem Teil der materialized Database macht. Die materialized Database hingegen ist der
 	persistente Datenbankzustand, welcher nach einem Absturz vorhanden ist~\cite{Haerder1983}.}
-der entsprechenden Änderung in das Log geschrieben werden, und \texttt{REDO}, Informationen muss in das temp, archive
-Log geschrieben werden bevor die Bestätigung des EOT\footnote{End of Transaction} kommt~\cite{Haerder1983}.
+der entsprechenden Änderung in das Log geschrieben werden.
+Dazu nutzt es \texttt{REDO} Informationen, um committete Änderungen zu wiederholen, die vor Bestätigung des
+EOT\footnote{End of Transaction} in das aktive Log geschrieben werden müssen~\cite{Haerder1983}.
+In PostgreSQL hingegen wird WAL anders verwendet.
+Die Datendateien dürfen erst dann geschrieben werden, wenn die Änderungen protokolliert und auf einen permanenten
+Speicher geschrieben wurden.
+Dadurch muss nicht bei jedem Transaktionscommit auf die Festplatte geschrieben werden, denn im Falle eines Absturzes
+kann die Datenbank mithilfe der Logs wiederhergestellt werden.
+Alle Änderungen, die noch nicht propagiert wurden, können anhand der WAL-Einträge wiederholt werden, dies ist
+der \texttt{REDO}~\cite{PostgreSQLWAL}.

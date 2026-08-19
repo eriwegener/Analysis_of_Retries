@@ -1,7 +1,8 @@
 % !TeX root = ../../../main.tex
 
 Das \texttt{analysis}-Modul enthält die Funktionen, die die Logdateien mit pandas auswerten.
-Die Funktion \texttt{start\_analysis()} wird durch die \texttt{main} aufgerufen startet die einzelnen Analyseschritte.
+Die Funktion \texttt{start\_analysis()} wird durch die \texttt{main}-Funktion aufgerufen und startet die einzelnen
+Analyseschritte.
 Dafür wird die Logdatei eingelesen und in einem DataFrame gespeichert.
 
 Durch die Funktion \texttt{\_print()} werden die Ergebnisse in die Konsole geschrieben.
@@ -9,7 +10,7 @@ Die Funktion in Codeausschnitt~\ref{lst:sortNumeric} implementiert eine numerisc
 Hierzu werden die ersten beiden Ebenen des MultiIndex betrachtet.
 Sind die Indexwerte Strings, wird mithilfe eines regulären Ausdrucks der darin enthaltene numerische Wert
 ausgelesen und in einen \texttt{float} umgewandelt.
-Das \texttt{if hasattr} dient lediglich als Absicherung, dass nur in Strings die Zahl extrahiert wird, während bei
+Das \texttt{if hasattr} dient lediglich als Absicherung, dass nur für Strings die Zahl extrahiert wird, während bei
 numerischen Werten direkt sortiert wird.
 Dadurch werden die Ergebnisse in der numerisch korrekten Reihenfolge und nicht lexikografisch sortiert.
 Wenn der Einfluss eines bestimmten Parameters betrachtet wird, steht dieser in dem ersten Level des Index, sodass die
@@ -24,7 +25,7 @@ def _sort_numeric(data):
     )
 \end{lstlisting}
 
-Für die Auswertung stehen vier Funktionen zur Verfügung, die den Einfluss der Parameter Concurrency, Delay, Retry Count
+Für die Auswertung stehen vier Funktionen zur Verfügung, die den Einfluss der Parameter Concurrency, Delay, Retry-Count
 und Strategie untersuchen.
 Zusätzlich existiert eine Funktion, welche die Ergebnisse unabhängig von einem dieser Parameter auswertet.
 Den vier parameterabhängigen Analysefunktionen wird jeweils der Parameter übergeben, dessen Einfluss auf die
@@ -38,7 +39,7 @@ der Kenngrößen mehrfach implementieren zu müssen.
 
 Im Folgendem wird nur der Fall, ohne zusätzliche Parameter betrachtet, da sich lediglich das Auslesen und die
 Gruppierung nach diesem ändert.
-Des Weiteren enthält jede Funktion, außer \texttt{\_throughput} den Parameter \texttt{pstatus}, welcher entweder auf
+Des Weiteren enthält jede Funktion, außer \texttt{\_throughput}, den Parameter \texttt{pstatus}, welcher entweder auf
 \texttt{success}, \texttt{failed} oder mit \texttt{""} leer gesetzt werden kann.
 Dadurch kann das DataFrame wahlweise mit allen Einträgen, ausschließlich mit erfolgreichen Einträgen oder
 ausschließlich mit fehlgeschlagenen Einträgen ausgegeben werden.
@@ -52,26 +53,25 @@ Das wird am Schluss mit 100 multipliziert, damit ein Prozentwert ausgegeben wird
 
 Für die \texttt{\_retry\_distribution} wird das DataFrame nach \texttt{retries} und dem Status gruppiert.
 Durch \texttt{dropna=False} werden \texttt{None}- beziehungsweise \texttt{NaN}-Werte berücksichtigt.
-Dabei zählt \texttt{size()} die Einträge und \texttt{unstack()} wandelt die zweite Indexebene in Spalten um, während
+Dabei zählt \texttt{size()} die Einträge und \texttt{unstack()} wandelt die zweite Indexebene in Spalten um während
 \texttt{fill\_value=0} dafür sorgt, dass nicht vorhandene Kombinationen mit 0 dargestellt werden.
 
 Bei der Funktion \texttt{\_execution\_comparison} werden Ausführungszeiten verglichen.
 Dafür wird das DataFrame nach dem Status gruppiert und für jede Gruppe der Durchschnitt mit \texttt{mean()} von der
 \texttt{total\_ms} berechnet.
-Die Quartile in \texttt{\_quartiles} berechnen sich analog dazu, außer dass \texttt{quantile([0.50, 0.95, 0.99, 0.999])}
+Die Quantile in \texttt{\_quantiles} berechnen sich analog dazu, außer dass \texttt{quantile([0.50, 0.95, 0.99, 0.999])}
 anstelle von \texttt{mean} verwendet wurde.
 
-Zur Bestimmung des durch den Retry-Mechanismus entstehenden Overheads werden zunächst die einzelnen Ausführungszeiten
-der Transaktionsversuche betrachtet.
-Es wird aus \texttt{attempts\_ms} jeweils der erste Eintrag entfernt, da dieser die ursprüngliche Ausführung der
-Transaktion und somit keinen Retry darstellt.
-Aus den verbleibenden Ausführungszeiten wird anschließend mit \texttt{min()} die kürzeste Ausführungszeit bestimmt und
-in \texttt{best\_ms} gespeichert.
-Der Overhead ergibt sich schließlich aus der Differenz zwischen der gesamten Ausführungszeit \texttt{total\_ms} und der
-kürzesten gemessenen Ausführungszeit.
+Zur Bestimmung des durch den Retry-Mechanismus entstehenden Overheads werden die einzelnen Ausführungszeiten der
+Transaktionsversuche (\texttt{attempts\_ms}) sowie die Gesamtdauer (\texttt{total\_ms}) betrachtet.
+Da der erste Eintrag in \texttt{attempts\_ms} die ursprüngliche Ausführung der Transaktion repräsentiert und somit
+keinen Retry darstellt, wird dessen Dauer von der Gesamtausführungszeit abgezogen.
+Finden keine Wiederholungsversuche statt, beträgt der Overhead null.
+Der Overhead ergibt sich somit direkt aus der Verzögerung und den Ausführungszeiten aller zusätzlichen Versuche
+inklusive Wartezeiten.
 Anschließend wird aus dem \texttt{overhead} der Durchschnitt berechnet.
-Dadurch wird der zusätzliche Zeitaufwand bestimmt, der über die reine Ausführungszeit des schnellsten
-Transaktionsversuchs hinausgeht.
+Dadurch wird der tatsächliche zeitliche Zusatzaufwand bestimmt, der ausschließlich durch das Auftreten von Retries
+verursacht wird.
 
 Für die Berechnung des Durchsatzes wird zunächst aus der \texttt{run\_id} die jeweilige Experiment-ID extrahiert und in
 der Spalte \texttt{e} gespeichert.

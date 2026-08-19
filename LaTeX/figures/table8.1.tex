@@ -1,0 +1,62 @@
+% !TeX root = ../main.tex
+
+\begin{table}[htbp]
+	\centering
+	\footnotesize
+	\begin{tabular}{l|c|ccc}
+		\toprule
+		& & \multicolumn{3}{c}{Faktoren} \\
+		\cmidrule(lr){3-5}
+		Type & D & Erfolgsrate-Faktor & Ausführungszeit-Faktor & Effizienzverhältnis \\
+		\midrule
+		\multirow{4}{*}{Deadlock}
+		& d0.005 & 107 & 097 & 1.10 \\
+		& d0.01  & 107 & 101 & 1.06 \\
+		& d0.05  & 100 & 103 & 0.97 \\
+		& d0.1   & 109 & 105 & 1.04 \\
+		\midrule
+		\multirow{4}{*}{Serialization}
+		& d0.005 & 114 & 105 & 1.09 \\
+		& d0.01  & 112 & 106 & 1.06 \\
+		& d0.05  & 140 & 138 & 1.01 \\
+		& d0.1   & 140 & 145 & 0.97 \\
+		\midrule
+		\multirow{4}{*}{Timeouts}
+		& d0.005 & 118 & 095 & 1.24 \\
+		& d0.01  & 127 & 112 & 1.13 \\
+		& d0.05  & 163 & 120 & 1.36 \\
+		& d0.1   & 172 & 107 & 1.61 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Erfolgsrate und Ausführungszeit relativ zu d0 sowie deren Verhältnis.}
+	\label{tab:delay}
+\end{table}
+
+\begin{table}[htbp]
+	\centering
+	\footnotesize
+	\begin{tabular}{l|c|ccc}
+		\toprule
+		& & \multicolumn{3}{c}{Faktoren} \\
+		\cmidrule(lr){3-5}
+		Type & RC & Erfolgsrate-Faktor & Ausführungszeit-Faktor & Effizienzverhältnis \\
+		\midrule
+		\multirow{3}{*}{Deadlock}
+		& r1 & 200 & 128 & 1.56 \\
+		& r3 & 267 & 222 & 1.20 \\
+		& r5 & 328 & 305 & 1.08 \\
+		\midrule
+		\multirow{3}{*}{Serialization}
+		& r1 & 168 & 181 & 0.93 \\
+		& r3 & 244 & 325 & 0.75 \\
+		& r5 & 284 & 387 & 0.73 \\
+		\midrule
+		\multirow{3}{*}{Timeouts}
+		& r1 & 160 & 107 & 1.50 \\
+		& r3 & 300 & 116 & 2.59 \\
+		& r5 & 380 & 125 & 3.04 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Erfolgsrate und Ausführungszeit relativ zu r0 sowie deren Verhältnis.}
+	\label{tab:retry_count}
+\end{table}

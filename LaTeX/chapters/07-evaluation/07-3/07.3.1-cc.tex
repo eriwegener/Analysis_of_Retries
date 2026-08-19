@@ -4,29 +4,30 @@ Die Abbildung~\ref{fig:cc-rateExec} stellt den Einfluss von Concurrency auf die 
 Ausführungszeiten der Transaktionen dar.
 Auch bei den Ausführungszeiten zeigen sich Unterschiede zwischen den Fehlerklassen.
 Über alle Fehlerklassen hinweg nimmt die Erfolgsrate mit steigender Concurrency ab.
-Deadlocks haben bei einer Concurrency von 2 95\% Erfolgsrate, fallen jedoch auf 10\% bei einer Concurrency von 20.
+Deadlocks haben bei einer Concurrency von zwei eine Erfolgsrate von 95\,\%, fallen jedoch auf 10\,\% bei einer Concurrency
+von 20 ab.
 Sie haben die höchsten Ausführungszeiten.
-Bei einer Concurrency von 2 liegen diese noch unter 2000ms und steigen dann an auf über 15000ms.
-Erfolgreiche und nicht erfolgreiche Transaktionen gleichen sich bei steigender Concurrency an und bei Concurrency
+Bei einer Concurrency von zwei liegen diese noch unter 2000\,ms und steigen dann auf über 15000\,ms an.
+Erfolgreiche und nicht erfolgreiche Transaktionen gleichen sich bei steigender Concurrency an und bei einer Concurrency
 von 20 haben erfolgreiche Transaktion im Durchschnitt länger gebraucht.
-Die durchschnittliche Dauer einer erfolgreichen Transaktion liegt bei 16841ms, während die von nicht erfolgreichen
-Transaktionen bei 15450ms liegt.
-Die höchste Erfolgschance haben Serialization Failures die von 95\% aud 26\% zurückgehen.
+Die durchschnittliche Dauer einer erfolgreichen Transaktion liegt bei 16841\,ms, während die von nicht erfolgreichen
+Transaktionen bei 15450\,ms liegt.
+Die höchste Erfolgschance haben Serialization Failures die von 95\,\% auf 26\,\% zurückgehen.
 Sie weisen die niedrigsten Ausführungszeiten auf.
-Bis zu einer Concurrency von 7 liegt die durchschnittliche Ausführungszeit erfolgreicher Transaktionen über der
+Bis zu einer Concurrency von sieben liegt die durchschnittliche Ausführungszeit erfolgreicher Transaktionen über der
 von nicht erfolgreichen Transaktionen.
-Ein Unterschied wird erst ab 10 gleichzeitigen Anwendungen erkennbar.
+Ein Unterschied wird erst ab zehn gleichzeitigen Anwendungen erkennbar.
 Die Ausführungszeit erfolgreicher Transaktionen sinkt bei weiter steigender Concurrency wieder, während die
 Ausführungszeit nicht erfolgreicher Transaktionen weitgehend stagniert beziehungsweise weiter ansteigt.
 Lock Timeouts weisen dabei die niedrigste Erfolgschance über alle Concurrency Werte auf.
-Diese sinkt von 36\% bei einer Concurrency von 2 auf 3\% bei einer Concurrency von 20.
+Diese sinkt von 36\,\% bei einer Concurrency von zwei auf 3\,\% bei einer Concurrency von 20.
 Bei Lock Timeouts verlaufen die Ausführungszeiten erfolgreicher und nicht erfolgreicher Transaktionen weitgehend
 parallel.
 Zwischen den beiden Verläufen besteht ein nahezu konstanter Abstand.
 
 \input{figures/cc-rateExec}
 
-Die in Tabelle~\ref{tab:cc-retryDistribution} dargestellte Retry-Verteilung zeigt, dass bei einer Concurrency von 2
+Die in Tabelle~\ref{tab:cc-retryDistribution} dargestellte Retry-Verteilung zeigt, dass bei einer Concurrency von zwei
 sowohl bei Deadlocks als auch bei Serialization Failures nicht mehr als drei Retries auftreten.
 Mit steigender Concurrency verändert sich die Verteilung der benötigten Retries.
 Die in Tabelle~\ref{tab:cc-quantiles} dargestellten Quantile zeigen insgesamt ein ähnliches Verhalten wie die
@@ -35,16 +36,65 @@ Bei Deadlocks und Lock Timeouts steigen die Ausführungszeiten sowohl über die 
 Concurrency.
 Bei Serialization Failures zeigt sich im $p_{99.9}$-Quantil ein abweichender Verlauf.
 Sowohl bei erfolgreichen als auch bei nicht erfolgreichen Transaktionen wird die höchste Ausführungszeit bei einer
-Concurrency von 5 erreicht.
-Ab einer Concurrency von 10 sinkt die Ausführungszeit in diesem Quantil wieder.
+Concurrency von fünf erreicht.
+Ab einer Concurrency von zehn sinkt die Ausführungszeit in diesem Quantil wieder.
 
-Der Retry Overhead~\ref{fig:cc-overhead} zeigt einen ähnlichen Verlauf wie die Ausführungszeiten.
-Bei einer Concurrency von 2 liegt der durchschnittliche Overhead von Deadlocks über dem von Lock Timeouts.
-Bei der Ausführungszeit war dies noch andersherum.
+Der Retry-Overhead in Abbildung~\ref{fig:cc-overhead} zeigt einen ähnlichen Verlauf wie die Ausführungszeiten.
+Mit steigender Concurrency nimmt insbesondere der Overhead von Deadlocks deutlich zu.
+Serialization Failures weisen dagegen über alle Concurrency-Werte hinweg den geringsten Overhead auf.
 Der in Abbildung~\ref{fig:cc-throughput} dargestellte Durchsatz nimmt mit steigender Concurrency insgesamt ab.
 Bei einer Concurrency von 20 liegt der Durchsatz ohne Retry bei Serialization Failures und Lock Timeouts über dem
 Durchsatz mit Retry.
-Bei Deadlocks weist \texttt{Experiment0} bei einer Concurrency von 2 den höchsten und bei einer Concurrency von 20
+Bei Deadlocks weist \texttt{Experiment0} bei einer Concurrency von zwei den höchsten und bei einer Concurrency von 20
 den niedrigsten Durchsatz auf.
 Über die betrachteten Concurrency-Level liegt der Durchsatz von Deadlocks durchgehend unter dem der beiden anderen
 Fehlerklassen, während Serialization Failures den höchsten Durchsatz aufweisen.
+
+\input{figures/r-ccS}
+
+Die Abbildungen~\ref{fig:r-ccS} zeigen den Verlauf der Erfolgsraten für die Strategien \texttt{s0} bis \texttt{s3}
+in Abhängigkeit von der Concurrency für die drei Fehlerklassen.
+Bei Deadlocks liegt die Erfolgsrate von \texttt{s0} bei einer Concurrency von zwei bei 50.08\,\%, während \texttt{s1} mit
+99.88\,\%, \texttt{s3} mit 99.85\,\% und \texttt{s2} mit 97.29\,\% deutlich höhere Werte aufweisen.
+Mit steigender Concurrency verringern sich die Werte kontinuierlich.
+Bei \texttt{cc5} sind es 24.84\,\% und bei \texttt{cc20} noch 2.88\,\% in \texttt{s0}.
+Für die Strategien \texttt{s1}, \texttt{s2}, \texttt{s3} reduzieren sich die Erfolgsraten von Werten zwischen 62.21\,\%
+und 70.65\,\% bei \texttt{cc5} auf 10.78\,\% \texttt{s2} und 13.20\,\% \texttt{s1} bei \texttt{cc20}.
+Bei den Serialization Failures beginnt die Erfolgsrate für \texttt{s0} bei \texttt{cc20} ebenfalls mit
+50.08\,\%, fällt bei \texttt{cc5} auf 20.68\,\% und verbleibt für die weiteren Schritte auf einem Niveau
+zwischen 19.96\,\% und 18.04\,\%.
+Die Strategien \texttt{s1}, \texttt{s2} und \texttt{s3} starten bei \texttt{cc2} mit Erfolgsraten zwischen 97.95\,\%
+und 99.43\,\%.
+Mit zunehmender Parallelität nehmen die Raten bei allen drei Strategien ab.
+Bei \texttt{cc20} verzeichnet \texttt{s2} mit 28.44\,\% den höchsten Wert, gefolgt von \texttt{s3} mit 27.16\,\% und
+\texttt{s1} mit 23.53\,\%.
+Im Szenario der Lock Timeouts liegt die Erfolgsrate bei \texttt{cc2} für \texttt{s0} bei 12.60\,\%, für
+\texttt{s1} bei 34.63\,\%, für \texttt{s3} bei 36.52\,\% und für \texttt{s2} bei 40.53\,\%.
+Mit dem Anstieg der Concurrency auf \texttt{cc5} verringern sich die Werte bei \texttt{s0} auf 4.40\,\%, bei
+\texttt{s1} auf 12.47\,\%, bei \texttt{s3} auf 15.00\,\% sowie bei \texttt{s2} auf 15.35\,\%.
+Bei \texttt{cc20} erreichen die Erfolgsraten sämtlicher Strategien Werte zwischen 1.24\,\% \texttt{s0} und 3.22\,\%
+\texttt{s2}.
+
+\input{figures/exec-ccS}
+
+Die Abbildungen~\ref{fig:exec-ccS} zeigen die durchschnittliche Gesamtlaufzeit der Strategien \texttt{s0} bis
+\texttt{s3} in Abhängigkeit von der Concurrency für die drei Fehlerklassen.
+
+Bei den Deadlocks starten alle Strategien bei \texttt{cc2} auf einem ähnlichen Niveau von 1053\,ms bis 1083\,ms.
+Mit steigender Concurrency wachsen die Laufzeiten stark an, während \texttt{s0} bei \texttt{cc20} auf 8577.79\,ms
+ansteigt, verdoppeln sich in etwa die Zeiten für \texttt{s1}, \texttt{s2} und \texttt{s3} auf 16753.56\,ms bis 17324.52\,ms.
+Im Fall der Serialization Failures verbleibt \texttt{s0} über alle Concurrency-Stufen hinweg nahezu konstant im
+Bereich von 51.51\,ms bis 53.99\,ms.
+Für \texttt{s1}, \texttt{s2} und \texttt{s3} ist ab \texttt{cc5} ein deutlicher Anstieg der Ausführungszeit zu
+beobachten.
+\texttt{s1} steigt auf 201.39\,ms und verbleibt bis \texttt{cc10} auf einem ähnlichen Niveau, bevor der Wert bei
+\texttt{cc20} auf 140.54\,ms zurückgeht.
+\texttt{s2} steigt ab \texttt{cc5} auf über 210\,ms an und erreicht bei \texttt{cc10} mit 224.29\,ms seinen höchsten
+Wert, bevor die Ausführungszeit bei \texttt{cc20} leicht auf 210.09\,ms sinkt.
+\texttt{s3} steigt von 106.37\,ms bei \texttt{cc2} auf 149.54\,ms bei \texttt{cc5} und nimmt anschließend mit
+zunehmender Concurrency weiter auf 165.71\,ms zu.
+Bei den Lock Timeouts zeigt \texttt{s0} mit 1005.67\,ms \texttt{cc2} bis 1102.48\,ms \texttt{cc20} den geringsten
+Anstieg.
+Die Strategien \texttt{s1} bis \texttt{s3} liegen durchgehend auf einem höheren Niveau.
+\texttt{s1} bewegt sich über alle Stufen hinweg stabil zwischen 1124.72\,ms und 1176.40\,ms, während \texttt{s2}
+und \texttt{s3} ab \texttt{cc5} Werte zwischen 1320\,ms und 1417\,ms einnehmen.

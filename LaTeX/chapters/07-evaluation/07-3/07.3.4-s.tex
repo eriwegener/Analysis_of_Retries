@@ -1,34 +1,34 @@
 % !TeX root = ../main.tex
 
 Die in Abbildung~\ref{fig:s-rateExec} gezeigten Erfolgs- und Fehlerraten zeigen den Einfluss einer Strategie.
-Bei Deadlocks steigt die Erfolgsrate zunächst deutlich von 18\% bei \texttt{s0} auf 52\% bei \texttt{s1}.
-Anschließend sinkt sie auf 46\% und bleibt bei \texttt{s3} unverändert.
-\texttt{s1} ist auch die einzige Stelle, an der die Erfolgsrate höher ist als die Fehlerrate.
-Die Ausführungszeiten erfolgreicher Transaktionen steigen von 2039ms auf 4851ms und erreichen somit bei \texttt{s1}
+Bei Deadlocks steigt die Erfolgsrate zunächst deutlich von 18\,\,\% bei \texttt{s0} auf 52\,\,\% bei \texttt{s1}.
+Anschließend sinkt sie auf 46\,\,\% und bleibt bei \texttt{s3} unverändert.
+\texttt{s1} ist auch die einzige Strategie, an der die Erfolgsrate höher ist als die Fehlerrate.
+Die Ausführungszeiten erfolgreicher Transaktionen steigen von 2039\,ms auf 4851\,ms und erreichen somit bei \texttt{s1}
 ihren Höchstwert.
-Für \texttt{s2} sinkt diese auf 4575ms und steigt wieder auf 4719ms für \texttt{s3}.
-Bei nicht erfolgreichen Transaktionen hat \texttt{Strategie0} 2344ms und \texttt{Strategie1} den höchsten Wert mit
-12100ms, danach sinkt dieser wieder auf 11883ms für \texttt{s2}.
-Mit 11131ms bei \texttt{s3} sinkt die Dauer weiterhin.
+Für \texttt{s2} sinkt diese auf 4575\,ms und steigt wieder auf 4719\,ms für \texttt{s3}.
+Bei nicht erfolgreichen Transaktionen hat \texttt{Strategie0} 2344\,ms und \texttt{Strategie1} den höchsten Wert mit
+12100\,ms, danach sinkt dieser wieder auf 11883\,ms für \texttt{s2}.
+Mit 11131\,ms bei \texttt{s3} sinkt die Dauer weiterhin.
 Die Erfolgsrate für Serialization Failures schaut ähnlich aus.
-Erst steigt sie von 25\% für \texttt{Strategie0} auf 57\% für \texttt{Strategie1} an, schwächt ab und steigt
-nur noch leicht auf 60\% für \texttt{Strategie2}.
-\texttt{Strategie3} hat mit 54\% eine geringere Erfolgsrate als die anderen beiden Retry Strategien.
+Erst steigt sie von 25\,\,\% für \texttt{Strategie0} auf 57\,\,\% für \texttt{Strategie1} an, schwächt erst ab und steigt danach
+nur noch leicht auf 60\,\,\% für \texttt{Strategie2}.
+\texttt{Strategie3} hat mit 54\,\,\% eine geringere Erfolgsrate als die anderen beiden Retry-Strategien.
 Ab der ersten Strategie bleibt die Erfolgsrate über der Fehlerrate.
-Serialization Failures haben mit 52ms-54ms die niedrigste Ausführungszeit in \texttt{Strategie0}.
-Zu \texttt{Strategie1} steigen die Ausführungszeiten an auf 163ms (erfolgreich) und 180ms (nicht erfolgreich).
-Nicht erfolgreiche Transaktionen haben bei \texttt{Strategie2} durchschnittlich 263ms benötigt und dies ist der
+Serialization Failures haben mit 52\,ms bis 54\,ms die niedrigste Ausführungszeit in \texttt{Strategie0}.
+Zu \texttt{Strategie1} steigen die Ausführungszeiten an auf 163\,ms (erfolgreich) und 180\,ms (nicht erfolgreich).
+Nicht erfolgreiche Transaktionen haben bei \texttt{Strategie2} durchschnittlich 263\,ms benötigt und dies ist der
 höchste Wert.
-Für erfolgreiche Transaktionen liegt der höchste Wert mit 182ms auch bei \texttt{Strategie2}.
-Bei \texttt{s3} benötigten erfolgreiche Transaktionen 138ms und nicht erfolgreiche 233ms.
-Lock Timeouts weisen die niedrigste Erfolgsrate auf, die bei \texttt{Strategie0} 5\% beträgt.
-Diese steigt dann durch \texttt{Strategie1} auf 12\%, mit \texttt{Strategie2} auf 15\% und sinkt leicht mit
-\texttt{Strategie3} auf 14\%.
+Für erfolgreiche Transaktionen liegt der höchste Wert mit 182\,ms auch bei \texttt{Strategie2}.
+Bei \texttt{s3} benötigten erfolgreiche Transaktionen 138\,ms und nicht erfolgreiche 233\,ms.
+Lock Timeouts weisen die niedrigste Erfolgsrate auf, die bei \texttt{Strategie0} 5\,\,\% beträgt.
+Diese steigt dann durch \texttt{Strategie1} auf 12\,\,\%, mit \texttt{Strategie2} auf 15\,\,\% und sinkt leicht mit
+\texttt{Strategie3} auf 14\,\,\%.
 Die Ausführungsdauer erfolgreicher Transaktion bei Lock Timeouts verhält sich wie bei den anderen Parametern.
-Sie steigt leicht linear an bei knapp über 1000ms.
-Für nicht erfolgreiche Transaktionen steigt die Dauer an von \texttt{Strategie0} 128ms auf \texttt{Strategie1} 475ms.
-Danach steigt sie leicht weiter an und erreicht den Höchstwert bei \texttt{Strategie2} mit 573ms und sinkt bei
-\texttt{Strategie3} wieder ab auf 538ms.
+Sie steigt leicht linear an bei knapp über 1000\,ms.
+Für nicht erfolgreiche Transaktionen steigt die Dauer an von \texttt{Strategie0} 128\,ms auf \texttt{Strategie1} 475\,ms.
+Danach steigt sie leicht weiter an und erreicht den Höchstwert bei \texttt{Strategie2} mit 573\,ms und sinkt bei
+\texttt{Strategie3} wieder ab auf 538\,ms.
 
 \input{figures/s-rateExec}
 

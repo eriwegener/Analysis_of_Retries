@@ -1,8 +1,8 @@
 % !TeX root = ../../main.tex
 
 Der Codeausschnitt~\ref{lst:params} zeigt die Wertebereiche der für die Experimente verwendeten Parameter.
-Um die Vergleichbarkeit und Stabilität der Ergebnisse zu gewährleisten, wird jedes Experiment fünfmal wiederholt.
-Die Workload bleibt dabei mit 500 Transaktionen für alle Experimente konstant.
+\texttt{WORKLOAD} und \texttt{ITERATION} bleiben über alle Experimente hinweg konstant und umfassen jeweils
+500 auszuführende Transaktionen sowie fünf Wiederholungen.
 Dadurch wird verhindert, dass Unterschiede in der Anzahl der ausgeführten Transaktionen die Messergebnisse
 beeinflussen.
 Unterschiede zwischen den Ergebnissen können somit auf die jeweils untersuchten Parameter zurückgeführt werden.
@@ -17,7 +17,7 @@ Dadurch lässt sich der Einfluss des einzelnen Parameters gezielter bestimmen.
 
 Der Parameter \texttt{RETRY\_STRATEGY} ist aus Gründen der Optimierung ebenfalls in der \texttt{config.py} definiert.
 Die Auswahl der tatsächlich verwendeten Strategie erfolgt jedoch innerhalb der Implementierung über eine
-\texttt{if-else}-Verzweigung.
+\texttt{match/case}-Verzweigung.
 Dadurch können die verschiedenen Retry-Strategien mit derselben grundlegenden Logik ausgeführt und miteinander
 verglichen werden.
 

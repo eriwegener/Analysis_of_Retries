@@ -1,6 +1,7 @@
 % !Tex root = ../../main.tex
 
-Der Forschungsstand zu dem Wiederholen von Transaktionen ist sich nicht einig.
+Die vorhandene Forschung zum Wiederholungsverhalten von Transaktionen präsentiert widersprüchliche Ansätze
+und Ergebnisse.
 Die einzelnen Fehlerklassen sind unterschiedlich stark erforscht.
 Das kann daran liegen, dass der Fehler eigentlich als gelöst angesehen wird oder nicht häufig genug auftritt,
 um für die Forschung relevant zu sein.
@@ -12,29 +13,29 @@ anderen Fehlern ebenfalls der Fall wäre~\cite{PostgreSQLSerializationFailures}.
 Andere Forscher sagen, dass das Problem mit den Deadlocks nicht gelöst sei.
 Zwar sei Retry eine weit verbreitete Methode um Deadlock Fehler zu behandeln, aber sie ist nur partiell effektiv.
 Denn sobald der Deadlock entstanden ist, ist der Schaden an der Datenbank schon entstanden.
-Vor allem aus der Perspektive des \texttt{Software Engineering} sind Deadlocks schlimm, da das Abbrechen von einer
+Vor allem aus der Perspektive des \texttt{Software Engineering} sind Deadlocks schlecht, da das Abbrechen von einer
 Transaktion bei diesen Fehlern der Performance schadet.
-Denn daraufhin muss die Transaktion zurückgesetzt werden, was für die Datenbank ein riesiges Problem in der
+Denn daraufhin muss die Transaktion zurückgesetzt werden, was für die Datenbank ein großes Problem in der
 Performance darstellt~\cite{Grechanik2013Deadlocks}.
 Das zeigt, dass Retry bisher der effektivste Weg ist um mit Deadlock Fehlern umzugehen, aber am effizientesten ist es,
-wenn der Deadlock direkt vermeidet werden könnte.
+wenn der Deadlock direkt vermieden werden könnte.
 
 Für den \texttt{Serialization Failure} ist die Forschung ein bisschen weiter.
 Es wird hier angenommen, dass Retry der beste Weg sei und deswegen den Retry sicher machen sollte.
 Ein Weg dafür ist der von Ports und Grittner entwickelte \emph{Safe Retry}.
-Das Ziel besteht darin liegt eine abgebrochene Transaktion direkt zu wiederholen, sodass sie nicht nochmal scheitert.
+Das Ziel besteht darin eine abgebrochene Transaktion direkt zu wiederholen, sodass sie nicht nochmal scheitert.
 Beim \emph{Safe Retry} wird eine Transaktion nicht frühzeitig abgebrochen, stattdessen wird auf die letzte Transaktion
-gewartet und diese committet ist.
+gewartet bis diese committet ist.
 Anschließend soll eine Transaktion ausgewählt werden die abgebrochen wird, bestenfalls eine die mehrere Probleme
 bereitet, da sonst diese Transaktion mit einer anderen wieder konkurriert.
-Sobal alle anderen Transaktionen committet haben, wird die erste Transaktion abgebrochen und wiederholt.
+Sobald alle anderen Transaktionen committet haben, wird die erste Transaktion abgebrochen und wiederholt.
 Durch diese Regeln werden die Retry-Kosten nach \texttt{Serialization Failures} minimal gehalten~\cite{Ports2012SerializableSnapshot}.
 
 Die Forschung zu Locks zeigt, dass Retry zwar das gängige, aber nicht das performanteste Mittel ist.
-Da es für Datenbanken keinen besseren Weg gibt, als den Wartezeit für ein Lock zu erhöhen, muss nach der Wartezeit dann
+Da es für Datenbanken keinen besseren Weg gibt, als die Wartezeit für ein Lock zu erhöhen, muss nach der Wartezeit dann
 eine Transaktion abgebrochen werden.
 Die Wartezeit lässt sich beliebig erhöhen, das sollte aber nicht das Ziel sein.
-Forschende haben für \emph{Remote Direct Memory Access RDMA} einen Weg gefunden die Retries zu reduzieren.
+Forschende haben für \emph{Remote Direct Memory Access (RDMA)} einen Weg gefunden die Retries zu reduzieren.
 Dort wird Lock Contention durch \emph{handing over} geregelt.
 Dabei kommunizieren die Clients direkt miteinander, um ein Lock weiterzugeben, nachdem es nicht mehr benötigt wird.
 Dadurch wartet ein Client lokal auf die Weitergabe eines Locks, anstelle von permanenten Wiederholen.

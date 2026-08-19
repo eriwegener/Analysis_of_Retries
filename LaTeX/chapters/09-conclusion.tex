@@ -2,65 +2,69 @@
 
 Transaktionen können aufgrund von Datenbankfehlern fehlschlagen.
 Ein Retry ermöglicht das Wiederholen von fehlgeschlagenen Transaktionen bei transient Failures.
-Dadurch erhöht sich die Erfolgsrate, aber auch die Ausführungszeit einer Transaktion und verursache zusätzliche
+Dadurch erhöht sich die Erfolgsrate, aber auch die Ausführungszeit einer Transaktion und verursacht zusätzliche
 Datenbanklast.
-Diese Arbeit untersucht den Einfluss verschiedener Retry Strategien und deren Parameter für PostgreSQL\@.
+Diese Arbeit untersuchte den Einfluss verschiedener Retry-Strategien und deren Parameter für PostgreSQL\@.
 Dafür wurden die Fehlerklassen Deadlocks, Serialization Failures und Lock Timeouts getestet.
 Die Bewertung wurde insbesondere anhand der Erfolgsraten und Ausführungszeiten durchgeführt.
-Die Arbeit basiert auf einer Problemanalyse, aus der Anforderungen an den Retry-Mechanismus abgeleitet wurden.
+Die Arbeit basiert auf einer Problemanalyse aus der Anforderungen an den Retry-Mechanismus abgeleitet wurden.
 Darauf aufbauend wurden Experimente konzipiert und implementiert, mit denen verschiedene Retry-Strategien sowie die
-Parameter Retry Count, Delay und Concurrency systematisch untersucht wurden.
+Parameter Retry-Count, Delay und Concurrency systematisch untersucht wurden.
 Anhand der Ergebnisse aus diesen Experimenten wurde die Zuverlässigkeit und Performance der einzelnen Strategien
 und Parameter bewertet.
 Die Ergebnisse zeigen, dass ein Retry die Erfolgsrate für die untersuchten Fehlerklassen deutlich erhöht.
-Der Nutzen unterscheidet sich stark zwischen den Fehlerklassen.
+Der Nutzen unterscheidet sich jedoch stark zwischen den Fehlerklassen.
 Mehrere Retries erhöhen grundsätzlich die Erfolgswahrscheinlichkeit, aber führen auch zu erhöhten Ausführungszeiten.
-Ein höherer Retry Count ist daher nicht automatisch sinnvoller.
-Es muss ein geeigneter Tradeoff zwischen der Erfolgsrate und der Ausführungszeit gefunden werden, damit eine
-Strategie sinnvoll einsetzbar ist.
+Ein höherer Retry-Count ist daher nicht automatisch sinnvoller.
+Es muss ein geeigneter Kompromiss zwischen der Erfolgsrate und der Ausführungszeit gefunden werden, damit eine
+Strategie effizient einsetzbar ist.
 Zusätzlich beeinflusst der Delay das Verhältnis zwischen Erfolgsrate und Ausführungszeit.
-Concurrency hat einen negativen Einfluss auf die Erfolgsraten.
+Concurrency hat einen maßgeblichen negativen Einfluss auf die Erfolgsraten.
+Bei steigender Parallelität steigt die Konkurrenz um Datenbankressourcen, wodurch selbst Strategien mit hoher
+Erfolgsrate ab einer gewissen Last an ihre Grenzen geraten.
+Dadurch können häufiger Folgekonflikte ausgelöst werden.
 
 Die Forschungsfrage lässt sich nun auch beantworten.
 Ein Retry verbessert die Zuverlässigkeit im Sinne einer höheren Erfolgsrate und verschlechtert gleichzeitig die
 Performance durch zusätzliche Ausführungszeit und Belastung.
-Der Einfluss ist abhängig von Fehlerklasse, Strategie, Retry Count und Delay.
+Der Einfluss ist abhängig von Fehlerklasse, Strategie, Retry-Count und Delay.
 Deadlocks profitieren von einem \emph{immediate Retry} und diese Strategie mit einem möglichen Retry bietet unter
-den untersuchten Bedingungen das beste Verhältnis von Ausführungszeit zu Erfolgschance.
+den untersuchten Bedingungen das beste Verhältnis von Ausführungszeit zu Erfolgswahrscheinlichkeit.
 Auch Serialization Failures haben einen Nutzen von Retries.
 Der zusätzliche Aufwand steht jedoch teilweise nicht im Verhältnis zum Gewinn.
-Ein Retry ist daher nicht grundsätzlich sinnvoll, auch wenn \texttt{s3} die beste Retry Strategie unter den
+Ein Retry ist daher nicht grundsätzlich sinnvoll, auch wenn \texttt{s3} die beste Retry-Strategie unter den
 untersuchten Varianten darstellt.
-Auf Lock Timeouts wirkt sich Retry ebenfalls positiv auf, diese bleiben aber problematisch hinsichtlich der Erfolgsrate.
+Auf Lock Timeouts wirkt sich Retry ebenfalls positiv auf.
+Diese bleiben aber problematisch hinsichtlich der Erfolgsrate.
 \emph{Retry with Delay} ist die beste Strategie für diese Fehlerklasse.
-Mit 0.1s als Delay und 5 möglichen Retries liefern die Parameter unter den gegebenen Bedingungen die besten Ergebnisse.
+Mit 0.1\,s als Delay und fünf möglichen Retries liefern die Parameter unter den gegebenen Bedingungen die besten Ergebnisse.
 Die Erfolgsraten und Ausführungszeiten der Transaktionen müssen gemeinsam betrachtet werden, wobei die Gewichtung
 dieser frei wählbar ist.
 Des Weiteren muss für jede Fehlerklasse spezifisch konfiguriert werden, da nicht jede von der gleichen Strategie und
 deren Parametern profitiert.
 Eine optimale Konfiguration hängt außerdem von der Systemlast und Concurrency ab.
-Die Parameter Retry Count und Delay ermöglichen eine Kontrolle der Performancekosten und unterschiedliche Strategien
+Die Parameter Retry-Count und Delay ermöglichen eine Kontrolle der Performancekosten und unterschiedliche Strategien
 ermöglichen eine Anpassung an verschiedene Fehlerklassen.
-Die Untersuchung bestätigt damit grundsätzlich, dass ein konfigurierbarer fehlerspezifischer Retry Mechanismus
+Die Untersuchung bestätigt damit grundsätzlich, dass ein konfigurierbarer fehlerspezifischer Retry-Mechanismus
 sinnvoll ist.
 
-Diese Untersuchung bietet sinnige Erweiterungen.
-So ist eine dynamische Überprüfung des SQLSTATE-Codes eine Erweiterung, die das Problem löst, dass nicht retry-bare
-Fehler auch nicht wiederholt werden.
-Dadurch vermeiden sich unnötige Wiederholungen, welche die Systemlast reduzieren.
+Diese Untersuchung bietet sinnvolle Erweiterungen.
+So ist eine dynamische Überprüfung des SQLSTATE-Codes eine Erweiterung, die das Problem löst, dass nicht wiederholbare
+Fehler auch wiederholt werden.
+Dadurch vermeiden sich unnötige Wiederholungen, welche die Systemlast erhöhen.
 Weitere Fehlerklassen könnten auch noch untersucht werden.
-Vor allem in Bezug auf transient Faults und nontransient Faults ist noch Untersuchungsbedarf.
+Vor allem in Bezug auf transient Faults und nontransient Faults ist noch Untersuchungsbedarf vorhanden.
 Zusätzlich kann eine realitätsnahe Testumgebung weitere Aufschlüsse dazu bieten, wie sich Retry bei realer Last
 auswirkt.
-An der Stelle sollte vor allem auf die Concurrency, den Workload und die Dauer durch Iterationen bedacht werden.
-Interessant wäre außerdem, wie sich die Fehlerklassen bei anderen Strategien verhalten.
-Insbesondere bei adaptiven Backoff-Strategien und dynamischen Retry Count und Delay.
+An der Stelle sollte vor allem auf die Concurrency, den Workload und die Dauer durch Iterationen geachtet werden.
+Interessant wäre zudem, wie sich die Fehlerklassen bei anderen Strategien verhalten, insbesondere bei adaptiven
+Backoff-Strategien und dynamischen Retry-Count und Delay.
 Eine weitere Richtung bieten verteilte Systeme und generell die Anbindung an ein Netzwerk um Netzwerkfehler und
-Latenzen zu berücksichtigen, sowie Tests über ein verteiltes System.
-Als Letztes könnten verschiedenen Datenbankmanagementsysteme getestet werden, um herauszufinden, welches sich
-besonders für Retry Mechanismen eignet.
+Latenzen zu berücksichtigen sowie Tests über ein verteiltes System.
+Als Letztes könnten verschiedene Datenbankmanagementsysteme getestet werden, um herauszufinden, welches sich
+besonders für Retry-Mechanismen eignet.
 
 Zusammenfassend zeigt die Untersuchung, dass ein Retry-Mechanismus unter den untersuchten Bedingungen grundsätzlich
 geeignet ist, die Erfolgsrate fehlgeschlagener Transaktionen zu erhöhen.
-Die Strategie und dessen Parameter müssen an Fehlerklasse und Systembedingungen angepasst werden.
-Deshalb gibt es keine allgemein optimale Retry Konfiguration.
+Die Strategie und deren Parameter müssen an Fehlerklasse und Systembedingungen angepasst werden.
+Deshalb gibt es keine allgemein optimale Retry-Konfiguration.

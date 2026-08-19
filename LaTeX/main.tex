@@ -1,4 +1,4 @@
-%\def\PrintVersion
+\def\PrintVersion
 
 \ifdefined\PrintVersion
 \documentclass[12pt,a4paper,twoside,openright]{report}
@@ -26,7 +26,9 @@
 	\fi
 	\hypersetup{pageanchor=true}
 	\pagenumbering{Roman}
-
+	\chapter*{Kurzfassung}
+	\label{chap:abstract}
+	\input{abstract}
 	\tableofcontents
 
 	\clearpage
@@ -74,13 +76,6 @@
 	]
 
 	\clearpage
-	%\phantomsection
-	%\addcontentsline{toc}{chapter}{\listfigurename}
-	%\listoffigures
-	%\clearpage
-	%\phantomsection
-	%\addcontentsline{toc}{chapter}{\listtablename}
-	%\listoftables
 %
 	\appendix
 	\chapter{Anhang}

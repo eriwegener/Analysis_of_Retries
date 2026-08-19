@@ -1,7 +1,7 @@
 % !TeX root = ../main.tex
 
 Ein Teil der gewonnenen Erkenntnisse lässt sich auf andere Anwendungsszenarien übertragen.
-Die grundsätzliche Erkenntnis, dass Retry Count und Delay einen Trade-off zwischen Erfolgsrate und Ausführungszeit
+Die grundsätzliche Erkenntnis, dass Retry-Count und Delay einen Kompromiss zwischen Erfolgsrate und Ausführungszeit
 erzeugen, ist nicht auf eine einzelne Systemkonfiguration beschränkt.
 Auch die Beobachtung, dass die Wahl der Retry-Strategie von der jeweiligen Fehlerklasse abhängt, stellt eine
 grundsätzliche Erkenntnis der Untersuchung dar.
@@ -9,21 +9,18 @@ Die konkreten Ergebnisse für Deadlocks, Serialization Failures und Lock Timeout
 und dessen Verhalten gebunden.
 Andere DBMS können Konflikte unterschiedlich behandeln und dadurch andere Ergebnisse und optimale Retry-Konfigurationen
 aufweisen.
-Ebenso sind die absoluten Ausführungszeiten von der verwendeten Hardware und der Systemkonfiguration abhängig.
-Bei verteilten Anwendungen können zusätzlich Netzwerklatenzen und Kommunikationsfehler das Verhalten des Retry-Ansatzes
-beeinflussen.
 
 Für weiterführende Untersuchungen bietet sich zunächst eine Betrachtung unter realer beziehungsweise realitätsnaher
 Last an.
 Dadurch könnte untersucht werden, ob die beobachteten Zusammenhänge zwischen Erfolgsrate, Ausführungszeit und
-Retry Konfiguration auch unter produktionsähnlichen Bedingungen bestehen.
+Retry-Konfiguration auch unter produktionsähnlichen Bedingungen bestehen.
 Darüber hinaus könnte der untersuchte Parameterbereich erweitert werden.
-Weitere Delay und Retry Werte könnten zeigen, ob die in dieser Untersuchung ermittelten Konfigurationen tatsächlich
+Weitere Delay und Retry-Werte könnten zeigen, ob die in dieser Untersuchung ermittelten Konfigurationen tatsächlich
 günstige Bereiche darstellen oder ob weitere Konfigurationen ein besseres Verhältnis zwischen Erfolgsrate und
 Ausführungszeit ermöglichen.
 Eine weitere Erweiterung wäre die Untersuchung zusätzlicher Fehlerklassen.
 Dadurch könnte überprüft werden, ob sich das beobachtete Verhalten auch auf andere Fehler übertragen lässt.
 Schließlich könnte anstelle fester Delay-Werte ein adaptiver Backoff untersucht werden, bei dem die Wartezeit
 abhängig von der Anzahl bisheriger Fehlversuche angepasst wird.
-Dadurch ließe sich untersuchen, ob eine dynamische Anpassung der Retry-Parameter den Trade-off zwischen Erfolgsrate
+Dadurch ließe sich untersuchen, ob eine dynamische Anpassung der Retry-Parameter den Kompromiss zwischen Erfolgsrate
 und Ausführungszeit weiter verbessern kann.

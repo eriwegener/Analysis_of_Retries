@@ -1,4 +1,22 @@
 % !Tex root = ../main.tex
 
-Hier kurze infos zu Python.
-\textbf{In diesem Abschnitt fehlen noch pandas und psycopg2!!!}
+Python ist eine vielseitig einsetzbare, interpretierte Programmiersprache, die sich durch eine vergleichsweise
+einfache Syntax und eine umfangreiche Standardbibliothek auszeichnet.
+Der Python-Interpreter steht zusammen mit der Standardbibliothek kostenlos für verschiedene Betriebssysteme
+zur Verfügung.
+Darüber hinaus kann Python durch zahlreiche Bibliotheken und Pakete von Drittanbietern erweitert werden, wodurch
+sich die Programmiersprache für unterschiedliche Anwendungsbereiche wie Datenanalyse und Datenbankanbindung
+eignet~\cite{PythonTutorial}.
+
+Für die Verarbeitung und Analyse strukturierter Daten wird in dieser Arbeit die Bibliothek \emph{pandas} verwendet.
+pandas ist ein Open-Source-Paket für Python, das Datenstrukturen und Funktionen für die effiziente Verarbeitung,
+Manipulation und Analyse von Daten bereitstellt.
+Eine zentrale Datenstruktur ist dabei der \emph{DataFrame}, mit dem sich tabellarische Daten bearbeiten und
+analysieren lassen~\cite{Pandas}.
+
+Zur Anbindung an eine PostgreSQL-Datenbank wird \emph{psycopg2} eingesetzt.
+Dabei handelt es sich um einen PostgreSQL-Adapter für Python, der die Verbindung zu PostgreSQL-Datenbanken sowie die
+Ausführung von SQL-Anweisungen aus Python heraus ermöglicht.
+psycopg2 basiert auf der PostgreSQL-Bibliothek \emph{libpq}\footnote{libpq ist die offizielle C-Bibliothek von
+	PostgreSQL} und unterstützt unter anderem die Verwendung von Transaktionen, Cursors und die automatische
+Konvertierung verschiedener Python-Datentypen in entsprechende PostgreSQL-Datentypen~\cite{Psycopg2}.

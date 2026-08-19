@@ -11,7 +11,10 @@ implementiert.
 Der Codeausschnitt~\ref{lst:deadlockImpl} zeigt beispielhaft die Implementierung eines Deadlocks.
 Hierfür werden zwei Transaktionen verwendet, die jeweils eine Zeile der Tabelle \texttt{deadlocks} sperren und
 anschließend versuchen, auf die von der anderen Transaktion gesperrte Zeile zuzugreifen.
-Über die \texttt{client\_id} wird mit dem Modulo-Operator entschieden, welche der beiden Transaktionen ein Client
+Damit ein Deadlock entsteht, warten die Transaktionen 50\,ms aufeinander.
+Der Einfluss dieser Wartezeit auf die Ergebnisse ist hingegen nachrangig, da diese durch den PostgreSQL-Default für
+\texttt{deadlock\_timeout} (1\,s) dominiert werden.
+Über die \texttt{client\_id} wird mit dem Modulo-Operator entschieden, welcher der beiden Clients welche Transaktion
 ausführen soll.
 
 \begin{lstlisting}[style=pythoncode, caption={Implementierung eines Deadlocks}, label={lst:deadlockImpl}]
@@ -46,7 +49,7 @@ ausschließlich als namensgebende Funktionen.
 Dadurch wird abgeleitet und klar zugeordnet, welche Fehlerklassen erzeugt und durch die Experimente getestet werden
 sollen.
 Die Runner-Funktionen starten die Funktion \texttt{start()} in \texttt{experimentFunctions}.
-Diese aufgerufene Funktion liest, über den in Coodeausschnitt~\ref{lst:caller-name} gezeigten Code, den Namen von der
+Diese aufgerufene Funktion liest über den in Codeausschnitt~\ref{lst:caller-name} gezeigten Code den Namen von der
 aufrufenden Funktion aus.
 Der Name wird bis zum Ende mit übergeben, damit die Funktionen wissen, welche Fehlerklassen behandelt und wohin die
 Logeinträge geschrieben werden sollen.

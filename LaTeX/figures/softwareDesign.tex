@@ -54,7 +54,7 @@
 
 				\node (start) [startstop] {main.py\\Programmstart};
 				\node (runner) [process, below=of start] {experimentRunner.py};
-				\node (analysis) [process, right=2cmof runner] {anaylsis.py};
+				\node (analysis) [process, right=2cmof runner] {analysis.py};
 				\node (experiment) [process, below=of runner] {experimentFunctions.py};
 				\node (config) [process, left=2cm of runner] {config.py};
 				\node (database) [process, below=of config] {database.py};
@@ -79,6 +79,6 @@
 			\end{tikzpicture}};
 	\end{tikzpicture}
 
-	\caption{Aufbau der Projektstruktur}
+	\caption{Aufbau der Systemstruktur}
 	\label{fig:softwareDesign}
 \end{figure}

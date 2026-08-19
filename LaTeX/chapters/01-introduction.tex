@@ -1,14 +1,54 @@
 % !TeX root = ../main.tex
 
-Forschungsfrage: Welchen Einfluss haben unterschiedliche Retry Strategien und deren Parameter auf die Performance und
-Zuverlässigkeit von Datenbanken bei definierten Fehlerklassen.
+Datenbanken sind ein fester Bestandteil moderner Anwendungen und werden zur Speicherung und Verwaltung von Daten
+eingesetzt.
+Insbesondere bei Anwendungen, bei denen mehrere Zugriffe gleichzeitig auf Daten erfolgen, müssen Transaktionen
+zuverlässig ausgeführt werden, um die Konsistenz der gespeicherten Daten sicherzustellen.
+Transaktionen können grundsätzlich trotz korrekter Implementierung aufgrund von temporären Fehlern
+fehlschlagen.
+Solche Fehler sind beispielsweise Deadlocks, Serialization Failures und Lock Timeouts.
+Diese Fehler entstehen häufig durch konkurrierende Zugriffe auf gemeinsame Daten und bedeuten nicht zwangsläufig,
+dass eine Transaktion dauerhaft nicht ausführbar ist.
+Ein fehlgeschlagener Transaktionsversuch muss daher nicht zwingend zu einem endgültigen Abbruch der Verarbeitung
+führen.
+Ein Retry-Mechanismus setzt an dieser Stelle an und ermöglicht es, fehlgeschlagene Transaktionen automatisch
+erneut auszuführen.
+Dies kann wiederum die Zuverlässigkeit einer Anwendung erhöhen, ohne dass ein manueller Eingriff erforderlich ist.
+Die erneute Ausführung einer Transaktion ist jedoch nicht ohne Kosten.
+Jeder weitere Versuch beansprucht erneut Ressourcen der Datenbank und kann die Ausführungszeit der Transaktion
+verlängern.
+Gleichzeitig kann ein Retry die Konkurrenz zwischen gleichzeitig ausgeführten Transaktionen weiter erhöhen.
+Besonders bei Fehlern, die durch konkurrierende Zugriffe entstehen, ist daher nicht garantiert, dass ein
+unmittelbarer Wiederholungsversuch erfolgreich ist.
+Ein unkontrollierter Einsatz von Retry-Mechanismen kann somit zwar die Erfolgsrate erhöhen, gleichzeitig aber die
+Performance und die Belastung des Systems negativ beeinflussen.
 
-Das Nutzen einer Datenbank bringt viele Vorteile, aber auch Nachteile.
-Vor allem, wenn die Fehlerbehandlung nicht solide läuft.
-Denn wenn eine Datenbank einen Fehler bemerkt, wird dieser bisher manuell behandelt.
-Sobald ein Fehler auftritt, bricht die Datenbank die Transaktion ab und gibt dem Client den Fehlercode zurück.
-In dem Fall muss dann die Clientapplikation entscheiden wie mit diesem um gegangen wird.
-Das heißt meistens, dass der User eigenhändig eingreifen muss.
-Das Ziel ist es, dass der Client schon gar nicht mehr erfährt, dass eine Transaktion abgebrochen wurde.
-Die folgende Arbeit behandelt, wie genau man bestimmte Fehler abfangen und möglicherweise auch lösen kann.
-\textbf{Muss auch dringen noch geändert werden.}
+Es werden die drei Fehlerklassen Deadlocks, Serialization Failures und Lock Timeouts auf einer PostgreSQL Datenbank
+erzeugt und wiederholt.
+Für die Untersuchung werden verschiedene Retry-Strategien mit variierenden Retry-Counts und Delays eingesetzt und
+bei unterschiedlichen Concurrency-Werten getestet.
+Bewertet werden die Strategien, insbesondere anhand der Erfolgsrate und Ausführungszeit der Transaktionen.
+Dabei gilt die Erfolgsrate als Maß für die Zuverlässigkeit und die Ausführungszeit für Performance.
+Ziel ist es, zu untersuchen wie sich die einzelnen Parameter auswirken und ob sich Unterschiede zwischen den
+Fehlerklassen ergeben.
+Des Weiteren soll sich ergeben, welche Konfigurationen unter den untersuchten Bedingungen sinnvoll sind und welcher
+Kompromisse zwischen Erfolgsrate und Performance entsteht.
+
+Diese Arbeit soll die Forschungsfrage: \glqq Welchen Einfluss haben unterschiedliche Retry-Strategien und deren
+Parameter auf die Performance und Zuverlässigkeit von Datenbanken bei definierten Fehlerklassen?\grqq \ beantworten.
+Ausgehend von der Problemanalyse werden Anforderungen an einen
+Retry-Mechanismus abgeleitet.
+Auf dieser Grundlage werden die Experimente konzipiert und in einer kontrollierten Testumgebung durchgeführt.
+Die untersuchten Strategien und Parameter werden dabei systematisch variiert.
+Anschließend werden die Ergebnisse hinsichtlich der Erfolgsrate und Ausführungszeit ausgewertet und die untersuchten
+Konfigurationen bewertet.
+Unterstützend werden weitere Messgrößen wie Retry-Overhead und Durchsatz betrachtet.
+
+Die Arbeit ist wie folgt aufgebaut.
+Zunächst werden die Grundlagen erklärt und die Arbeit in den Stand der Forschung eingeordnet.
+Anschließend wird das Problem analysiert und das Konzept der Untersuchung vorgestellt.
+Darauf folgt die Beschreibung der Implementierung und der Durchführung der Experimente.
+Danach werden die erzielten Ergebnisse dargestellt und diskutiert.
+Abschließend wird die Forschungsfrage beantwortet, die Grenzen der Untersuchung betrachtet und mögliche
+Erweiterungen für zukünftige Arbeiten
+aufgezeigt.

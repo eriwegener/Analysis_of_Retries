@@ -1,7 +1,7 @@
 % !TeX root = ../../../main.tex
 
-Im Modul \texttt{retry} befinden sich die Implementierungen der einzelnen Retry Strategien.
-Allen Strategien liegt dabei der ein gemeinsamer Ablauf zugrunde.
+Im Modul \texttt{retry} befinden sich die Implementierungen der einzelnen Retry-Strategien.
+Allen Strategien liegt dabei ein gemeinsamer Ablauf zugrunde.
 Zu Beginn werden in jeder Strategie die Variable \texttt{retries} und das Array \texttt{attempt\_times}
 initialisiert, die sowohl die Anzahl an gebrauchten Retries, als auch die Ausführungsdauer der einzelnen
 Transaktionsversuche speichern.
@@ -14,7 +14,7 @@ Als Rückgabewerte werden der Status der Transaktion, ihre Ausführungsdauer und
 SQLSTATE-Code erfasst.
 Die Dauer wird zusätzlich an das \texttt{attempt\_time}-Array angehängt.
 
-Daraufhin werden die spezifischen Retry Mechanismen implementiert.
+Daraufhin werden die spezifischen Retry-Mechanismen implementiert.
 Beim Basisexperiment \texttt{run\_without\_retry} entfällt dieser Schritt, da die Transaktion lediglich einmal
 ausgeführt wird.
 Für dieses Experiment wird die Variable \texttt{retries} auf \texttt{None} gesetzt.
@@ -22,20 +22,19 @@ Dadurch wird verhindert, dass das Basisexperiment bei der späteren Auswertung d
 Experiment mit null Retries interpretiert wird.
 Der Wert \texttt{None} wird bei der Analyse als \texttt{NaN} dargestellt und entsprechend separat ausgewertet.
 
-Bei den Retry Mechanismen wird der Retry so lange durchgeführt, wie die maximale Anzahl an Retries es
-zulässt, oder bis eine Transaktion erfolgreich war.
-Dies geschieht mit einer \texttt{while}-Schleife in der als Erstes der Befehl \texttt{db.rollback()} durchgeführt,
+Bei den Retry-Mechanismen wird der Retry so lange durchgeführt, wie die maximale Anzahl an Retries es
+zulässt oder bis eine Transaktion erfolgreich war.
+Dies geschieht mit einer \texttt{while}-Schleife, in der als Erstes der Befehl \texttt{db.rollback()} durchgeführt,
 damit sich die Verbindung wieder in einem fehlerfreien Zustand befindet.
 Dann wird die Transaktion wiederholt und die zurückgegeben Werte werden gespeichert.
 Die Ausführungszeit des Versuchs wird dem Array angehängt und die Anzahl der gebrauchten Retries wird um eins erhöht.
 Dieser Ablauf wird wiederholt, bis eine der beiden Bedingung der Schleife nicht mehr zu treffen.
 
 Die Implementierungen der einzelnen Strategien unterscheiden sich lediglich darin, wie sie den Delay behandeln.
-Während bei der Strategie \emph{immediate Retry}-Strategie der Delay nicht verwendet wird, da die Transaktion, wird bei
-\emph{Retry after Delay} der Delay auf den Wert des Parameters gesetzt.
-Die \emph{Retry with Backoff + Jitter}-Strategie wird hingegen berechnet, dem maximalen Delay für jeden erneuten
-Versuch, indem der initiale Delay mit $2^{n}$ multipliziert wird, wobei n der Anzahl der bereits durchgeführten
-Retries entspricht.
+Während bei der \emph{immediate Retry}-Strategie der Delay nicht verwendet wird, wird bei \emph{Retry after Delay}
+der Delay auf den Wert des Parameters gesetzt.
+Die \emph{Retry with Backoff + Jitter}-Strategie wird hingegen berechnet, indem der initiale Delay mit $2^{n}$
+multipliziert wird, wobei n für die Anzahl der bereits durchgeführten Retries entspricht.
 Anschließend wird zufällig ein Delay zwischen null und dem berechneten maximal Wert gewählt~\ref{lst:jitter}.
 In Python wird hierfür die Funktion \texttt{random.uniform} verwendet, welche einen gleichverteilten Zufallswert
 innerhalb des angegebenen Intervalls erzeugt.
@@ -52,7 +51,7 @@ Rückgabestatus geprüft, ob sie erfolgreich ausgeführt werden konnte oder ein 
 Sobald die Schleife beendet wird, wird ein Timestamp für das Ende des gesamten Versuchs erfasst.
 Aus der Differenz zwischen End- und Startzeitpunkt wird anschließend die Gesamtdauer \texttt{total\_ms} des Versuchs
 in Millisekunden berechnet.
-Hierfür wird die Zeitdifferenz mit 1000 multipliziert und anschließend mit \texttt{math.floor} auf eine gerade Zahl
+Hierfür wird die Zeitdifferenz mit 1000 multipliziert und anschließend mit \texttt{math.floor} auf eine ganze Zahl
 abgerundet.
 Abschließend werden die gesammelten Ergebnisse, einschließlich der Anzahl der durchgeführten Retries, der
 Ausführungszeiten der einzelnen Versuche, der Gesamtdauer, des Status und des SQLSTATE-Codes, zurückgegeben.
