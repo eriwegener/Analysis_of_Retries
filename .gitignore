@@ -1,0 +1,20 @@
+# IntelliJ / PyCharm
+.idea/
+httpRequests/
+shelf/
+
+# Data sources (falls außerhalb .idea genutzt)
+dataSources/
+dataSources.local.xml
+
+# Python
+.venv/
+.env
+LaTeX/
+
+# Build / output
+out/
+*.iml
+test.py
+logging/tests/
+logging/backup/
